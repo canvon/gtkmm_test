@@ -4,7 +4,7 @@ EntryCvn::EntryCvn() :
 	outerBox_(Gtk::ORIENTATION_VERTICAL),
 	middleInnerBox_(Gtk::ORIENTATION_HORIZONTAL),
 	editableCheckButton_("_Editable", true),
-	visibleCheckButton_("_Visible", true),
+	visibilityCheckButton_("_Visibility", true),
 	closeButton_("_Close", true)
 {
 	set_title("entry test by canvon");
@@ -17,7 +17,7 @@ EntryCvn::EntryCvn() :
 	outerBox_.pack_start(closeButton_);
 
 	middleInnerBox_.pack_start(editableCheckButton_);
-	middleInnerBox_.pack_start(visibleCheckButton_);
+	middleInnerBox_.pack_start(visibilityCheckButton_);
 
 	entry_.set_activates_default();
 	closeButton_.set_can_default();
@@ -25,8 +25,8 @@ EntryCvn::EntryCvn() :
 
 	editableCheckButton_.signal_toggled().connect(
 		sigc::mem_fun(*this, &EntryCvn::on_editable_toggled));
-	visibleCheckButton_.signal_toggled().connect(
-		sigc::mem_fun(*this, &EntryCvn::on_visible_toggled));
+	visibilityCheckButton_.signal_toggled().connect(
+		sigc::mem_fun(*this, &EntryCvn::on_visibility_toggled));
 	closeButton_.signal_clicked().connect(
 		sigc::mem_fun(*this, &EntryCvn::on_close_clicked));
 
@@ -42,9 +42,9 @@ void EntryCvn::on_editable_toggled()
 	entry_.set_editable(editableCheckButton_.get_active());
 }
 
-void EntryCvn::on_visible_toggled()
+void EntryCvn::on_visibility_toggled()
 {
-	entry_.set_visible(visibleCheckButton_.get_active());
+	entry_.set_visibility(visibilityCheckButton_.get_active());
 }
 
 void EntryCvn::on_close_clicked()

@@ -14,12 +14,12 @@ public:
 
 protected:
 	void on_editable_toggled();
-	void on_visible_toggled();
+	void on_visibility_toggled();
 	void on_close_clicked();
 
 	Gtk::Entry entry_;
 	Gtk::Box outerBox_, middleInnerBox_;
-	Gtk::CheckButton editableCheckButton_, visibleCheckButton_;
+	Gtk::CheckButton editableCheckButton_, visibilityCheckButton_;
 	Gtk::Button closeButton_;
 };
 
