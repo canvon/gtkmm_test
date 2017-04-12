@@ -19,6 +19,7 @@ EntryCvn::EntryCvn() :
 	middleInnerBox_.pack_start(editableCheckButton_);
 	middleInnerBox_.pack_start(visibleCheckButton_);
 
+	entry_.set_activates_default();
 	closeButton_.set_can_default();
 	closeButton_.grab_default();
 
