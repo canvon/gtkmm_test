@@ -3,9 +3,9 @@
 EntryCvn::EntryCvn() :
 	outerBox_(Gtk::ORIENTATION_VERTICAL),
 	middleInnerBox_(Gtk::ORIENTATION_HORIZONTAL),
-	editableCheckButton_("_Editable"),
-	visibleCheckButton_("_Visible"),
-	closeButton_("_Close")
+	editableCheckButton_("_Editable", true),
+	visibleCheckButton_("_Visible", true),
+	closeButton_("_Close", true)
 {
 	set_title("entry test by canvon");
 	entry_.set_text("hello world");
