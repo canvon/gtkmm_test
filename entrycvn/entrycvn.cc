@@ -28,6 +28,8 @@ EntryCvn::EntryCvn() :
 		sigc::mem_fun(*this, &EntryCvn::on_visible_toggled));
 	closeButton_.signal_clicked().connect(
 		sigc::mem_fun(*this, &EntryCvn::on_close_clicked));
+
+	show_all_children();
 }
 
 EntryCvn::~EntryCvn()
