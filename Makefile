@@ -10,10 +10,12 @@ LINK.o = $(LINK.cc)
 
 SRCS := $(wildcard *.cc) \
         $(wildcard helloworld/*.cc) \
-        $(wildcard radiobuttons/*.cc)
+        $(wildcard radiobuttons/*.cc) \
+        $(wildcard entrycvn/*.cc)
 OBJS := $(SRCS:.cc=.o)
 DEPS := $(OBJS:.o=.deps)
-BINS := simple helloworld/helloworld radiobuttons/radiobuttons
+BINS := simple helloworld/helloworld radiobuttons/radiobuttons \
+        entrycvn/entrycvn
 
 all: $(BINS)
 
@@ -23,6 +25,7 @@ clean:
 simple: simple.o
 helloworld/helloworld: helloworld/main.o helloworld/helloworld.o
 radiobuttons/radiobuttons: radiobuttons/main.o radiobuttons/radiobuttons.o
+entrycvn/entrycvn: entrycvn/main.o entrycvn/entrycvn.o
 
 %.deps: %.cc
 	set -o pipefail && \
