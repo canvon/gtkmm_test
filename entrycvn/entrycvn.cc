@@ -19,8 +19,8 @@ EntryCvn::EntryCvn() :
 	middleInnerBox_.pack_start(editableCheckButton_);
 	middleInnerBox_.pack_start(visibleCheckButton_);
 
-	entry_.set_can_default();
-	entry_.grab_default();
+	closeButton_.set_can_default();
+	closeButton_.grab_default();
 
 	editableCheckButton_.signal_toggled().connect(
 		sigc::mem_fun(*this, &EntryCvn::on_editable_toggled));
