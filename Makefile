@@ -8,10 +8,12 @@ LDFLAGS  := $(shell pkg-config gtkmm-3.0 --libs)
 # Let GNU make implicit rule link in a C++ way.
 LINK.o = $(LINK.cc)
 
-SRCS := $(wildcard *.cc) $(wildcard helloworld/*.cc)
+SRCS := $(wildcard *.cc) \
+        $(wildcard helloworld/*.cc) \
+        $(wildcard radiobuttons/*.cc)
 OBJS := $(SRCS:.cc=.o)
 DEPS := $(OBJS:.o=.deps)
-BINS := simple helloworld/helloworld
+BINS := simple helloworld/helloworld radiobuttons/radiobuttons
 
 all: $(BINS)
 
@@ -20,6 +22,7 @@ clean:
 
 simple: simple.o
 helloworld/helloworld: helloworld/main.o helloworld/helloworld.o
+radiobuttons/radiobuttons: radiobuttons/main.o radiobuttons/radiobuttons.o
 
 %.deps: %.cc
 	set -o pipefail && \
