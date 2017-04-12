@@ -23,6 +23,10 @@ EntryCvn::EntryCvn() :
 	closeButton_.set_can_default();
 	closeButton_.grab_default();
 
+	// Sync controls to initial entry state.
+	editableCheckButton_.set_active(entry_.get_editable());
+	visibilityCheckButton_.set_active(entry_.get_visibility());
+
 	editableCheckButton_.signal_toggled().connect(
 		sigc::mem_fun(*this, &EntryCvn::on_editable_toggled));
 	visibilityCheckButton_.signal_toggled().connect(
