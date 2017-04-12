@@ -1,3 +1,4 @@
 # build results
 *.o
 /simple
+/helloworld/helloworld
