@@ -17,11 +17,12 @@ OBJS := $(SRCS:.cc=.o)
 DEPS := $(OBJS:.o=.deps)
 BINS := simple helloworld/helloworld radiobuttons/radiobuttons \
         entrycvn/entrycvn ls-gui-cvn/ls-gui-cvn
+BINS_EXTRA := ls-gui-cvn/main
 
 all: $(BINS)
 
 clean:
-	rm -f $(BINS) $(OBJS) $(DEPS)
+	rm -f $(BINS) $(BINS_EXTRA) $(OBJS) $(DEPS)
 
 simple: simple.o
 helloworld/helloworld: helloworld/main.o helloworld/helloworld.o
