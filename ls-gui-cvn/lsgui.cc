@@ -6,6 +6,9 @@ LsGui::LsGui() :
 {
 	set_title("ls");
 
+	model_ = Gtk::ListStore::create(modelColumns_);
+	ls_.set_model(model_);
+
 	add(outerVBox_);
 
 	outerVBox_.pack_start(location_);
@@ -21,6 +24,26 @@ LsGui::LsGui() :
 
 LsGui::~LsGui()
 {
+}
+
+LsGui::LsModelColumns::LsModelColumns()
+{
+	add(perms);
+	add(nlink);
+	add(owner); add(group);
+	add(size);
+	add(time);
+	add(name);
+}
+
+LsGui::LsModelColumns &LsGui::get_modelColumns()
+{
+	return modelColumns_;
+}
+
+Glib::RefPtr<Gtk::ListStore> LsGui::get_model()
+{
+	return model_;
 }
 
 void LsGui::on_location_activate()
