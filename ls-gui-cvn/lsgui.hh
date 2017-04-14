@@ -21,7 +21,7 @@ public:
 		Gtk::TreeModelColumn<guint>
 			nlink;  // number of hard links
 		Gtk::TreeModelColumn<Glib::ustring>
-			owner, group;
+			user, group;
 		Gtk::TreeModelColumn<guint>
 			size;  // size in bytes
 		Gtk::TreeModelColumn<Glib::ustring>

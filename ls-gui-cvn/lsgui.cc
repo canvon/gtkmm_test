@@ -13,7 +13,7 @@ LsGui::LsGui() :
 
 	ls_.append_column("Permissions", modelColumns_.perms);
 	ls_.append_column("#links",      modelColumns_.nlink);
-	ls_.append_column("Owner",       modelColumns_.owner);
+	ls_.append_column("User",        modelColumns_.user);
 	ls_.append_column("Group",       modelColumns_.group);
 	ls_.append_column("Size",        modelColumns_.size);
 	ls_.append_column("Time",        modelColumns_.time);
@@ -43,7 +43,7 @@ LsGui::LsModelColumns::LsModelColumns()
 {
 	add(perms);
 	add(nlink);
-	add(owner); add(group);
+	add(user); add(group);
 	add(size);
 	add(time);
 	add(name);
@@ -79,7 +79,7 @@ void LsGui::on_location_activate()
 		Gtk::TreeModel::Row row = *model_->append();
 		row[modelColumns_.perms] = loc_stat.get_mode_str();
 		row[modelColumns_.nlink] = loc_stat.get_nlink();
-		row[modelColumns_.owner] = loc_stat.get_user();
+		row[modelColumns_.user]  = loc_stat.get_user();
 		row[modelColumns_.group] = loc_stat.get_group();
 		row[modelColumns_.size]  = loc_stat.get_size();
 		//row[modelColumns_.time]  = loc_stat.get_mtime_str();  // TODO: Use when implemented.
