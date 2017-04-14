@@ -67,7 +67,9 @@ void LsGui::on_location_activate()
 
 	// FIXME
 
-	model_.clear();
+	// (N.B.: Be sure to use "->", as "." compiles fine
+	//        but frees the smartpointer => Segmentation fault.)
+	model_->clear();
 
 	try {
 		// Retrieve stat information.
