@@ -2,7 +2,7 @@
 SHELL = /bin/bash
 
 CXX      := g++
-CXXFLAGS := $(shell pkg-config gtkmm-3.0 --cflags) -std=c++11 -Wall -O2
+CXXFLAGS := $(shell pkg-config gtkmm-3.0 --cflags) -std=c++14 -Wall -O2
 LDFLAGS  := $(shell pkg-config gtkmm-3.0 --libs)
 
 # Let GNU make implicit rule link in a C++ way.
