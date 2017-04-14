@@ -1,5 +1,7 @@
 #include "lsgui.hh"
+#include "lsstat.hh"
 #include <iostream>
+#include <stdexcept>
 
 LsGui::LsGui() :
 	outerVBox_(Gtk::ORIENTATION_VERTICAL)
@@ -64,4 +66,19 @@ void LsGui::on_location_activate()
 	std::cout << "New location: " << loc << std::endl;
 
 	// FIXME
+
+	model_.clear();
+
+	try {
+		// Retrieve stat information.
+		LsStat loc_stat(loc.c_str());
+
+		// TODO: Put the stat results into the row.
+		Gtk::TreeModel::Row row = *model_->append();
+		row[modelColumns_.name] = loc;
+	}
+	catch (std::exception &ex)
+	{
+		std::cerr << "Error: " << ex.what() << std::endl;
+	}
 }

@@ -30,7 +30,7 @@ radiobuttons/radiobuttons: radiobuttons/main.o radiobuttons/radiobuttons.o
 entrycvn/entrycvn: entrycvn/main.o entrycvn/entrycvn.o
 ls-gui-cvn/ls-gui-cvn: ls-gui-cvn/main
 	cp $< $@
-ls-gui-cvn/main: ls-gui-cvn/main.o ls-gui-cvn/lsgui.o
+ls-gui-cvn/main: ls-gui-cvn/main.o ls-gui-cvn/lsgui.o ls-gui-cvn/lsstat.o
 
 %.deps: %.cc
 	set -o pipefail && \
