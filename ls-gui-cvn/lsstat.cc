@@ -19,6 +19,9 @@ LsStat::LsStat(const char *pathname)
 	if (!pathname)
 		throw std::invalid_argument("LsStat ctor: argument pathname is required");
 
+	// Initialize smartpointer.
+	pimpl = std::make_shared<LsStat::impl>();
+
 	if (stat(pathname, &pimpl->sb))
 		throw std::runtime_error(
 			std::string("LsStat ctor: syscall stat() failed: ")
