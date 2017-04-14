@@ -11,11 +11,12 @@ LINK.o = $(LINK.cc)
 SRCS := $(wildcard *.cc) \
         $(wildcard helloworld/*.cc) \
         $(wildcard radiobuttons/*.cc) \
-        $(wildcard entrycvn/*.cc)
+        $(wildcard entrycvn/*.cc) \
+        $(wildcard ls-gui-cvn/*.cc)
 OBJS := $(SRCS:.cc=.o)
 DEPS := $(OBJS:.o=.deps)
 BINS := simple helloworld/helloworld radiobuttons/radiobuttons \
-        entrycvn/entrycvn
+        entrycvn/entrycvn ls-gui-cvn/ls-gui-cvn
 
 all: $(BINS)
 
@@ -26,6 +27,9 @@ simple: simple.o
 helloworld/helloworld: helloworld/main.o helloworld/helloworld.o
 radiobuttons/radiobuttons: radiobuttons/main.o radiobuttons/radiobuttons.o
 entrycvn/entrycvn: entrycvn/main.o entrycvn/entrycvn.o
+ls-gui-cvn/ls-gui-cvn: ls-gui-cvn/main
+	cp $< $@
+ls-gui-cvn/main: ls-gui-cvn/main.o ls-gui-cvn/lsgui.o
 
 %.deps: %.cc
 	set -o pipefail && \
