@@ -71,13 +71,13 @@ int LsStat::get_gid()   { return pimpl->sb.st_gid; }
 std::string LsStat::get_user()
 {
 	// FIXME
-	return "N.A.";
+	return std::to_string(pimpl->sb.st_uid);
 }
 
 std::string LsStat::get_group()
 {
 	// FIXME
-	return "N.A.";
+	return std::to_string(pimpl->sb.st_gid);
 }
 
 long long LsStat::get_size()
