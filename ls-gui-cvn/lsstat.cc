@@ -15,13 +15,17 @@ public:
 	struct stat sb;  // stat buffer
 };
 
-LsStat::LsStat(const char *pathname)
+LsStat::LsStat()
+{
+	// Initialize smartpointer.
+	pimpl = std::make_shared<LsStat::impl>();
+}
+
+LsStat::LsStat(const char *pathname) :
+	LsStat()
 {
 	if (!pathname)
 		throw std::invalid_argument("LsStat ctor: argument pathname is required");
-
-	// Initialize smartpointer.
-	pimpl = std::make_shared<LsStat::impl>();
 
 	if (stat(pathname, &pimpl->sb)) {
 		std::ostringstream os;
@@ -34,6 +38,26 @@ LsStat::LsStat(const char *pathname)
 
 LsStat::LsStat(const std::string &pathname_str) :
 	LsStat(pathname_str.c_str())
+{
+}
+
+LsLstat::LsLstat(const char *pathname) :
+	LsStat()
+{
+	if (!pathname)
+		throw std::invalid_argument("LsLstat ctor: argument pathname is required");
+
+	if (lstat(pathname, &pimpl->sb)) {
+		std::ostringstream os;
+		os << "LsLstat ctor: syscall lstat() failed for " << std::quoted(pathname);
+		if (errno)
+			os << ": " << strerror(errno);
+		throw std::runtime_error(os.str());
+	}
+}
+
+LsLstat::LsLstat(const std::string &pathname_str) :
+	LsLstat(pathname_str.c_str())
 {
 }
 

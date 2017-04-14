@@ -4,6 +4,7 @@
 #include <memory>
 #include <string>
 
+// A stat() and struct stat wrapper.
 class LsStat
 {
 public:
@@ -45,12 +46,20 @@ public:
 
 	struct stat &get_stat();
 
-private:
+protected:
+	LsStat();  // For use by derived classes.
+
 	class impl;
 	std::shared_ptr<impl> pimpl;
 };
 
-// TODO: Add LsLstat, which retrieves information about the symbolic link
-//       instead of the symlink target.
+// LsLstat retrieves information about the symbolic link instead of
+// the symlink target. (Uses lstat() internally instead of stat().)
+class LsLstat : public LsStat
+{
+public:
+	LsLstat(const char *pathname);
+	LsLstat(const std::string &pathname_str);
+};
 
 #endif  // LS_STAT_HH
