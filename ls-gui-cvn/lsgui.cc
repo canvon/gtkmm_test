@@ -1,6 +1,8 @@
 #include "lsgui.hh"
 #include "lsstat.hh"
+#include "lsdirent.hh"
 #include <iostream>
+#include <iomanip>
 #include <stdexcept>
 
 LsGui::LsGui() :
@@ -72,18 +74,43 @@ void LsGui::on_location_activate()
 	model_->clear();
 
 	try {
-		// Retrieve stat information.
+		// Retrieve stat information of the location itself.
 		LsStat loc_stat(loc.c_str());
 
-		// Put the stat results into the row.
-		Gtk::TreeModel::Row row = *model_->append();
-		row[modelColumns_.perms] = loc_stat.get_mode_str();
-		row[modelColumns_.nlink] = loc_stat.get_nlink();
-		row[modelColumns_.user]  = loc_stat.get_user();
-		row[modelColumns_.group] = loc_stat.get_group();
-		row[modelColumns_.size]  = loc_stat.get_size();
-		//row[modelColumns_.time]  = loc_stat.get_mtime_str();  // TODO: Use when implemented.
-		row[modelColumns_.name]  = loc;
+		if (loc_stat.get_is_dir()) {
+			std::cout << "Reading in directory "
+			          << std::quoted(loc.raw())
+			          << "..."
+			          << std::endl;
+
+			LsDirent dir(loc.c_str());
+
+			while (dir.read()) {
+				Glib::ustring ent_name = dir.get_name();
+				LsStat ent_stat(ent_name.c_str());
+
+				// Put the directory entry's stat results into the row.
+				Gtk::TreeModel::Row row = *model_->append();
+				row[modelColumns_.perms] = ent_stat.get_mode_str();
+				row[modelColumns_.nlink] = ent_stat.get_nlink();
+				row[modelColumns_.user]  = ent_stat.get_user();
+				row[modelColumns_.group] = ent_stat.get_group();
+				row[modelColumns_.size]  = ent_stat.get_size();
+				//row[modelColumns_.time]  = ent_stat.get_mtime_str();  // TODO: Use when implemented.
+				row[modelColumns_.name]  = ent_name;
+			}
+		}
+		else {
+			// Put the non-directory location's stat results into the row.
+			Gtk::TreeModel::Row row = *model_->append();
+			row[modelColumns_.perms] = loc_stat.get_mode_str();
+			row[modelColumns_.nlink] = loc_stat.get_nlink();
+			row[modelColumns_.user]  = loc_stat.get_user();
+			row[modelColumns_.group] = loc_stat.get_group();
+			row[modelColumns_.size]  = loc_stat.get_size();
+			//row[modelColumns_.time]  = loc_stat.get_mtime_str();  // TODO: Use when implemented.
+			row[modelColumns_.name]  = loc;
+		}
 	}
 	catch (std::exception &ex)
 	{
