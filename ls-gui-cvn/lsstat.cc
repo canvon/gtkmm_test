@@ -1,5 +1,6 @@
 #include "lsstat.hh"
 #include <stdexcept>
+#include <iomanip>
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -22,10 +23,13 @@ LsStat::LsStat(const char *pathname)
 	// Initialize smartpointer.
 	pimpl = std::make_shared<LsStat::impl>();
 
-	if (stat(pathname, &pimpl->sb))
-		throw std::runtime_error(
-			std::string("LsStat ctor: syscall stat() failed: ")
-			+ strerror(errno));
+	if (stat(pathname, &pimpl->sb)) {
+		std::ostringstream os;
+		os << "LsStat ctor: syscall stat() failed for " << std::quoted(pathname);
+		if (errno)
+			os << ": " << strerror(errno);
+		throw std::runtime_error(os.str());
+	}
 }
 
 struct stat &LsStat::get_stat()
