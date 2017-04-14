@@ -9,6 +9,17 @@ LsGui::LsGui() :
 	model_ = Gtk::ListStore::create(modelColumns_);
 	ls_.set_model(model_);
 
+	ls_.append_column("Permissions", modelColumns_.perms);
+	ls_.append_column("#links",      modelColumns_.nlink);
+	ls_.append_column("Owner",       modelColumns_.owner);
+	ls_.append_column("Group",       modelColumns_.group);
+	ls_.append_column("Size",        modelColumns_.size);
+	ls_.append_column("Time",        modelColumns_.time);
+	ls_.append_column("File name",   modelColumns_.name);
+
+	Gtk::TreeModel::Row row = *model_->append();
+	row[modelColumns_.name] = "test1";
+
 	add(outerVBox_);
 
 	outerVBox_.pack_start(location_);
