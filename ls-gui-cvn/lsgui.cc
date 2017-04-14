@@ -75,9 +75,15 @@ void LsGui::on_location_activate()
 		// Retrieve stat information.
 		LsStat loc_stat(loc.c_str());
 
-		// TODO: Put the stat results into the row.
+		// Put the stat results into the row.
 		Gtk::TreeModel::Row row = *model_->append();
-		row[modelColumns_.name] = loc;
+		row[modelColumns_.perms] = loc_stat.get_mode_str();
+		row[modelColumns_.nlink] = loc_stat.get_nlink();
+		row[modelColumns_.owner] = loc_stat.get_user();
+		row[modelColumns_.group] = loc_stat.get_group();
+		row[modelColumns_.size]  = loc_stat.get_size();
+		//row[modelColumns_.time]  = loc_stat.get_mtime_str();  // TODO: Use when implemented.
+		row[modelColumns_.name]  = loc;
 	}
 	catch (std::exception &ex)
 	{
