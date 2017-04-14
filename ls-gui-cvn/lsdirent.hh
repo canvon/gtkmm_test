@@ -8,6 +8,7 @@ class LsDirent
 {
 public:
 	LsDirent(const char *pathname);
+	LsDirent(const std::string &pathname_str);
 	~LsDirent();
 
 	void close();

@@ -8,6 +8,7 @@ class LsStat
 {
 public:
 	LsStat(const char *pathname);
+	LsStat(const std::string &pathname_str);
 
 	bool get_is_reg(),
 	     get_is_dir(),

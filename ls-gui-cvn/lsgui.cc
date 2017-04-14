@@ -75,7 +75,7 @@ void LsGui::on_location_activate()
 
 	try {
 		// Retrieve stat information of the location itself.
-		LsStat loc_stat(loc.c_str());
+		LsStat loc_stat(loc);
 
 		if (loc_stat.get_is_dir()) {
 			std::cout << "Reading in directory "
@@ -83,11 +83,11 @@ void LsGui::on_location_activate()
 			          << "..."
 			          << std::endl;
 
-			LsDirent dir(loc.c_str());
+			LsDirent dir(loc);
 
 			while (dir.read()) {
 				Glib::ustring ent_name = dir.get_name();
-				LsStat ent_stat(ent_name.c_str());
+				LsStat ent_stat(ent_name);
 
 				// Put the directory entry's stat results into the row.
 				Gtk::TreeModel::Row row = *model_->append();

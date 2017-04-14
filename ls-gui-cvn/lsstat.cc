@@ -32,6 +32,11 @@ LsStat::LsStat(const char *pathname)
 	}
 }
 
+LsStat::LsStat(const std::string &pathname_str) :
+	LsStat(pathname_str.c_str())
+{
+}
+
 bool LsStat::get_is_reg()  { return S_ISREG (pimpl->sb.st_mode); }
 bool LsStat::get_is_dir()  { return S_ISDIR (pimpl->sb.st_mode); }
 bool LsStat::get_is_chr()  { return S_ISCHR (pimpl->sb.st_mode); }

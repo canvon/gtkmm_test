@@ -32,6 +32,11 @@ LsDirent::LsDirent(const char *pathname)
 	}
 }
 
+LsDirent::LsDirent(const std::string &pathname_str) :
+	LsDirent(pathname_str.c_str())
+{
+}
+
 LsDirent::~LsDirent()
 {
 	// Ensure directory stream (and associated file descriptor) does not leak.
