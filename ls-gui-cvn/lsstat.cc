@@ -59,8 +59,76 @@ int LsStat::get_filemode_rwx_other() { return pimpl->sb.st_mode & S_IRWXO; }
 
 std::string LsStat::get_mode_str()
 {
-	// FIXME
-	return "N.A.";
+	std::ostringstream os;
+
+
+	// file type
+
+	if      (get_is_reg())   os << '-';
+	else if (get_is_dir())   os << 'd';
+	else if (get_is_chr())   os << 'c';
+	else if (get_is_blk())   os << 'b';
+	else if (get_is_fifo())  os << 'p';
+	else if (get_is_lnk())   os << 'l';
+	else if (get_is_sock())  os << 's';
+	else                     os << '?';
+
+
+	// user perms
+
+	if      (get_filemode_r_user())  os << 'r';
+	else                             os << '-';
+
+	if      (get_filemode_w_user())  os << 'w';
+	else                             os << '-';
+
+	if (get_filemode_set_uid()) {
+		if      (get_filemode_x_user())  os << 's';
+		else                             os << 'S';
+	}
+	else {
+		if      (get_filemode_x_user())  os << 'x';
+		else                             os << '-';
+	}
+
+
+	// group perms
+
+	if      (get_filemode_r_group())  os << 'r';
+	else                              os << '-';
+
+	if      (get_filemode_w_group())  os << 'w';
+	else                              os << '-';
+
+	if (get_filemode_set_gid()) {
+		if      (get_filemode_x_group())  os << 's';
+		else                              os << 'S';
+	}
+	else {
+		if      (get_filemode_x_group())  os << 'x';
+		else                              os << '-';
+	}
+
+
+	// other perms
+
+	if      (get_filemode_r_other())  os << 'r';
+	else                              os << '-';
+
+	if      (get_filemode_w_other())  os << 'w';
+	else                              os << '-';
+
+	if (get_filemode_sticky()) {
+		if      (get_filemode_x_other())  os << 't';
+		else                              os << 'T';
+	}
+	else {
+		if      (get_filemode_x_other())  os << 'x';
+		else                              os << '-';
+	}
+
+
+	return os.str();
 }
 
 int LsStat::get_nlink() { return pimpl->sb.st_nlink; }
