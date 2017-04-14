@@ -2,6 +2,7 @@
 #include <stdexcept>
 #include <iomanip>
 
+#include <fcntl.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -15,11 +16,15 @@ public:
 	struct stat sb;  // stat buffer
 };
 
+// Basic constructor, to be used by LsStat itself and all derived classes.
 LsStat::LsStat()
 {
 	// Initialize smartpointer.
 	pimpl = std::make_shared<LsStat::impl>();
 }
+
+
+// Constructors for stat().
 
 LsStat::LsStat(const char *pathname) :
 	LsStat()
@@ -41,6 +46,9 @@ LsStat::LsStat(const std::string &pathname_str) :
 {
 }
 
+
+// Constructors for lstat() (instead of stat()).
+
 LsLstat::LsLstat(const char *pathname) :
 	LsStat()
 {
@@ -60,6 +68,39 @@ LsLstat::LsLstat(const std::string &pathname_str) :
 	LsLstat(pathname_str.c_str())
 {
 }
+
+
+// Constructors for fstatat() (instead of stat()).
+
+LsFstatat::LsFstatat(int dirfd, const char *pathname, bool symlink_nofollow) :
+	LsStat()
+{
+	// (Allow possible special-case.)
+	//if (!pathname)
+	//	throw std::invalid_argument("LsFstatat ctor: argument pathname is required");
+
+	int flags = 0;
+	if (symlink_nofollow)
+		flags |= AT_SYMLINK_NOFOLLOW;
+	if (fstatat(dirfd, pathname, &pimpl->sb, flags)) {
+		std::ostringstream os;
+		os << "LsFstatat ctor: syscall fstatat() failed at file descriptor "
+		   << dirfd << " for " << std::quoted(pathname);
+		if (flags)
+			os << " (with flags " << flags << ")";
+		if (errno)
+			os << ": " << strerror(errno);
+		throw std::runtime_error(os.str());
+	}
+}
+
+LsFstatat::LsFstatat(int dirfd, const std::string &pathname_str, bool symlink_nofollow) :
+	LsFstatat(dirfd, pathname_str.c_str(), symlink_nofollow)
+{
+}
+
+
+// The rest is shared between LsStat and all derived classes.
 
 bool LsStat::get_is_reg()  { return S_ISREG (pimpl->sb.st_mode); }
 bool LsStat::get_is_dir()  { return S_ISDIR (pimpl->sb.st_mode); }

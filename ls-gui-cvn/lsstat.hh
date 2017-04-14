@@ -62,4 +62,14 @@ public:
 	LsLstat(const std::string &pathname_str);
 };
 
+// LsFstatat works from an already opened directory. (Uses fstatat().)
+class LsFstatat : public LsStat
+{
+public:
+	LsFstatat(int dirfd, const char *pathname, bool symlink_nofollow = false);
+	LsFstatat(int dirfd, const std::string &pathname_str, bool symlink_nofollow = false);
+	LsFstatat(const char *pathname) = delete;
+	LsFstatat(const std::string &pathname_str) = delete;
+};
+
 #endif  // LS_STAT_HH
