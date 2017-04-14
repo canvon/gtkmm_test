@@ -83,11 +83,12 @@ void LsGui::on_location_activate()
 			          << "..."
 			          << std::endl;
 
-			LsDirent dir(loc);
+			LsDirent  dir(loc);
+			int       dir_fd = dir.fd();
 
 			while (dir.read()) {
-				Glib::ustring ent_name = dir.get_name();
-				LsLstat ent_stat(ent_name);
+				Glib::ustring  ent_name = dir.get_name();
+				LsFstatat      ent_stat(dir_fd, ent_name, /* symlink nofollow: */ true);
 
 				// Put the directory entry's stat results into the row.
 				Gtk::TreeModel::Row row = *model_->append();

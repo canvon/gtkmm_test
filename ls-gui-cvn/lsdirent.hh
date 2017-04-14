@@ -13,6 +13,8 @@ public:
 
 	void close();
 
+	int fd();
+
 	// Returns true if a directory entry has been read,
 	//         false if the end of the directory stream has been reached.
 	// Other cases will likely throw an exception.

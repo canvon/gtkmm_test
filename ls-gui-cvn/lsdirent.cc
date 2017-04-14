@@ -61,6 +61,23 @@ void LsDirent::close()
 	pimpl->entp = nullptr;
 }
 
+int LsDirent::fd()
+{
+	if (!pimpl->dirp)
+		throw std::logic_error("LsDirent fd(): invalid operation: directory stream not open");
+
+	int fd = 0;
+	if ((fd = dirfd(pimpl->dirp)) < 0) {
+		std::ostringstream os;
+		os << "LsDirent fd(): library function dirfd() failed";
+		if (errno)
+			os << ": " << strerror(errno);
+		throw std::runtime_error(os.str());
+	}
+
+	return fd;
+}
+
 bool LsDirent::read()
 {
 	if (!pimpl->dirp)
