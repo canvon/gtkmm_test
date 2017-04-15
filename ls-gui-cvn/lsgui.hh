@@ -46,6 +46,7 @@ public:
 
 protected:
 	void on_location_activate();
+	bool on_location_key_press_event(GdkEventKey* key_event);
 
 	LsModelColumns modelColumns_;
 	Glib::RefPtr<Gtk::ListStore> model_;

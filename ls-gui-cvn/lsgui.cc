@@ -71,6 +71,8 @@ LsGui::LsGui() :
 
 	location_.signal_activate().connect(
 		sigc::mem_fun(*this, &LsGui::on_location_activate));
+	location_.signal_key_press_event().connect(
+		sigc::mem_fun(*this, &LsGui::on_location_key_press_event));
 
 	// FIXME
 
@@ -179,4 +181,23 @@ void LsGui::fill_row(Gtk::TreeModel::Row &row, const int *dirfdptr, const Glib::
 void LsGui::on_location_activate()
 {
 	set_location_str(location_.get_text());
+}
+
+bool LsGui::on_location_key_press_event(GdkEventKey* key_event)
+{
+	if (key_event) {
+		switch (key_event->keyval) {
+		case GDK_KEY_Escape:
+			if ((key_event->state & GDK_MODIFIER_MASK) == 0) {
+				// On Esc pressed on the location entry
+				// with no modifiers, reset the entry text.
+				location_.set_text(location_str_);
+				location_.set_position(-1);
+			}
+			break;
+		}
+	}
+
+	// Don't stop signal propagation.
+	return false;
 }
