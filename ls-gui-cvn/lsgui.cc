@@ -38,8 +38,10 @@ LsGui::LsGui() :
 		renderer->property_xalign().set_value(1.0);
 	}
 
+#if 0
 	Gtk::TreeModel::Row row = *model_->append();
 	row[modelColumns_.name] = "test1";
+#endif
 
 	add(outerVBox_);
 
