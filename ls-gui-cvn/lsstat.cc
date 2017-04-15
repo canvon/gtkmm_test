@@ -102,32 +102,32 @@ LsFstatat::LsFstatat(int dirfd, const std::string &pathname_str, bool symlink_no
 
 // The rest is shared between LsStat and all derived classes.
 
-bool LsStat::get_is_reg()  { return S_ISREG (pimpl->sb.st_mode); }
-bool LsStat::get_is_dir()  { return S_ISDIR (pimpl->sb.st_mode); }
-bool LsStat::get_is_chr()  { return S_ISCHR (pimpl->sb.st_mode); }
-bool LsStat::get_is_blk()  { return S_ISBLK (pimpl->sb.st_mode); }
-bool LsStat::get_is_fifo() { return S_ISFIFO(pimpl->sb.st_mode); }
-bool LsStat::get_is_lnk()  { return S_ISLNK (pimpl->sb.st_mode); }
-bool LsStat::get_is_sock() { return S_ISSOCK(pimpl->sb.st_mode); }
+bool LsStat::get_is_reg () const { return S_ISREG (pimpl->sb.st_mode); }
+bool LsStat::get_is_dir () const { return S_ISDIR (pimpl->sb.st_mode); }
+bool LsStat::get_is_chr () const { return S_ISCHR (pimpl->sb.st_mode); }
+bool LsStat::get_is_blk () const { return S_ISBLK (pimpl->sb.st_mode); }
+bool LsStat::get_is_fifo() const { return S_ISFIFO(pimpl->sb.st_mode); }
+bool LsStat::get_is_lnk () const { return S_ISLNK (pimpl->sb.st_mode); }
+bool LsStat::get_is_sock() const { return S_ISSOCK(pimpl->sb.st_mode); }
 
-bool LsStat::get_filemode_set_uid()  { return (pimpl->sb.st_mode & S_ISUID) == S_ISUID; }
-bool LsStat::get_filemode_set_gid()  { return (pimpl->sb.st_mode & S_ISGID) == S_ISGID; }
-bool LsStat::get_filemode_sticky()   { return (pimpl->sb.st_mode & S_ISVTX) == S_ISVTX; }
-bool LsStat::get_filemode_r_user()   { return (pimpl->sb.st_mode & S_IRUSR) == S_IRUSR; }
-bool LsStat::get_filemode_w_user()   { return (pimpl->sb.st_mode & S_IWUSR) == S_IWUSR; }
-bool LsStat::get_filemode_x_user()   { return (pimpl->sb.st_mode & S_IXUSR) == S_IXUSR; }
-bool LsStat::get_filemode_r_group()  { return (pimpl->sb.st_mode & S_IRGRP) == S_IRGRP; }
-bool LsStat::get_filemode_w_group()  { return (pimpl->sb.st_mode & S_IWGRP) == S_IWGRP; }
-bool LsStat::get_filemode_x_group()  { return (pimpl->sb.st_mode & S_IXGRP) == S_IXGRP; }
-bool LsStat::get_filemode_r_other()  { return (pimpl->sb.st_mode & S_IROTH) == S_IROTH; }
-bool LsStat::get_filemode_w_other()  { return (pimpl->sb.st_mode & S_IWOTH) == S_IWOTH; }
-bool LsStat::get_filemode_x_other()  { return (pimpl->sb.st_mode & S_IXOTH) == S_IXOTH; }
+bool LsStat::get_filemode_set_uid() const  { return (pimpl->sb.st_mode & S_ISUID) == S_ISUID; }
+bool LsStat::get_filemode_set_gid() const  { return (pimpl->sb.st_mode & S_ISGID) == S_ISGID; }
+bool LsStat::get_filemode_sticky () const  { return (pimpl->sb.st_mode & S_ISVTX) == S_ISVTX; }
+bool LsStat::get_filemode_r_user () const  { return (pimpl->sb.st_mode & S_IRUSR) == S_IRUSR; }
+bool LsStat::get_filemode_w_user () const  { return (pimpl->sb.st_mode & S_IWUSR) == S_IWUSR; }
+bool LsStat::get_filemode_x_user () const  { return (pimpl->sb.st_mode & S_IXUSR) == S_IXUSR; }
+bool LsStat::get_filemode_r_group() const  { return (pimpl->sb.st_mode & S_IRGRP) == S_IRGRP; }
+bool LsStat::get_filemode_w_group() const  { return (pimpl->sb.st_mode & S_IWGRP) == S_IWGRP; }
+bool LsStat::get_filemode_x_group() const  { return (pimpl->sb.st_mode & S_IXGRP) == S_IXGRP; }
+bool LsStat::get_filemode_r_other() const  { return (pimpl->sb.st_mode & S_IROTH) == S_IROTH; }
+bool LsStat::get_filemode_w_other() const  { return (pimpl->sb.st_mode & S_IWOTH) == S_IWOTH; }
+bool LsStat::get_filemode_x_other() const  { return (pimpl->sb.st_mode & S_IXOTH) == S_IXOTH; }
 
-int LsStat::get_filemode_rwx_user()  { return pimpl->sb.st_mode & S_IRWXU; }
-int LsStat::get_filemode_rwx_group() { return pimpl->sb.st_mode & S_IRWXG; }
-int LsStat::get_filemode_rwx_other() { return pimpl->sb.st_mode & S_IRWXO; }
+int LsStat::get_filemode_rwx_user () const { return pimpl->sb.st_mode & S_IRWXU; }
+int LsStat::get_filemode_rwx_group() const { return pimpl->sb.st_mode & S_IRWXG; }
+int LsStat::get_filemode_rwx_other() const { return pimpl->sb.st_mode & S_IRWXO; }
 
-std::string LsStat::get_mode_str()
+std::string LsStat::get_mode_str() const
 {
 	std::ostringstream os;
 
@@ -201,29 +201,34 @@ std::string LsStat::get_mode_str()
 	return os.str();
 }
 
-int LsStat::get_nlink() { return pimpl->sb.st_nlink; }
+int LsStat::get_nlink() const { return pimpl->sb.st_nlink; }
 
-int LsStat::get_uid()   { return pimpl->sb.st_uid; }
-int LsStat::get_gid()   { return pimpl->sb.st_gid; }
+int LsStat::get_uid  () const { return pimpl->sb.st_uid;   }
+int LsStat::get_gid  () const { return pimpl->sb.st_gid;   }
 
-std::string LsStat::get_user()
+std::string LsStat::get_user() const
 {
 	// FIXME
 	return std::to_string(pimpl->sb.st_uid);
 }
 
-std::string LsStat::get_group()
+std::string LsStat::get_group() const
 {
 	// FIXME
 	return std::to_string(pimpl->sb.st_gid);
 }
 
-long long LsStat::get_size()
+long long LsStat::get_size() const
 {
 	return pimpl->sb.st_size;
 }
 
 struct stat &LsStat::get_stat()
+{
+	return pimpl->sb;
+}
+
+const struct stat &LsStat::get_stat() const
 {
 	return pimpl->sb;
 }

@@ -11,40 +11,41 @@ public:
 	LsStat(const char *pathname);
 	LsStat(const std::string &pathname_str);
 
-	bool get_is_reg(),
-	     get_is_dir(),
-	     get_is_chr(),
-	     get_is_blk(),
-	     get_is_fifo(),
-	     get_is_lnk(),
-	     get_is_sock();
-	bool get_filemode_set_uid(),
-	     get_filemode_set_gid(),
-	     get_filemode_sticky(),
-	     get_filemode_r_user(),
-	     get_filemode_w_user(),
-	     get_filemode_x_user(),
-	     get_filemode_r_group(),
-	     get_filemode_w_group(),
-	     get_filemode_x_group(),
-	     get_filemode_r_other(),
-	     get_filemode_w_other(),
-	     get_filemode_x_other();
-	int get_filemode_rwx_user(),
-	    get_filemode_rwx_group(),
-	    get_filemode_rwx_other();
-	std::string get_mode_str();
+	bool get_is_reg () const,
+	     get_is_dir () const,
+	     get_is_chr () const,
+	     get_is_blk () const,
+	     get_is_fifo() const,
+	     get_is_lnk () const,
+	     get_is_sock() const;
+	bool get_filemode_set_uid() const,
+	     get_filemode_set_gid() const,
+	     get_filemode_sticky () const,
+	     get_filemode_r_user () const,
+	     get_filemode_w_user () const,
+	     get_filemode_x_user () const,
+	     get_filemode_r_group() const,
+	     get_filemode_w_group() const,
+	     get_filemode_x_group() const,
+	     get_filemode_r_other() const,
+	     get_filemode_w_other() const,
+	     get_filemode_x_other() const;
+	int get_filemode_rwx_user () const,
+	    get_filemode_rwx_group() const,
+	    get_filemode_rwx_other() const;
+	std::string get_mode_str() const;
 
-	int get_nlink();
+	int get_nlink() const;
 
-	int          get_uid(),  get_gid();
-	std::string  get_user(), get_group();
+	int          get_uid () const,  get_gid  () const;
+	std::string  get_user() const,  get_group() const;
 
-	long long get_size();
+	long long get_size() const;
 
 	// TODO: Give access to mtime, ctime, atime.
 
 	struct stat &get_stat();
+	const struct stat &get_stat() const;
 
 protected:
 	LsStat();  // For use by derived classes.
