@@ -101,6 +101,57 @@ Glib::RefPtr<Gtk::ListStore> LsGui::get_model()
 	return model_;
 }
 
+Glib::ustring LsGui::get_location_str() const
+{
+	return Glib::ustring(location_str_);
+}
+
+void LsGui::set_location_str(const Glib::ustring &new_location_str)
+{
+	location_str_ = Glib::ustring(new_location_str);
+
+	std::cout << "New location: " << location_str_ << std::endl;
+
+	// FIXME
+
+	// (N.B.: Be sure to use "->", as "." compiles fine
+	//        but frees the smartpointer => Segmentation fault.)
+	model_->clear();
+
+	try {
+		// Retrieve stat information of the location itself.
+		LsLstat loc_stat(location_str_);
+
+		if (loc_stat.get_is_dir()) {
+			std::cout << "Reading in directory "
+			          << std::quoted(location_str_.raw())
+			          << "..."
+			          << std::endl;
+
+			LsDirent  dir(location_str_);
+			int       dir_fd = dir.fd();
+
+			while (dir.read()) {
+				Glib::ustring  ent_name = dir.get_name();
+				LsFstatat      ent_stat(dir_fd, ent_name, /* symlink nofollow: */ true);
+
+				// Put the directory entry's stat results into one row each entry.
+				Gtk::TreeModel::Row row = *model_->append();
+				fill_row(row, &dir_fd, ent_name, ent_stat);
+			}
+		}
+		else {
+			// Put the non-directory location's stat results into a single row.
+			Gtk::TreeModel::Row row = *model_->append();
+			fill_row(row, nullptr, location_str_, loc_stat);
+		}
+	}
+	catch (std::exception &ex)
+	{
+		std::cerr << "Error: " << ex.what() << std::endl;
+	}
+}
+
 void LsGui::fill_row(Gtk::TreeModel::Row &row, const int *dirfdptr, const Glib::ustring &name, const LsStat &name_stat)
 {
 	row[modelColumns_.perms] = name_stat.get_mode_str();
@@ -127,46 +178,5 @@ void LsGui::fill_row(Gtk::TreeModel::Row &row, const int *dirfdptr, const Glib::
 
 void LsGui::on_location_activate()
 {
-	Glib::ustring loc = location_.get_text();
-
-	std::cout << "New location: " << loc << std::endl;
-
-	// FIXME
-
-	// (N.B.: Be sure to use "->", as "." compiles fine
-	//        but frees the smartpointer => Segmentation fault.)
-	model_->clear();
-
-	try {
-		// Retrieve stat information of the location itself.
-		LsLstat loc_stat(loc);
-
-		if (loc_stat.get_is_dir()) {
-			std::cout << "Reading in directory "
-			          << std::quoted(loc.raw())
-			          << "..."
-			          << std::endl;
-
-			LsDirent  dir(loc);
-			int       dir_fd = dir.fd();
-
-			while (dir.read()) {
-				Glib::ustring  ent_name = dir.get_name();
-				LsFstatat      ent_stat(dir_fd, ent_name, /* symlink nofollow: */ true);
-
-				// Put the directory entry's stat results into one row each entry.
-				Gtk::TreeModel::Row row = *model_->append();
-				fill_row(row, &dir_fd, ent_name, ent_stat);
-			}
-		}
-		else {
-			// Put the non-directory location's stat results into a single row.
-			Gtk::TreeModel::Row row = *model_->append();
-			fill_row(row, nullptr, loc, loc_stat);
-		}
-	}
-	catch (std::exception &ex)
-	{
-		std::cerr << "Error: " << ex.what() << std::endl;
-	}
+	set_location_str(location_.get_text());
 }

@@ -39,6 +39,8 @@ public:
 
 	LsModelColumns &get_modelColumns();
 	Glib::RefPtr<Gtk::ListStore> get_model();
+	Glib::ustring get_location_str() const;
+	void set_location_str(const Glib::ustring &new_location_str);
 
 	void fill_row(Gtk::TreeModel::Row &row, const int *dirfdptr, const Glib::ustring &name, const LsStat &name_stat);
 
@@ -47,6 +49,8 @@ protected:
 
 	LsModelColumns modelColumns_;
 	Glib::RefPtr<Gtk::ListStore> model_;
+
+	Glib::ustring location_str_;
 
 	Gtk::Box outerVBox_;
 	Gtk::Box locationHBox_;
