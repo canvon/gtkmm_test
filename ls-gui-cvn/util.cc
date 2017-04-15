@@ -3,6 +3,7 @@
 #include <iomanip>
 #include <stdexcept>
 
+#include <fcntl.h>
 #include <unistd.h>
 #include <cstring>
 #include <cerrno>
@@ -41,9 +42,55 @@ std::string cvn::readlink(const std::string &pathname_str, const LsStat &symlink
 
 // From path name and expected size, as C or C++ string.
 //
-// This is the "real" implementation, for now.
+// This is implemented using readlinkat() now, to keep code duplication down.
 
 std::string cvn::readlink(const char *pathname, int expected_size)
+{
+	return readlinkat(AT_FDCWD, pathname, expected_size);
+}
+
+std::string cvn::readlink(const std::string &pathname_str, int expected_size)
+{
+	return readlink(pathname_str.c_str(), expected_size);
+}
+
+
+//
+// cvn::readlinkat() family of functions
+//
+
+
+// From directory file descriptor and path name, as C or C++ string.
+
+std::string cvn::readlinkat(int dirfd, const char *pathname)
+{
+	return readlinkat(dirfd, pathname, LsLstat(pathname));
+}
+
+std::string cvn::readlinkat(int dirfd, const std::string &pathname_str)
+{
+	return readlinkat(dirfd, pathname_str.c_str());
+}
+
+
+// From directory file descriptor, path name and stat result, as C or C++ string.
+
+std::string cvn::readlinkat(int dirfd, const char *pathname, const LsStat &symlink_stat)
+{
+	return readlinkat(dirfd, pathname, static_cast<int>(symlink_stat.get_size()));
+}
+
+std::string cvn::readlinkat(int dirfd, const std::string &pathname_str, const LsStat &symlink_stat)
+{
+	return readlinkat(dirfd, pathname_str.c_str(), symlink_stat);
+}
+
+
+// From directory file descriptor, path name and expected size, as C or C++ string.
+//
+// This is the "real" implementation, for now.
+
+std::string cvn::readlinkat(int dirfd, const char *pathname, int expected_size)
 {
 	int symlink_size = expected_size;
 
@@ -60,10 +107,11 @@ std::string cvn::readlink(const char *pathname, int expected_size)
 		size_t  buf_size = sizeof buf / sizeof *buf;
 		ssize_t ret;
 
-		if ((ret = ::readlink(pathname, buf, buf_size)) < 0) {
+		if ((ret = ::readlinkat(dirfd, pathname, buf, buf_size)) < 0) {
 			std::ostringstream os;
-			os << "cvn::readlink(): syscall readlink() failed for "
-			   << std::quoted(pathname)
+			os << "cvn::readlinkat(): syscall readlinkat() failed"
+			   << " at directory file descriptor " << dirfd
+			   << " for " << std::quoted(pathname)
 			   << " (with buffer size " << buf_size << ")";
 			if (errno)
 				os << ": " << strerror(errno);
@@ -82,14 +130,14 @@ std::string cvn::readlink(const char *pathname, int expected_size)
 
 	// Couldn't avoid truncation.
 	std::ostringstream os;
-	os << "cvn::readlink(): couldn't avoid truncation after "
+	os << "cvn::readlinkat(): couldn't avoid truncation after "
 	   << attempts_max << " attempts";
 	os << " (next expected symlink size would have been "
 	   << symlink_size << ")";
 	throw std::runtime_error(os.str());
 }
 
-std::string cvn::readlink(const std::string &pathname_str, int expected_size)
+std::string cvn::readlinkat(int dirfd, const std::string &pathname_str, int expected_size)
 {
-	return readlink(pathname_str.c_str(), expected_size);
+	return readlinkat(dirfd, pathname_str.c_str(), expected_size);
 }
