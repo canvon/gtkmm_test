@@ -23,6 +23,18 @@ LsGui::LsGui() :
 	lsViewColumns_.name  = ls_.append_column("File name",   modelColumns_.name)  - 1;
 
 	Gtk::CellRenderer *renderer = nullptr;
+	if ((renderer = ls_.get_column_cell_renderer(lsViewColumns_.perms)) == nullptr) {
+		g_warning("LsGui ctor: Can't get cell renderer for ls view column perms, get_column_cell_renderer() failed");
+	}
+	else {
+		auto text_renderer = static_cast<Gtk::CellRendererText*>(renderer);
+		if (text_renderer == nullptr) {
+			g_warning("LsGui ctor: Can't get text cell renderer for ls view column perms, cast gave null pointer");
+		}
+		else {
+			text_renderer->property_family().set_value("mono");
+		}
+	}
 	if ((renderer = ls_.get_column_cell_renderer(lsViewColumns_.nlink)) == nullptr) {
 		g_warning("LsGui ctor: Can't get cell renderer for ls view column nlink, get_column_cell_renderer() failed");
 	}
