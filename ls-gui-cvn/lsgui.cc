@@ -192,7 +192,16 @@ void LsGui::set_location_str(const Glib::ustring &new_location_str)
 		outerVBox_.reorder_child(errorsInfoBar_, posErrorsInfoBar_);
 
 		// Put error message into errorsInfoBar.
-		errorMessage_.set_text(Glib::ustring("Error: ") + ex.what());
+		gchar *msg = g_markup_escape_text(ex.what(), -1);
+		if (msg) {
+			errorMessage_.set_markup(Glib::ustring("<big>Error: <span background=\"red\"> ") + msg + " </span></big>");
+			g_free(msg);
+			msg = nullptr;
+		}
+		else {
+			g_warning("Set location string: g_markup_escape_text() failed, will fall back from set_markup() to set_text()");
+			errorMessage_.set_text(Glib::ustring("Error: ") + ex.what());
+		}
 
 		errorsInfoBar_.set_message_type(Gtk::MESSAGE_ERROR);
 		errorsInfoBar_.show();
