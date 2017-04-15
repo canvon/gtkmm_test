@@ -1,11 +1,10 @@
 #include "lsdirent.hh"
-#include <stdexcept>
+#include <system_error>
 #include <iomanip>
 
 #include <sys/types.h>
 #include <dirent.h>
 #include <errno.h>
-#include <string.h>
 
 
 class LsDirent::impl
@@ -26,9 +25,7 @@ LsDirent::LsDirent(const char *pathname)
 	if ((pimpl->dirp = opendir(pathname)) == nullptr) {
 		std::ostringstream os;
 		os << "LsDirent ctor: library function opendir() failed for " << std::quoted(pathname);
-		if (errno)
-			os << ": " << strerror(errno);
-		throw std::runtime_error(os.str());
+		throw std::system_error(errno, std::generic_category(), os.str());
 	}
 }
 
@@ -50,11 +47,8 @@ void LsDirent::close()
 		throw std::logic_error("LsDirent close(): invalid operation: directory stream not open");
 
 	if (closedir(pimpl->dirp)) {
-		std::ostringstream os;
-		os << "LsDirent close(): library function closedir() failed";
-		if (errno)
-			os << ": " << strerror(errno);
-		throw std::runtime_error(os.str());
+		throw std::system_error(errno, std::generic_category(), 
+			"LsDirent close(): library function closedir() failed");
 	}
 
 	pimpl->dirp = nullptr;
@@ -68,11 +62,8 @@ int LsDirent::fd()
 
 	int fd = 0;
 	if ((fd = dirfd(pimpl->dirp)) < 0) {
-		std::ostringstream os;
-		os << "LsDirent fd(): library function dirfd() failed";
-		if (errno)
-			os << ": " << strerror(errno);
-		throw std::runtime_error(os.str());
+		throw std::system_error(errno, std::generic_category(),
+			"LsDirent fd(): library function dirfd() failed");
 	}
 
 	return fd;
@@ -85,9 +76,8 @@ bool LsDirent::read()
 
 	errno = 0;
 	if ((pimpl->entp = readdir(pimpl->dirp)) == nullptr && errno) {
-		throw std::runtime_error(
-			std::string("LsDirent read(): library function readdir() failed: ")
-			+ strerror(errno));
+		throw std::system_error(errno, std::generic_category(),
+			"LsDirent read(): library function readdir() failed");
 	}
 
 	return pimpl->entp != nullptr;

@@ -1,11 +1,10 @@
 #include "util.hh"
 
 #include <iomanip>
-#include <stdexcept>
+#include <system_error>
 
 #include <fcntl.h>
 #include <unistd.h>
-#include <cstring>
 #include <cerrno>
 
 
@@ -113,9 +112,7 @@ std::string cvn::readlinkat(int dirfd, const char *pathname, int expected_size)
 			   << " at directory file descriptor " << dirfd
 			   << " for " << std::quoted(pathname)
 			   << " (with buffer size " << buf_size << ")";
-			if (errno)
-				os << ": " << strerror(errno);
-			throw std::runtime_error(os.str());
+			throw std::system_error(errno, std::generic_category(), os.str());
 		}
 
 		// No truncation, for sure?

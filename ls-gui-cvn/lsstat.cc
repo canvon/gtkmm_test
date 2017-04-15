@@ -1,5 +1,5 @@
 #include "lsstat.hh"
-#include <stdexcept>
+#include <system_error>
 #include <iomanip>
 
 #include <fcntl.h>
@@ -7,7 +7,6 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <errno.h>
-#include <string.h>
 
 
 class LsStat::impl
@@ -35,9 +34,7 @@ LsStat::LsStat(const char *pathname) :
 	if (stat(pathname, &pimpl->sb)) {
 		std::ostringstream os;
 		os << "LsStat ctor: syscall stat() failed for " << std::quoted(pathname);
-		if (errno)
-			os << ": " << strerror(errno);
-		throw std::runtime_error(os.str());
+		throw std::system_error(errno, std::generic_category(), os.str());
 	}
 }
 
@@ -58,9 +55,7 @@ LsLstat::LsLstat(const char *pathname) :
 	if (lstat(pathname, &pimpl->sb)) {
 		std::ostringstream os;
 		os << "LsLstat ctor: syscall lstat() failed for " << std::quoted(pathname);
-		if (errno)
-			os << ": " << strerror(errno);
-		throw std::runtime_error(os.str());
+		throw std::system_error(errno, std::generic_category(), os.str());
 	}
 }
 
@@ -88,9 +83,7 @@ LsFstatat::LsFstatat(int dirfd, const char *pathname, bool symlink_nofollow) :
 		   << dirfd << " for " << std::quoted(pathname);
 		if (flags)
 			os << " (with flags " << flags << ")";
-		if (errno)
-			os << ": " << strerror(errno);
-		throw std::runtime_error(os.str());
+		throw std::system_error(errno, std::generic_category(), os.str());
 	}
 }
 
