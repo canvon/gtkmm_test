@@ -9,6 +9,7 @@ LsGui::LsGui() :
 	outerVBox_(Gtk::ORIENTATION_VERTICAL)
 {
 	set_title("ls");
+	set_default_size(800, 600);
 
 	model_ = Gtk::ListStore::create(modelColumns_);
 	ls_.set_model(model_);
@@ -27,7 +28,9 @@ LsGui::LsGui() :
 	add(outerVBox_);
 
 	outerVBox_.pack_start(location_, Gtk::PACK_SHRINK);
-	outerVBox_.pack_start(ls_);
+
+	scrollLs_.add(ls_);
+	outerVBox_.pack_start(scrollLs_);
 
 	location_.signal_activate().connect(
 		sigc::mem_fun(*this, &LsGui::on_location_activate));

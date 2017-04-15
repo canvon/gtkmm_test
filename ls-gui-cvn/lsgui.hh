@@ -4,6 +4,7 @@
 #include <gtkmm/window.h>
 #include <gtkmm/box.h>
 #include <gtkmm/entry.h>
+#include <gtkmm/scrolledwindow.h>
 #include <gtkmm/liststore.h>
 #include <gtkmm/treeview.h>
 
@@ -43,6 +44,7 @@ protected:
 
 	Gtk::Box outerVBox_;
 	Gtk::Entry location_;
+	Gtk::ScrolledWindow scrollLs_;
 	Gtk::TreeView ls_;
 };
 

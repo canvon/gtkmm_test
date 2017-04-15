@@ -12,8 +12,5 @@
 
   * Right-align numbers.
 
-  * Use a scrolled window, so the window size will not grow indefinitely
-    with the directory size...
-
   * Filter out dot-files/dot-dirs, with option to turn that off again.
 
