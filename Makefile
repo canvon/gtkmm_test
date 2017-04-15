@@ -31,7 +31,7 @@ entrycvn/entrycvn: entrycvn/main.o entrycvn/entrycvn.o
 ls-gui-cvn/ls-gui-cvn: ls-gui-cvn/main
 	cp $< $@
 ls-gui-cvn/main: ls-gui-cvn/main.o ls-gui-cvn/lsgui.o ls-gui-cvn/lsstat.o \
-                 ls-gui-cvn/lsdirent.o
+                 ls-gui-cvn/lsdirent.o ls-gui-cvn/util.o
 
 %.deps: %.cc
 	set -o pipefail && \
