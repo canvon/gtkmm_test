@@ -194,13 +194,22 @@ void LsGui::set_location_str(const Glib::ustring &new_location_str)
 		// Put error message into errorsInfoBar.
 		gchar *msg = g_markup_escape_text(ex.what(), -1);
 		if (msg) {
-			errorMessage_.set_markup(Glib::ustring("<big>Error: <span background=\"red\"> ") + msg + " </span></big>");
+			// Accumulate errors.
+			markupErrorMessage_ =
+				(markupErrorMessage_.empty() ? Glib::ustring() : (markupErrorMessage_ + "\n"))
+				+ "<big>Error: <span background=\"red\"> "
+				+ msg + " </span></big>";
+			errorMessage_.set_markup(markupErrorMessage_);
 			g_free(msg);
 			msg = nullptr;
 		}
 		else {
 			g_warning("Set location string: g_markup_escape_text() failed, will fall back from set_markup() to set_text()");
-			errorMessage_.set_text(Glib::ustring("Error: ") + ex.what());
+			// Accumulate errors.
+			Glib::ustring prev_text = errorMessage_.get_text();
+			errorMessage_.set_text(
+				(prev_text.empty() ? Glib::ustring() : (prev_text + "\n"))
+				+ "Error: " + ex.what());
 		}
 
 		errorsInfoBar_.set_message_type(Gtk::MESSAGE_ERROR);
@@ -267,6 +276,7 @@ void LsGui::on_errorsInfoBar_response(int response_id)
 {
 	switch (response_id) {
 	case Gtk::RESPONSE_CLOSE:
+		markupErrorMessage_.clear();
 		errorMessage_.set_text("");
 		errorsInfoBar_.hide();
 		break;

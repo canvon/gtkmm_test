@@ -60,7 +60,7 @@ protected:
 	Gtk::Label locationLabel_;
 	Gtk::Entry location_;
 	Gtk::InfoBar errorsInfoBar_; int posErrorsInfoBar_;
-	Gtk::Label errorMessage_;
+	Gtk::Label errorMessage_; Glib::ustring markupErrorMessage_;
 	Gtk::ScrolledWindow scrollLs_;
 	Gtk::TreeView ls_;
 
