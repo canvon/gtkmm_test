@@ -2,6 +2,7 @@
 #include "lsstat.hh"
 #include "lsdirent.hh"
 #include "util.hh"
+#include <gtkmm/dialog.h>  // For Gtk::RESPONSE_CLOSE
 #include <iostream>
 #include <iomanip>
 #include <stdexcept>
@@ -67,6 +68,19 @@ LsGui::LsGui() :
 
 	locationLabel_.set_mnemonic_widget(location_);
 
+	auto container = dynamic_cast<Gtk::Container*>(errorsInfoBar_.get_content_area());
+	if (container == nullptr) {
+		g_warning("Can't prepare GTK InfoBar: get_content_area() is not a Gtk::Container*!");
+	}
+	else {
+		container->add(errorMessage_);
+	}
+
+	//errorsInfoBar_.add_button("_Close", 0);
+	errorsInfoBar_.set_show_close_button();
+
+	outerVBox_.pack_start(errorsInfoBar_, Gtk::PACK_SHRINK);
+
 	scrollLs_.add(ls_);
 	outerVBox_.pack_start(scrollLs_);
 
@@ -75,9 +89,14 @@ LsGui::LsGui() :
 	location_.signal_key_press_event().connect(
 		sigc::mem_fun(*this, &LsGui::on_location_key_press_event));
 
+	errorsInfoBar_.signal_response().connect(
+		sigc::mem_fun(*this, &LsGui::on_errorsInfoBar_response));
+
 	// FIXME
 
 	show_all_children();
+
+	errorsInfoBar_.hide();
 
 #if 0  // Don't do unrequested filesystem access, for now...
 	// Switch to an initial directory...
@@ -161,6 +180,12 @@ void LsGui::set_location_str(const Glib::ustring &new_location_str)
 	catch (std::exception &ex)
 	{
 		std::cerr << "Error: " << ex.what() << std::endl;
+
+		// Put error message into errorsInfoBar.
+		errorMessage_.set_text(Glib::ustring("Error: ") + ex.what());
+
+		errorsInfoBar_.set_message_type(Gtk::MESSAGE_ERROR);
+		errorsInfoBar_.show();
 	}
 }
 
@@ -217,4 +242,17 @@ bool LsGui::on_location_key_press_event(GdkEventKey* key_event)
 
 	// Don't stop signal propagation.
 	return false;
+}
+
+void LsGui::on_errorsInfoBar_response(int response_id)
+{
+	switch (response_id) {
+	case Gtk::RESPONSE_CLOSE:
+		errorMessage_.set_text("");
+		errorsInfoBar_.hide();
+		break;
+	default:
+		g_warning("Errors InfoBar, signal response: Unrecognized response id %d.", response_id);
+		break;
+	}
 }

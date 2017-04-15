@@ -5,6 +5,7 @@
 #include <gtkmm/box.h>
 #include <gtkmm/label.h>
 #include <gtkmm/entry.h>
+#include <gtkmm/infobar.h>
 #include <gtkmm/scrolledwindow.h>
 #include <gtkmm/liststore.h>
 #include <gtkmm/treeview.h>
@@ -47,6 +48,7 @@ public:
 protected:
 	void on_location_activate();
 	bool on_location_key_press_event(GdkEventKey* key_event);
+	void on_errorsInfoBar_response(int response_id);
 
 	LsModelColumns modelColumns_;
 	Glib::RefPtr<Gtk::ListStore> model_;
@@ -57,6 +59,8 @@ protected:
 	Gtk::Box locationHBox_;
 	Gtk::Label locationLabel_;
 	Gtk::Entry location_;
+	Gtk::InfoBar errorsInfoBar_;
+	Gtk::Label errorMessage_;
 	Gtk::ScrolledWindow scrollLs_;
 	Gtk::TreeView ls_;
 
