@@ -29,7 +29,7 @@ LsGui::LsGui() :
 		g_warning("LsGui ctor: Can't get cell renderer for ls view column perms, get_column_cell_renderer() failed");
 	}
 	else {
-		auto text_renderer = static_cast<Gtk::CellRendererText*>(renderer);
+		auto text_renderer = dynamic_cast<Gtk::CellRendererText*>(renderer);
 		if (text_renderer == nullptr) {
 			g_warning("LsGui ctor: Can't get text cell renderer for ls view column perms, cast gave null pointer");
 		}
