@@ -10,7 +10,7 @@
 
   * Use fixed-width font for at least the mode string column.
 
-  * Right-align numbers.
+  * Right-align more numbers: uid/gid
 
   * Filter out dot-files/dot-dirs, with option to turn that off again.
 

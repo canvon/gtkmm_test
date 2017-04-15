@@ -46,6 +46,11 @@ protected:
 	Gtk::Entry location_;
 	Gtk::ScrolledWindow scrollLs_;
 	Gtk::TreeView ls_;
+
+	struct LsViewColumns
+	{
+		int perms, nlink, user, group, size, time, name;
+	} lsViewColumns_;
 };
 
 #endif  // LS_GUI_HH

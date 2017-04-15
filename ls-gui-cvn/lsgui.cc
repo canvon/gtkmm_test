@@ -14,13 +14,29 @@ LsGui::LsGui() :
 	model_ = Gtk::ListStore::create(modelColumns_);
 	ls_.set_model(model_);
 
-	ls_.append_column("Permissions", modelColumns_.perms);
-	ls_.append_column("#links",      modelColumns_.nlink);
-	ls_.append_column("User",        modelColumns_.user);
-	ls_.append_column("Group",       modelColumns_.group);
-	ls_.append_column("Size",        modelColumns_.size);
-	ls_.append_column("Time",        modelColumns_.time);
-	ls_.append_column("File name",   modelColumns_.name);
+	lsViewColumns_.perms = ls_.append_column("Permissions", modelColumns_.perms) - 1;
+	lsViewColumns_.nlink = ls_.append_column("#links",      modelColumns_.nlink) - 1;
+	lsViewColumns_.user  = ls_.append_column("User",        modelColumns_.user)  - 1;
+	lsViewColumns_.group = ls_.append_column("Group",       modelColumns_.group) - 1;
+	lsViewColumns_.size  = ls_.append_column("Size",        modelColumns_.size)  - 1;
+	lsViewColumns_.time  = ls_.append_column("Time",        modelColumns_.time)  - 1;
+	lsViewColumns_.name  = ls_.append_column("File name",   modelColumns_.name)  - 1;
+
+	Gtk::CellRenderer *renderer = nullptr;
+	if ((renderer = ls_.get_column_cell_renderer(lsViewColumns_.nlink)) == nullptr) {
+		g_warning("LsGui ctor: Can't get cell renderer for ls view column nlink, get_column_cell_renderer() failed");
+	}
+	else {
+		// right-align
+		renderer->property_xalign().set_value(1.0);
+	}
+	if ((renderer = ls_.get_column_cell_renderer(lsViewColumns_.size)) == nullptr) {
+		g_warning("LsGui ctor: Can't get cell renderer for ls view column size, get_column_cell_renderer() failed");
+	}
+	else {
+		// right-align
+		renderer->property_xalign().set_value(1.0);
+	}
 
 	Gtk::TreeModel::Row row = *model_->append();
 	row[modelColumns_.name] = "test1";
