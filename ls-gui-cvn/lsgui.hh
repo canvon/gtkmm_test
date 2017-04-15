@@ -59,7 +59,7 @@ protected:
 	Gtk::Box locationHBox_;
 	Gtk::Label locationLabel_;
 	Gtk::Entry location_;
-	Gtk::InfoBar errorsInfoBar_;
+	Gtk::InfoBar errorsInfoBar_; int posErrorsInfoBar_;
 	Gtk::Label errorMessage_;
 	Gtk::ScrolledWindow scrollLs_;
 	Gtk::TreeView ls_;

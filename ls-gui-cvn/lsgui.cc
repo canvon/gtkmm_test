@@ -80,6 +80,8 @@ LsGui::LsGui() :
 	errorsInfoBar_.set_show_close_button();
 
 	outerVBox_.pack_start(errorsInfoBar_, Gtk::PACK_SHRINK);
+	// Save position for later.
+	posErrorsInfoBar_ = outerVBox_.child_property_position(errorsInfoBar_).get_value();
 
 	scrollLs_.add(ls_);
 	outerVBox_.pack_start(scrollLs_);
@@ -180,6 +182,14 @@ void LsGui::set_location_str(const Glib::ustring &new_location_str)
 	catch (std::exception &ex)
 	{
 		std::cerr << "Error: " << ex.what() << std::endl;
+
+		// Try to work-around GTK bug 710888,
+		// InfoBar not opening again after first close.
+		//
+		// Remove and readd again.
+		outerVBox_.remove(errorsInfoBar_);
+		outerVBox_.pack_start(errorsInfoBar_, Gtk::PACK_SHRINK);
+		outerVBox_.reorder_child(errorsInfoBar_, posErrorsInfoBar_);
 
 		// Put error message into errorsInfoBar.
 		errorMessage_.set_text(Glib::ustring("Error: ") + ex.what());
