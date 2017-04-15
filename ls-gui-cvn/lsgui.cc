@@ -3,6 +3,7 @@
 #include "lsdirent.hh"
 #include "util.hh"
 #include <gtkmm/dialog.h>  // For Gtk::RESPONSE_CLOSE
+#include <glibmm/main.h>
 #include <iostream>
 #include <iomanip>
 #include <stdexcept>
@@ -222,6 +223,13 @@ void LsGui::set_location_str(const Glib::ustring &new_location_str)
 
 		errorsInfoBar_.set_message_type(Gtk::MESSAGE_ERROR);
 		errorsInfoBar_.show();
+
+		// Scroll to bottom when things have settled.
+		Glib::signal_idle().connect_once([this] {
+			auto vadjustptr = scrollErrorMessage_.get_vadjustment();
+			vadjustptr->set_value(vadjustptr->get_upper());
+			//vadjustptr->set_value(vadjustptr->get_upper() - vadjustptr->get_page_size());
+		});
 	}
 }
 
