@@ -6,6 +6,8 @@
 
     * Read symlink target and add it to the name column.
 
+  * Implement date/time processing & display.
+
   * Implement uid/gid -> user/group lookup.
 
   * Right-align more numbers: uid/gid
