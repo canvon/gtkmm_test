@@ -68,6 +68,11 @@ LsGui::LsGui() :
 
 	locationLabel_.set_mnemonic_widget(location_);
 
+	// Expand + fill horizontally, so the scroll bar appears
+	// far to the right, instead of somewhere near the end
+	// of the error message.
+	errorMessage_.set_hexpand();
+	errorMessage_.set_alignment(Gtk::ALIGN_FILL);
 	scrollErrorMessage_.set_propagate_natural_width();
 	scrollErrorMessage_.add(errorMessage_);
 
