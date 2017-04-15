@@ -26,7 +26,7 @@ LsGui::LsGui() :
 
 	add(outerVBox_);
 
-	outerVBox_.pack_start(location_);
+	outerVBox_.pack_start(location_, Gtk::PACK_SHRINK);
 	outerVBox_.pack_start(ls_);
 
 	location_.signal_activate().connect(
