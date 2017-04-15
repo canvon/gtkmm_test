@@ -20,3 +20,7 @@
 
   * Output errors in the GUI, instead of just on stdout/stderr / "in the terminal".
 
+  * Move directory processing to a background thread.
+
+  * Make directory processing background thread cancellable via the GUI.
+
