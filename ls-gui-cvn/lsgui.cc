@@ -108,11 +108,11 @@ Glib::ustring LsGui::get_location_str() const
 
 void LsGui::set_location_str(const Glib::ustring &new_location_str)
 {
+	// TODO: Put new location into location entry, but without risking a loop...
+
 	location_str_ = Glib::ustring(new_location_str);
 
 	std::cout << "New location: " << location_str_ << std::endl;
-
-	// FIXME
 
 	// (N.B.: Be sure to use "->", as "." compiles fine
 	//        but frees the smartpointer => Segmentation fault.)
