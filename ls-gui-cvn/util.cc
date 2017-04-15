@@ -134,6 +134,8 @@ std::string cvn::readlinkat(int dirfd, const char *pathname, int expected_size)
 	   << attempts_max << " attempts";
 	os << " (next expected symlink size would have been "
 	   << symlink_size << ")";
+	os << ", at directory file descriptor " << dirfd
+	   << " and pathname " << std::quoted(pathname);
 	throw std::runtime_error(os.str());
 }
 
