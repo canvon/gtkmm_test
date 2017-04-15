@@ -68,12 +68,15 @@ LsGui::LsGui() :
 
 	locationLabel_.set_mnemonic_widget(location_);
 
+	scrollErrorMessage_.set_propagate_natural_width();
+	scrollErrorMessage_.add(errorMessage_);
+
 	auto containerptr = dynamic_cast<Gtk::Container*>(errorsInfoBar_.get_content_area());
 	if (containerptr == nullptr) {
 		g_warning("Can't prepare GTK InfoBar: get_content_area() is not a Gtk::Container*!");
 	}
 	else {
-		containerptr->add(errorMessage_);
+		containerptr->add(scrollErrorMessage_);
 	}
 
 	//errorsInfoBar_.add_button("_Close", 0);
