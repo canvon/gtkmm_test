@@ -18,3 +18,5 @@
 
   * Have auto-completion in the location entry.
 
+  * Output errors in the GUI, instead of just on stdout/stderr / "in the terminal".
+
