@@ -3,6 +3,7 @@
 
 #include <gtkmm/window.h>
 #include <gtkmm/box.h>
+#include <gtkmm/label.h>
 #include <gtkmm/entry.h>
 #include <gtkmm/scrolledwindow.h>
 #include <gtkmm/liststore.h>
@@ -48,6 +49,8 @@ protected:
 	Glib::RefPtr<Gtk::ListStore> model_;
 
 	Gtk::Box outerVBox_;
+	Gtk::Box locationHBox_;
+	Gtk::Label locationLabel_;
 	Gtk::Entry location_;
 	Gtk::ScrolledWindow scrollLs_;
 	Gtk::TreeView ls_;

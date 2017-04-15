@@ -7,7 +7,8 @@
 #include <stdexcept>
 
 LsGui::LsGui() :
-	outerVBox_(Gtk::ORIENTATION_VERTICAL)
+	outerVBox_(Gtk::ORIENTATION_VERTICAL),
+	locationLabel_("_Location", true)
 {
 	set_title("ls");
 	set_default_size(800, 600);
@@ -58,7 +59,12 @@ LsGui::LsGui() :
 
 	add(outerVBox_);
 
-	outerVBox_.pack_start(location_, Gtk::PACK_SHRINK);
+	outerVBox_.pack_start(locationHBox_, Gtk::PACK_SHRINK);
+
+	locationHBox_.pack_start(locationLabel_, Gtk::PACK_SHRINK, 10);
+	locationHBox_.pack_start(location_);
+
+	locationLabel_.set_mnemonic_widget(location_);
 
 	scrollLs_.add(ls_);
 	outerVBox_.pack_start(scrollLs_);

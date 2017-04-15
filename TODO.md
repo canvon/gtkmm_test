@@ -18,5 +18,3 @@
 
   * Have auto-completion in the location entry.
 
-  * Add Label before the location entry.
-
