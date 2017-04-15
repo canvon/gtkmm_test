@@ -14,6 +14,8 @@
 
   * Replace ListStore by TreeStore and allow manual descend into child directories.
 
+  * Allow sorting.
+
   * Have auto-completion in the location entry.
 
   * Add Label before the location entry.
