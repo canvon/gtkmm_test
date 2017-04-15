@@ -94,6 +94,17 @@ Glib::RefPtr<Gtk::ListStore> LsGui::get_model()
 	return model_;
 }
 
+void LsGui::fill_row(Gtk::TreeModel::Row &row, const Glib::ustring &name, const LsStat &name_stat)
+{
+	row[modelColumns_.perms] = name_stat.get_mode_str();
+	row[modelColumns_.nlink] = name_stat.get_nlink();
+	row[modelColumns_.user]  = name_stat.get_user();
+	row[modelColumns_.group] = name_stat.get_group();
+	row[modelColumns_.size]  = name_stat.get_size();
+	//row[modelColumns_.time]  = name_stat.get_mtime_str();  // TODO: Use when implemented.
+	row[modelColumns_.name]  = name;
+}
+
 void LsGui::on_location_activate()
 {
 	Glib::ustring loc = location_.get_text();
@@ -123,27 +134,15 @@ void LsGui::on_location_activate()
 				Glib::ustring  ent_name = dir.get_name();
 				LsFstatat      ent_stat(dir_fd, ent_name, /* symlink nofollow: */ true);
 
-				// Put the directory entry's stat results into the row.
+				// Put the directory entry's stat results into one row each entry.
 				Gtk::TreeModel::Row row = *model_->append();
-				row[modelColumns_.perms] = ent_stat.get_mode_str();
-				row[modelColumns_.nlink] = ent_stat.get_nlink();
-				row[modelColumns_.user]  = ent_stat.get_user();
-				row[modelColumns_.group] = ent_stat.get_group();
-				row[modelColumns_.size]  = ent_stat.get_size();
-				//row[modelColumns_.time]  = ent_stat.get_mtime_str();  // TODO: Use when implemented.
-				row[modelColumns_.name]  = ent_name;
+				fill_row(row, ent_name, ent_stat);
 			}
 		}
 		else {
-			// Put the non-directory location's stat results into the row.
+			// Put the non-directory location's stat results into a single row.
 			Gtk::TreeModel::Row row = *model_->append();
-			row[modelColumns_.perms] = loc_stat.get_mode_str();
-			row[modelColumns_.nlink] = loc_stat.get_nlink();
-			row[modelColumns_.user]  = loc_stat.get_user();
-			row[modelColumns_.group] = loc_stat.get_group();
-			row[modelColumns_.size]  = loc_stat.get_size();
-			//row[modelColumns_.time]  = loc_stat.get_mtime_str();  // TODO: Use when implemented.
-			row[modelColumns_.name]  = loc;
+			fill_row(row, loc, loc_stat);
 		}
 	}
 	catch (std::exception &ex)

@@ -8,6 +8,9 @@
 #include <gtkmm/liststore.h>
 #include <gtkmm/treeview.h>
 
+// (Forward-declare so we don't need to include the header from here.)
+class LsStat;
+
 class LsGui : public Gtk::Window
 {
 public:
@@ -35,6 +38,8 @@ public:
 
 	LsModelColumns &get_modelColumns();
 	Glib::RefPtr<Gtk::ListStore> get_model();
+
+	void fill_row(Gtk::TreeModel::Row &row, const Glib::ustring &name, const LsStat &name_stat);
 
 protected:
 	void on_location_activate();
