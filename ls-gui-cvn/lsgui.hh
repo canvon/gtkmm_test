@@ -39,7 +39,7 @@ public:
 	LsModelColumns &get_modelColumns();
 	Glib::RefPtr<Gtk::ListStore> get_model();
 
-	void fill_row(Gtk::TreeModel::Row &row, const Glib::ustring &name, const LsStat &name_stat);
+	void fill_row(Gtk::TreeModel::Row &row, const int *dirfdptr, const Glib::ustring &name, const LsStat &name_stat);
 
 protected:
 	void on_location_activate();

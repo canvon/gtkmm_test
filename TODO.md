@@ -2,9 +2,7 @@
 
 ## ls-gui-cvn
 
-  * Complete the symlink support:
-
-    * Read symlink target and add it to the name column.
+  * Complete the symlink support -- but what would still need to get implemented?
 
   * Implement date/time processing & display.
 

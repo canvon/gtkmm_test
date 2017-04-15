@@ -1,6 +1,7 @@
 #include "lsgui.hh"
 #include "lsstat.hh"
 #include "lsdirent.hh"
+#include "util.hh"
 #include <iostream>
 #include <iomanip>
 #include <stdexcept>
@@ -94,7 +95,7 @@ Glib::RefPtr<Gtk::ListStore> LsGui::get_model()
 	return model_;
 }
 
-void LsGui::fill_row(Gtk::TreeModel::Row &row, const Glib::ustring &name, const LsStat &name_stat)
+void LsGui::fill_row(Gtk::TreeModel::Row &row, const int *dirfdptr, const Glib::ustring &name, const LsStat &name_stat)
 {
 	row[modelColumns_.perms] = name_stat.get_mode_str();
 	row[modelColumns_.nlink] = name_stat.get_nlink();
@@ -102,7 +103,20 @@ void LsGui::fill_row(Gtk::TreeModel::Row &row, const Glib::ustring &name, const 
 	row[modelColumns_.group] = name_stat.get_group();
 	row[modelColumns_.size]  = name_stat.get_size();
 	//row[modelColumns_.time]  = name_stat.get_mtime_str();  // TODO: Use when implemented.
-	row[modelColumns_.name]  = name;
+
+	Glib::ustring name_field(name);
+	if (name_stat.get_is_lnk()) {
+		try {
+			if (dirfdptr)
+				name_field = name_field + " -> " + cvn::readlinkat(*dirfdptr, name, name_stat);
+			else
+				name_field = name_field + " -> " + cvn::readlink(name, name_stat);
+		}
+		catch (std::exception &ex) {
+			name_field = name_field + " (Error reading symlink target: " + ex.what() + ")";
+		}
+	}
+	row[modelColumns_.name] = name_field;
 }
 
 void LsGui::on_location_activate()
@@ -136,13 +150,13 @@ void LsGui::on_location_activate()
 
 				// Put the directory entry's stat results into one row each entry.
 				Gtk::TreeModel::Row row = *model_->append();
-				fill_row(row, ent_name, ent_stat);
+				fill_row(row, &dir_fd, ent_name, ent_stat);
 			}
 		}
 		else {
 			// Put the non-directory location's stat results into a single row.
 			Gtk::TreeModel::Row row = *model_->append();
-			fill_row(row, loc, loc_stat);
+			fill_row(row, nullptr, loc, loc_stat);
 		}
 	}
 	catch (std::exception &ex)
