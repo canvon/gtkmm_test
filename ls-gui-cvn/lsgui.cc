@@ -77,6 +77,11 @@ LsGui::LsGui() :
 	// FIXME
 
 	show_all_children();
+
+#if 0  // Don't do unrequested filesystem access, for now...
+	// Switch to an initial directory...
+	set_location_str("/home");
+#endif
 }
 
 LsGui::~LsGui()
@@ -110,11 +115,15 @@ Glib::ustring LsGui::get_location_str() const
 
 void LsGui::set_location_str(const Glib::ustring &new_location_str)
 {
-	// TODO: Put new location into location entry, but without risking a loop...
-
 	location_str_ = Glib::ustring(new_location_str);
 
 	std::cout << "New location: " << location_str_ << std::endl;
+
+	// Put new location into location entry.
+	// (Apparently this doesn't risk looping...
+	// But better safe than sorry.)
+	if (location_.get_text() != location_str_)
+		location_.set_text(location_str_);
 
 	// (N.B.: Be sure to use "->", as "." compiles fine
 	//        but frees the smartpointer => Segmentation fault.)
