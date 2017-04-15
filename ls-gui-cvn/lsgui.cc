@@ -5,6 +5,7 @@
 #include <iostream>
 #include <iomanip>
 #include <stdexcept>
+#include <system_error>
 
 LsGui::LsGui() :
 	outerVBox_(Gtk::ORIENTATION_VERTICAL),
@@ -179,6 +180,13 @@ void LsGui::fill_row(Gtk::TreeModel::Row &row, const int *dirfdptr, const Glib::
 				name_field = name_field + " -> " + cvn::readlinkat(*dirfdptr, name, name_stat);
 			else
 				name_field = name_field + " -> " + cvn::readlink(name, name_stat);
+		}
+		catch (std::system_error &ex) {
+			// Special-case for system errors: Avoid information
+			// that is already known via the context in which
+			// the cell appears, and just display the system
+			// error message.
+			name_field = name_field + " (System error reading symlink target: " + ex.code().message() + ")";
 		}
 		catch (std::exception &ex) {
 			name_field = name_field + " (Error reading symlink target: " + ex.what() + ")";
