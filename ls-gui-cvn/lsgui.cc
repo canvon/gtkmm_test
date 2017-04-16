@@ -160,6 +160,12 @@ void LsGui::set_location_str(const Glib::ustring &new_location_str)
 	//        but frees the smartpointer => Segmentation fault.)
 	model_->clear();
 
+	// Special-case empty string to just clear the model, without error.
+	if (location_str_.empty()) {
+		std::cout << "View is now empty." << std::endl;
+		return;
+	}
+
 	try {
 		// Retrieve stat information of the location itself.
 		LsLstat loc_stat(location_str_);
