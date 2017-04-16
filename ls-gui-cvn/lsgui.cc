@@ -131,6 +131,7 @@ LsGui::LsModelColumns::LsModelColumns()
 	add(user); add(group);
 	add(size);
 	add(time);
+	add(name_raw);
 	add(name);
 }
 
@@ -185,7 +186,7 @@ void LsGui::set_location_str(const Glib::ustring &new_location_str)
 			int       dir_fd = dir.fd();
 
 			while (dir.read()) {
-				Glib::ustring  ent_name = dir.get_name();
+				std::string    ent_name = dir.get_name();
 				LsFstatat      ent_stat(dir_fd, ent_name, /* symlink nofollow: */ true);
 
 				// Put the directory entry's stat results into one row each entry.
@@ -196,7 +197,7 @@ void LsGui::set_location_str(const Glib::ustring &new_location_str)
 		else {
 			// Put the non-directory location's stat results into a single row.
 			Gtk::TreeModel::Row row = *model_->append();
-			fill_row(row, nullptr, location_str_, loc_stat);
+			fill_row(row, nullptr, location_str_.raw(), loc_stat);
 		}
 	}
 	catch (std::exception &ex)
@@ -286,7 +287,7 @@ void LsGui::set_location_str_relative(const Glib::ustring &rel_path)
 	set_location_str(new_path);
 }
 
-void LsGui::fill_row(Gtk::TreeModel::Row &row, const int *dirfdptr, const Glib::ustring &name, const LsStat &name_stat)
+void LsGui::fill_row(Gtk::TreeModel::Row &row, const int *dirfdptr, const std::string &name, const LsStat &name_stat)
 {
 	row[modelColumns_.perms] = name_stat.get_mode_str();
 	row[modelColumns_.nlink] = name_stat.get_nlink();
@@ -294,6 +295,7 @@ void LsGui::fill_row(Gtk::TreeModel::Row &row, const int *dirfdptr, const Glib::
 	row[modelColumns_.group] = name_stat.get_group();
 	row[modelColumns_.size]  = name_stat.get_size();
 	//row[modelColumns_.time]  = name_stat.get_mtime_str();  // TODO: Use when implemented.
+	row[modelColumns_.name_raw] = name;
 
 	Glib::ustring name_field(name);
 	if (name_stat.get_is_lnk()) {
@@ -362,6 +364,5 @@ void LsGui::on_ls_row_activated(const Gtk::TreeModel::Path &path, Gtk::TreeViewC
 		return;
 
 	Gtk::TreeModel::Row row = *sel_ptr->get_selected();
-	set_location_str_relative(row[modelColumns_.name]);
-	// ^ FIXME: Problem with symlinks and their "name -> target" content...
+	set_location_str_relative(Glib::ustring(row[modelColumns_.name_raw]));
 }
