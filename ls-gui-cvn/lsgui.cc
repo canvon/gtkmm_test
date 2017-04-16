@@ -107,8 +107,6 @@ LsGui::LsGui() :
 	errorsInfoBar_.signal_response().connect(
 		sigc::mem_fun(*this, &LsGui::on_errorsInfoBar_response));
 
-	// FIXME
-
 	show_all_children();
 
 	errorsInfoBar_.hide();
