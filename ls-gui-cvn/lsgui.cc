@@ -75,6 +75,7 @@ LsGui::LsGui() :
 	errorMessage_.set_hexpand();
 	errorMessage_.set_alignment(Gtk::ALIGN_FILL);
 	scrollErrorMessage_.set_propagate_natural_width();
+	scrollErrorMessage_.set_min_content_height(80);
 	scrollErrorMessage_.add(errorMessage_);
 
 	auto containerptr = dynamic_cast<Gtk::Container*>(errorsInfoBar_.get_content_area());
