@@ -18,7 +18,11 @@
 
   * Have auto-completion in the location entry.
 
+  * Add history, for going back via Alt-Left and forward via Alt-Right.
+
   * Move directory processing to a background thread.
 
   * Make directory processing background thread cancellable via the GUI.
+
+  * Add UI for (partially/fully?) canonicalize location.
 
