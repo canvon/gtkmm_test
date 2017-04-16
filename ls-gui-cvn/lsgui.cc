@@ -107,6 +107,9 @@ LsGui::LsGui() :
 	errorsInfoBar_.signal_response().connect(
 		sigc::mem_fun(*this, &LsGui::on_errorsInfoBar_response));
 
+	ls_.signal_row_activated().connect(
+		sigc::mem_fun(*this, &LsGui::on_ls_row_activated));
+
 	show_all_children();
 
 	errorsInfoBar_.hide();
@@ -259,6 +262,30 @@ void LsGui::set_location_str(const Glib::ustring &new_location_str)
 	}
 }
 
+void LsGui::set_location_str_relative(const Glib::ustring &rel_path)
+{
+	// As a special case, on empty relative path,
+	// stay with the current state.
+	if (rel_path.empty())
+		return;
+
+	// Absolute path? Ignore what we had so far.
+	// Also ignore if it was empty before.
+	if (location_str_.empty() || rel_path[0] == '/') {
+		set_location_str(rel_path);
+		return;
+	}
+
+	// Otherwise, combine previous location string with relative path.
+	Glib::ustring new_path(location_str_);
+	if (new_path[new_path.size() - 1] != '/')
+		new_path.push_back('/');
+	new_path.append(rel_path);
+
+	// Set new location string.
+	set_location_str(new_path);
+}
+
 void LsGui::fill_row(Gtk::TreeModel::Row &row, const int *dirfdptr, const Glib::ustring &name, const LsStat &name_stat)
 {
 	row[modelColumns_.perms] = name_stat.get_mode_str();
@@ -326,4 +353,15 @@ void LsGui::on_errorsInfoBar_response(int response_id)
 		g_warning("Errors InfoBar, signal response: Unrecognized response id %d.", response_id);
 		break;
 	}
+}
+
+void LsGui::on_ls_row_activated(const Gtk::TreeModel::Path &path, Gtk::TreeViewColumn *column)
+{
+	auto sel_ptr = ls_.get_selection();
+	if (sel_ptr->count_selected_rows() < 1)
+		return;
+
+	Gtk::TreeModel::Row row = *sel_ptr->get_selected();
+	set_location_str_relative(row[modelColumns_.name]);
+	// ^ FIXME: Problem with symlinks and their "name -> target" content...
 }

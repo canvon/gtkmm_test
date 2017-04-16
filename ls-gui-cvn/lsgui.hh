@@ -44,6 +44,7 @@ public:
 	Glib::RefPtr<Gtk::ListStore> get_model();
 	Glib::ustring get_location_str() const;
 	void set_location_str(const Glib::ustring &new_location_str);
+	void set_location_str_relative(const Glib::ustring &rel_path);
 
 	void fill_row(Gtk::TreeModel::Row &row, const int *dirfdptr, const Glib::ustring &name, const LsStat &name_stat);
 
@@ -51,6 +52,7 @@ protected:
 	void on_location_activate();
 	bool on_location_key_press_event(GdkEventKey* key_event);
 	void on_errorsInfoBar_response(int response_id);
+	void on_ls_row_activated(const Gtk::TreeModel::Path &path, Gtk::TreeViewColumn *column);
 
 	LsModelColumns modelColumns_;
 	Glib::RefPtr<Gtk::ListStore> model_;
