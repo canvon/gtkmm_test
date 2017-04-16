@@ -1,6 +1,8 @@
 #ifndef LS_GUI_HH
 #define LS_GUI_HH
 
+#include <vector>
+
 #include <gtkmm/window.h>
 #include <gtkmm/box.h>
 #include <gtkmm/label.h>
@@ -54,6 +56,8 @@ protected:
 	Glib::RefPtr<Gtk::ListStore> model_;
 
 	Glib::ustring location_str_;
+	typedef std::vector<std::string> errmsgs_type;
+	errmsgs_type errorMessages_lst_;
 
 	Gtk::Box outerVBox_;
 	Gtk::Box locationHBox_;
@@ -61,7 +65,7 @@ protected:
 	Gtk::Entry location_;
 	Gtk::InfoBar errorsInfoBar_; int posErrorsInfoBar_;
 	Gtk::ScrolledWindow scrollErrorMessage_;
-	Gtk::Label errorMessage_; Glib::ustring markupErrorMessage_;
+	Gtk::Label errorMessage_;
 	Gtk::ScrolledWindow scrollLs_;
 	Gtk::TreeView ls_;
 
