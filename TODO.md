@@ -4,6 +4,8 @@
 
   * Complete the symlink support -- but what would still need to get implemented?
 
+    * Be able to enter a symlinked directory by pressing Enter on the symlink.
+
   * Implement date/time processing & display.
 
   * Implement uid/gid -> user/group lookup.
@@ -25,4 +27,7 @@
   * Make directory processing background thread cancellable via the GUI.
 
   * Add UI for (partially/fully?) canonicalize location.
+
+  * Allow toggling symlink nofollow, to be able to see the symlink target's stats?
+    Or can this be done in another way?
 
