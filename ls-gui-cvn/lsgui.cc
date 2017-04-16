@@ -78,6 +78,9 @@ LsGui::LsGui() :
 	scrollErrorMessage_.set_min_content_height(80);
 	scrollErrorMessage_.add(errorMessage_);
 
+	// Allow copy & paste of error messages.
+	errorMessage_.set_selectable();
+
 	auto containerptr = dynamic_cast<Gtk::Container*>(errorsInfoBar_.get_content_area());
 	if (containerptr == nullptr) {
 		g_warning("Can't prepare GTK InfoBar: get_content_area() is not a Gtk::Container*!");
