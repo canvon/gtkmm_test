@@ -369,7 +369,7 @@ void LsGui::on_ls_row_activated(const Gtk::TreeModel::Path &path, Gtk::TreeViewC
 {
 	auto sel_ptr = ls_.get_selection();
 	if (sel_ptr->count_selected_rows() < 1) {
-		error_bell();
+		ls_.error_bell();
 		return;
 	}
 
@@ -386,7 +386,7 @@ void LsGui::on_ls_row_activated(const Gtk::TreeModel::Path &path, Gtk::TreeViewC
 		}
 		else {
 			// "Bing!" & stay with current state.
-			error_bell();
+			ls_.error_bell();
 		}
 	}
 }
