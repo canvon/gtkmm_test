@@ -276,8 +276,18 @@ void LsGui::set_location_str_relative(const Glib::ustring &rel_path_arg)
 
 	// Same path? Then append a slash '/', in the hopes to
 	// dereference a directory symlink...
-	if (rel_path[0] == '/' && rel_path == location_str_)
-		rel_path += '/';
+	if (rel_path[0] == '/' && rel_path == location_str_) {
+		LsStat loc_stat(location_str_);
+		if (loc_stat.get_is_dir())
+			rel_path += '/';
+		else {
+			// Bing!
+			error_bell();
+
+			// Stay with current state.
+			return;
+		}
+	}
 
 	// Absolute path? Ignore what we had so far.
 	// Also ignore if it was empty before.
