@@ -271,31 +271,12 @@ void LsGui::set_location_str(const Glib::ustring &new_location_str)
 	}
 }
 
-void LsGui::set_location_str_relative(const Glib::ustring &rel_path_arg)
+void LsGui::set_location_str_relative(const Glib::ustring &rel_path)
 {
-	// Have a local copy to be able to change it,
-	// without changing the method argument itself.
-	Glib::ustring rel_path(rel_path_arg);
-
 	// As a special case, on empty relative path,
 	// stay with the current state.
 	if (rel_path.empty())
 		return;
-
-	// Same path? Then append a slash '/', in the hopes to
-	// dereference a directory symlink...
-	if (rel_path[0] == '/' && rel_path == location_str_) {
-		LsStat loc_stat(location_str_);
-		if (loc_stat.get_is_dir())
-			rel_path += '/';
-		else {
-			// Bing!
-			error_bell();
-
-			// Stay with current state.
-			return;
-		}
-	}
 
 	// Absolute path? Ignore what we had so far.
 	// Also ignore if it was empty before.
@@ -391,5 +372,22 @@ void LsGui::on_ls_row_activated(const Gtk::TreeModel::Path &path, Gtk::TreeViewC
 		return;
 
 	Gtk::TreeModel::Row row = *sel_ptr->get_selected();
-	set_location_str_relative(Glib::ustring(row[modelColumns_.name_raw]));
+	if (location_is_dirlisting_) {
+		set_location_str_relative(Glib::ustring(row[modelColumns_.name_raw]));
+	}
+	else {
+		LsStat loc_stat(location_str_);
+		if (loc_stat.get_is_dir()) {
+			// Append a slash '/', in the hopes to
+			// dereference a directory symlink...
+			set_location_str(location_str_ + '/');
+		}
+		else {
+			// Bing!
+			error_bell();
+
+			// Stay with current state.
+			return;
+		}
+	}
 }
