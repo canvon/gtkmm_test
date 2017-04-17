@@ -263,12 +263,21 @@ void LsGui::set_location_str(const Glib::ustring &new_location_str)
 	}
 }
 
-void LsGui::set_location_str_relative(const Glib::ustring &rel_path)
+void LsGui::set_location_str_relative(const Glib::ustring &rel_path_arg)
 {
+	// Have a local copy to be able to change it,
+	// without changing the method argument itself.
+	Glib::ustring rel_path(rel_path_arg);
+
 	// As a special case, on empty relative path,
 	// stay with the current state.
 	if (rel_path.empty())
 		return;
+
+	// Same path? Then append a slash '/', in the hopes to
+	// dereference a directory symlink...
+	if (rel_path[0] == '/' && rel_path == location_str_)
+		rel_path += '/';
 
 	// Absolute path? Ignore what we had so far.
 	// Also ignore if it was empty before.
