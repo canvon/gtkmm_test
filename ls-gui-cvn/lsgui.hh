@@ -45,6 +45,7 @@ public:
 	LsModelColumns &get_modelColumns();
 	Glib::RefPtr<Gtk::ListStore> get_model();
 	Glib::ustring get_location_str() const;
+	bool get_location_is_dirlisting() const;
 	void set_location_str(const Glib::ustring &new_location_str);
 	void set_location_str_relative(const Glib::ustring &rel_path);
 
@@ -60,6 +61,7 @@ protected:
 	Glib::RefPtr<Gtk::ListStore> model_;
 
 	Glib::ustring location_str_;
+	bool location_is_dirlisting_;
 	typedef std::vector<std::string> errmsgs_type;
 	errmsgs_type errorMessages_lst_;
 

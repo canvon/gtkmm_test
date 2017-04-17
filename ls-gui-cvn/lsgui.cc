@@ -150,9 +150,15 @@ Glib::ustring LsGui::get_location_str() const
 	return Glib::ustring(location_str_);
 }
 
+bool LsGui::get_location_is_dirlisting() const
+{
+	return location_is_dirlisting_;
+}
+
 void LsGui::set_location_str(const Glib::ustring &new_location_str)
 {
 	location_str_ = Glib::ustring(new_location_str);
+	location_is_dirlisting_ = false;
 
 	std::cout << "New location: " << location_str_ << std::endl;
 
@@ -177,6 +183,8 @@ void LsGui::set_location_str(const Glib::ustring &new_location_str)
 		LsLstat loc_stat(location_str_);
 
 		if (loc_stat.get_is_dir()) {
+			location_is_dirlisting_ = true;
+
 			std::cout << "Reading in directory "
 			          << std::quoted(location_str_.raw())
 			          << "..."
