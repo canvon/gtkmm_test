@@ -4,9 +4,6 @@
 
   * Complete the symlink support -- but what would still need to get implemented?
 
-    * Be able to enter a symlinked directory by pressing Enter on the symlink:
-      Also work on relative paths...
-
   * Implement date/time processing & display.
 
   * Implement uid/gid -> user/group lookup.
