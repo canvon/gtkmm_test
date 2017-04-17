@@ -368,8 +368,10 @@ void LsGui::on_errorsInfoBar_response(int response_id)
 void LsGui::on_ls_row_activated(const Gtk::TreeModel::Path &path, Gtk::TreeViewColumn *column)
 {
 	auto sel_ptr = ls_.get_selection();
-	if (sel_ptr->count_selected_rows() < 1)
+	if (sel_ptr->count_selected_rows() < 1) {
+		error_bell();
 		return;
+	}
 
 	Gtk::TreeModel::Row row = *sel_ptr->get_selected();
 	if (location_is_dirlisting_) {
@@ -383,11 +385,8 @@ void LsGui::on_ls_row_activated(const Gtk::TreeModel::Path &path, Gtk::TreeViewC
 			set_location_str(location_str_ + '/');
 		}
 		else {
-			// Bing!
+			// "Bing!" & stay with current state.
 			error_bell();
-
-			// Stay with current state.
-			return;
 		}
 	}
 }
