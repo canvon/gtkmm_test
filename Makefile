@@ -2,7 +2,9 @@
 SHELL = /bin/bash
 
 CXX      := g++
-CXXFLAGS := $(shell pkg-config gtkmm-3.0 --cflags) -std=c++14 -Wall -O2
+PCCFLAGS := $(shell pkg-config gtkmm-3.0 --cflags)
+CXXFLAGS := $(PCCFLAGS) -std=c++14 -Wall -O2
+CFLAGS   := $(PCCFLAGS)            -Wall -O2
 LDFLAGS  := $(shell pkg-config gtkmm-3.0 --libs)
 
 # Let GNU make implicit rule link in a C++ way.
@@ -13,11 +15,11 @@ SRCS := $(wildcard *.cc) \
         $(wildcard radiobuttons/*.cc) \
         $(wildcard entrycvn/*.cc) \
         $(wildcard ls-gui-cvn/*.cc)
-OBJS := $(SRCS:.cc=.o)
+OBJS := $(SRCS:.cc=.o) ls-gui-cvn/resources.o
 DEPS := $(OBJS:.o=.deps)
 BINS := simple helloworld/helloworld radiobuttons/radiobuttons \
         entrycvn/entrycvn ls-gui-cvn/ls-gui-cvn
-BINS_EXTRA := ls-gui-cvn/main
+BINS_EXTRA := ls-gui-cvn/main ls-gui-cvn/resources.c
 
 all: $(BINS)
 
@@ -28,10 +30,24 @@ simple: simple.o
 helloworld/helloworld: helloworld/main.o helloworld/helloworld.o
 radiobuttons/radiobuttons: radiobuttons/main.o radiobuttons/radiobuttons.o
 entrycvn/entrycvn: entrycvn/main.o entrycvn/entrycvn.o
+
 ls-gui-cvn/ls-gui-cvn: ls-gui-cvn/main
 	cp $< $@
 ls-gui-cvn/main: ls-gui-cvn/main.o ls-gui-cvn/lsgui.o ls-gui-cvn/lsstat.o \
-                 ls-gui-cvn/lsdirent.o ls-gui-cvn/util.o
+                 ls-gui-cvn/lsdirent.o ls-gui-cvn/util.o \
+                 ls-gui-cvn/resources.o
+ls-gui-cvn/resources.o: ls-gui-cvn/resources.c
+ls-gui-cvn/resources.c: ls-gui-cvn/toolbar.gresource.xml
+	#cd "$(dir $<)" && \
+	#  glib-compile-resources \
+	#    --target="$(notdir $@)" \
+	#    --generate-source "$(notdir $<)"
+	glib-compile-resources --sourcedir="$(dir $<)" \
+	  --target="$@" --generate-source "$<"
+ls-gui-cvn/resources.deps: ls-gui-cvn/toolbar.gresource.xml
+	echo "$(@:.deps=.c) $@: $$( \
+	  glib-compile-resources --sourcedir="$(dir $<)" \
+	  --generate-dependencies "$<" )" >"$@"
 
 %.deps: %.cc
 	set -o pipefail && \

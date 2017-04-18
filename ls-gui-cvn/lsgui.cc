@@ -3,6 +3,7 @@
 #include "lsdirent.hh"
 #include "util.hh"
 #include <gtkmm/menubar.h>
+#include <gtkmm/toolbar.h>
 #include <gtkmm/dialog.h>  // For Gtk::RESPONSE_CLOSE
 #include <glibmm/main.h>
 #include <iostream>
@@ -130,10 +131,11 @@ LsGui::LsGui() :
 
 	try {
 		builder_ptr_->add_from_string(menubar_markup);
+		builder_ptr_->add_from_resource("/toolbar/toolbar.glade");
 	}
 	catch (const Glib::Error &ex)
 	{
-		auto errmsg = Glib::ustring("Building menu bar failed: ") + ex.what();
+		auto errmsg = Glib::ustring("Building menu bar & tool bar failed: ") + ex.what();
 		g_warning("%s", errmsg.c_str());
 		errorMessages_lst_.push_back(errmsg);
 	}
@@ -160,6 +162,17 @@ LsGui::LsGui() :
 		outerVBox_.pack_start(*menubar_ptr, Gtk::PACK_SHRINK);
 	}
 	while (false);
+
+	Gtk::Toolbar *toolbar_ptr = nullptr;
+	builder_ptr_->get_widget("toolbar", toolbar_ptr);
+	if (!toolbar_ptr) {
+		Glib::ustring errmsg("Couldn't get widget 'toolbar'");
+		g_warning("%s", errmsg.c_str());
+		errorMessages_lst_.push_back(errmsg);
+	}
+	else {
+		outerVBox_.pack_start(*toolbar_ptr, Gtk::PACK_SHRINK);
+	}
 
 
 	outerVBox_.pack_start(locationHBox_, Gtk::PACK_SHRINK);
