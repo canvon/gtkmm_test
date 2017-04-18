@@ -110,6 +110,16 @@ LsGui::LsGui() :
 	ls_.signal_row_activated().connect(
 		sigc::mem_fun(*this, &LsGui::on_ls_row_activated));
 
+
+	actionGroup_ptr_ = Gio::SimpleActionGroup::create();
+
+	actionGroup_ptr_->add_action("reload", sigc::mem_fun(*this, &LsGui::on_action_reload));
+	actionGroup_ptr_->add_action("backward", sigc::mem_fun(*this, &LsGui::on_action_backward));
+	actionGroup_ptr_->add_action("forward", sigc::mem_fun(*this, &LsGui::on_action_forward));
+
+	insert_action_group("navigation", actionGroup_ptr_);
+
+
 	show_all_children();
 
 	errorsInfoBar_.hide();
@@ -389,4 +399,21 @@ void LsGui::on_ls_row_activated(const Gtk::TreeModel::Path &path, Gtk::TreeViewC
 			ls_.error_bell();
 		}
 	}
+}
+
+void LsGui::on_action_reload()
+{
+	set_location_str(location_str_);
+}
+
+void LsGui::on_action_backward()
+{
+	// FIXME
+	g_warning("Go backward in history: Not implemented, yet!");
+}
+
+void LsGui::on_action_forward()
+{
+	// FIXME
+	g_warning("Go forward in history: Not implemented, yet!");
 }

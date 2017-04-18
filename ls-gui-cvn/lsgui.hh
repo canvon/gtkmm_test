@@ -11,6 +11,7 @@
 #include <gtkmm/scrolledwindow.h>
 #include <gtkmm/liststore.h>
 #include <gtkmm/treeview.h>
+#include <giomm/simpleactiongroup.h>
 
 // (Forward-declare so we don't need to include the header from here.)
 class LsStat;
@@ -56,6 +57,9 @@ protected:
 	bool on_location_key_press_event(GdkEventKey* key_event);
 	void on_errorsInfoBar_response(int response_id);
 	void on_ls_row_activated(const Gtk::TreeModel::Path &path, Gtk::TreeViewColumn *column);
+	void on_action_reload();
+	void on_action_backward();
+	void on_action_forward();
 
 	LsModelColumns modelColumns_;
 	Glib::RefPtr<Gtk::ListStore> model_;
@@ -79,6 +83,8 @@ protected:
 	{
 		int perms, nlink, user, group, size, time, name;
 	} lsViewColumns_;
+
+	Glib::RefPtr<Gio::SimpleActionGroup> actionGroup_ptr_;
 };
 
 #endif  // LS_GUI_HH
