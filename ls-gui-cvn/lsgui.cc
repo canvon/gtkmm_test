@@ -246,6 +246,8 @@ LsGui::LsGui() :
 
 	update_errorsInfoBar();
 
+	location_.grab_focus();
+
 #if 0  // Don't do unrequested filesystem access, for now...
 	// Switch to an initial directory...
 	set_location_str("/home");
