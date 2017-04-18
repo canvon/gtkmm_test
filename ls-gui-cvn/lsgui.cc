@@ -470,7 +470,7 @@ void LsGui::update_errorsInfoBar()
 			auto vadjustptr = scrollErrorMessage_.get_vadjustment();
 			vadjustptr->set_value(vadjustptr->get_upper());
 			//vadjustptr->set_value(vadjustptr->get_upper() - vadjustptr->get_page_size());
-		});
+		}, Glib::PRIORITY_LOW);
 	}
 }
 
