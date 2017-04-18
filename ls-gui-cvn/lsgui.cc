@@ -190,7 +190,7 @@ LsGui::LsGui() :
 
 	show_all_children();
 
-	errorsInfoBar_.hide();
+	update_errorsInfoBar();
 
 #if 0  // Don't do unrequested filesystem access, for now...
 	// Switch to an initial directory...
@@ -293,59 +293,11 @@ void LsGui::set_location_str(const Glib::ustring &new_location_str)
 		// Accumulate errors.
 		errorMessages_lst_.push_back(ex.what());
 
-		// Try to work-around GTK bug 710888,
-		// InfoBar not opening again after first close.
-		//
-		// Remove and readd again.
-		outerVBox_.remove(errorsInfoBar_);
-		outerVBox_.pack_start(errorsInfoBar_, Gtk::PACK_SHRINK);
-		outerVBox_.reorder_child(errorsInfoBar_, posErrorsInfoBar_);
-
-		// Put error message into errorsInfoBar.
-		Glib::ustring markup;
-		int n = 1;
-		const int total = errorMessages_lst_.size();
-		for (errmsgs_type::const_iterator iter = errorMessages_lst_.begin();
-		     iter != errorMessages_lst_.end();
-		     iter++, n++)
-		{
-			const std::string &msg(*iter);
-			gchar *msg_markup_ptr = g_markup_escape_text(msg.c_str(), -1);
-			if (msg_markup_ptr == nullptr) {
-				g_warning("Set location string: g_markup_escape_text() failed, will skip error message %d/%d",
-					n, total);
-				if (n > 1)
-					markup += "\n";
-				markup = markup
-					+ "<big><span background=\"red\">Error "
-					+ std::to_string(n) + "/" + std::to_string(total)
-					+ " N.A. </span></big>";
-			}
-			else {
-				if (n > 1)
-					markup += "\n";
-				markup = markup
-					+ "<big>Error "
-					+ std::to_string(n) + "/" + std::to_string(total)
-					+ ": <span background=\"red\"> "
-					+ msg_markup_ptr + " </span></big>";
-
-				g_free(msg_markup_ptr);
-				msg_markup_ptr = nullptr;
-			}
-		}
-
-		errorMessage_.set_markup(markup);
-
-		errorsInfoBar_.set_message_type(Gtk::MESSAGE_ERROR);
-		errorsInfoBar_.show();
-
-		// Scroll to bottom when things have settled.
-		Glib::signal_idle().connect_once([this] {
-			auto vadjustptr = scrollErrorMessage_.get_vadjustment();
-			vadjustptr->set_value(vadjustptr->get_upper());
-			//vadjustptr->set_value(vadjustptr->get_upper() - vadjustptr->get_page_size());
-		});
+		// Display error to the user in a nice InfoBar
+		// that can be closed when the user pleases
+		// (compared to a message dialog, which must be
+		// closed immediately to get any more work done).
+		update_errorsInfoBar();
 	}
 }
 
@@ -403,6 +355,67 @@ void LsGui::fill_row(Gtk::TreeModel::Row &row, const int *dirfdptr, const std::s
 		}
 	}
 	row[modelColumns_.name] = name_field;
+}
+
+void LsGui::update_errorsInfoBar()
+{
+	if (errorMessages_lst_.empty())
+		errorsInfoBar_.hide();
+	else {
+		// Try to work-around GTK bug 710888,
+		// InfoBar not opening again after first close.
+		//
+		// Remove and readd again.
+		outerVBox_.remove(errorsInfoBar_);
+		outerVBox_.pack_start(errorsInfoBar_, Gtk::PACK_SHRINK);
+		outerVBox_.reorder_child(errorsInfoBar_, posErrorsInfoBar_);
+
+		// Put error message into errorsInfoBar.
+		Glib::ustring markup;
+		int n = 1;
+		const int total = errorMessages_lst_.size();
+		for (errmsgs_type::const_iterator iter = errorMessages_lst_.begin();
+		     iter != errorMessages_lst_.end();
+		     iter++, n++)
+		{
+			const std::string &msg(*iter);
+			gchar *msg_markup_ptr = g_markup_escape_text(msg.c_str(), -1);
+			if (msg_markup_ptr == nullptr) {
+				g_warning("Set location string: g_markup_escape_text() failed, will skip error message %d/%d",
+					n, total);
+				if (n > 1)
+					markup += "\n";
+				markup = markup
+					+ "<big><span background=\"red\">Error "
+					+ std::to_string(n) + "/" + std::to_string(total)
+					+ " N.A. </span></big>";
+			}
+			else {
+				if (n > 1)
+					markup += "\n";
+				markup = markup
+					+ "<big>Error "
+					+ std::to_string(n) + "/" + std::to_string(total)
+					+ ": <span background=\"red\"> "
+					+ msg_markup_ptr + " </span></big>";
+
+				g_free(msg_markup_ptr);
+				msg_markup_ptr = nullptr;
+			}
+		}
+
+		errorMessage_.set_markup(markup);
+
+		errorsInfoBar_.set_message_type(Gtk::MESSAGE_ERROR);
+		errorsInfoBar_.show();
+
+		// Scroll to bottom when things have settled.
+		Glib::signal_idle().connect_once([this] {
+			auto vadjustptr = scrollErrorMessage_.get_vadjustment();
+			vadjustptr->set_value(vadjustptr->get_upper());
+			//vadjustptr->set_value(vadjustptr->get_upper() - vadjustptr->get_page_size());
+		});
+	}
 }
 
 void LsGui::on_location_activate()

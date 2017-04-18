@@ -56,6 +56,8 @@ public:
 	static const char *menubar_markup;
 
 protected:
+	void update_errorsInfoBar();
+
 	void on_location_activate();
 	bool on_location_key_press_event(GdkEventKey* key_event);
 	void on_errorsInfoBar_response(int response_id);
