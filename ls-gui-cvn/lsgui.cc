@@ -2,6 +2,7 @@
 #include "lsstat.hh"
 #include "lsdirent.hh"
 #include "util.hh"
+#include <gtkmm/menubar.h>
 #include <gtkmm/dialog.h>  // For Gtk::RESPONSE_CLOSE
 #include <glibmm/main.h>
 #include <iostream>
@@ -119,7 +120,43 @@ LsGui::LsGui() :
 	row[modelColumns_.name] = "test1";
 #endif
 
+
 	add(outerVBox_);
+
+
+	// Load menubar and/or toolbar.
+
+	builder_ptr_ = Gtk::Builder::create();
+
+	try {
+		builder_ptr_->add_from_string(menubar_markup);
+	}
+	catch (const Glib::Error &ex)
+	{
+		auto errmsg = Glib::ustring("Building menu bar failed: ") + ex.what();
+		g_warning("%s", errmsg.c_str());
+		errorMessages_lst_.push_back(errmsg);
+	}
+
+	auto obj_ptr = builder_ptr_->get_object("menubar");
+	if (!obj_ptr) {
+		Glib::ustring errmsg("Object 'menubar' not found");
+		g_warning("%s", errmsg.c_str());
+		errorMessages_lst_.push_back(errmsg);
+	}
+	else {
+		auto gmenu_ptr = Glib::RefPtr<Gio::Menu>::cast_dynamic(obj_ptr);
+		if (!gmenu_ptr) {
+			Glib::ustring errmsg("Object 'menubar' is not a Gio::Menu");
+			g_warning("%s", errmsg.c_str());
+			errorMessages_lst_.push_back(errmsg);
+		}
+		else {
+			auto menubar_ptr = Gtk::manage(new Gtk::MenuBar(gmenu_ptr));
+			outerVBox_.pack_start(*menubar_ptr, Gtk::PACK_SHRINK);
+		}
+	}
+
 
 	outerVBox_.pack_start(locationHBox_, Gtk::PACK_SHRINK);
 
