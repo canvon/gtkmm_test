@@ -138,24 +138,28 @@ LsGui::LsGui() :
 		errorMessages_lst_.push_back(errmsg);
 	}
 
-	auto obj_ptr = builder_ptr_->get_object("menubar");
-	if (!obj_ptr) {
-		Glib::ustring errmsg("Object 'menubar' not found");
-		g_warning("%s", errmsg.c_str());
-		errorMessages_lst_.push_back(errmsg);
-	}
-	else {
+	// menubar
+	do {
+		auto obj_ptr = builder_ptr_->get_object("menubar");
+		if (!obj_ptr) {
+			Glib::ustring errmsg("Object 'menubar' not found");
+			g_warning("%s", errmsg.c_str());
+			errorMessages_lst_.push_back(errmsg);
+			break;
+		}
+
 		auto gmenu_ptr = Glib::RefPtr<Gio::Menu>::cast_dynamic(obj_ptr);
 		if (!gmenu_ptr) {
 			Glib::ustring errmsg("Object 'menubar' is not a Gio::Menu");
 			g_warning("%s", errmsg.c_str());
 			errorMessages_lst_.push_back(errmsg);
+			break;
 		}
-		else {
-			auto menubar_ptr = Gtk::manage(new Gtk::MenuBar(gmenu_ptr));
-			outerVBox_.pack_start(*menubar_ptr, Gtk::PACK_SHRINK);
-		}
+
+		auto menubar_ptr = Gtk::manage(new Gtk::MenuBar(gmenu_ptr));
+		outerVBox_.pack_start(*menubar_ptr, Gtk::PACK_SHRINK);
 	}
+	while (false);
 
 
 	outerVBox_.pack_start(locationHBox_, Gtk::PACK_SHRINK);
