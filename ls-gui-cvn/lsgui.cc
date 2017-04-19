@@ -692,7 +692,32 @@ void LsGui::on_ls_row_activated(const Gtk::TreeModel::Path &path, Gtk::TreeViewC
 
 void LsGui::on_ls_column_clicked(int columnNr)
 {
-	modelSort_->set_sort_column(columnNr, Gtk::SortType::SORT_ASCENDING);
+	int prev_columnNr = 0;
+	Gtk::SortType prev_order = Gtk::SortType::SORT_ASCENDING;
+	if (modelSort_->get_sort_column_id(prev_columnNr, prev_order))
+	{
+		Gtk::SortType new_order = prev_order;
+		if (prev_columnNr == columnNr) {
+			// Switch sort order.
+			switch (prev_order) {
+			case Gtk::SortType::SORT_ASCENDING:
+				new_order = Gtk::SortType::SORT_DESCENDING;
+				break;
+			case Gtk::SortType::SORT_DESCENDING:
+				new_order = Gtk::SortType::SORT_ASCENDING;
+				break;
+			default:
+				// Leave it as-is, but warn.
+				g_warning("Unrecognized previous sort order '%d'!", prev_order);
+				break;
+			}
+		}
+
+		modelSort_->set_sort_column(columnNr, new_order);
+	}
+	else {
+		modelSort_->set_sort_column(columnNr, Gtk::SortType::SORT_ASCENDING);
+	}
 }
 
 void LsGui::on_action_open()
