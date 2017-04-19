@@ -131,27 +131,13 @@ LsGui::LsGui() :
 	ls_.set_headers_clickable();
 
 	// React on clicking the columns, by changing the sort key.
-	ls_.get_column(lsViewColumns_.perms)->signal_clicked().connect([this] {
-			modelSort_->set_sort_column(modelColumns_.perms, Gtk::SortType::SORT_ASCENDING);
-	});
-	ls_.get_column(lsViewColumns_.nlink)->signal_clicked().connect([this] {
-			modelSort_->set_sort_column(modelColumns_.nlink, Gtk::SortType::SORT_ASCENDING);
-	});
-	ls_.get_column(lsViewColumns_.user)->signal_clicked().connect([this] {
-			modelSort_->set_sort_column(modelColumns_.user, Gtk::SortType::SORT_ASCENDING);
-	});
-	ls_.get_column(lsViewColumns_.group)->signal_clicked().connect([this] {
-			modelSort_->set_sort_column(modelColumns_.group, Gtk::SortType::SORT_ASCENDING);
-	});
-	ls_.get_column(lsViewColumns_.size)->signal_clicked().connect([this] {
-			modelSort_->set_sort_column(modelColumns_.size, Gtk::SortType::SORT_ASCENDING);
-	});
-	ls_.get_column(lsViewColumns_.time)->signal_clicked().connect([this] {
-			modelSort_->set_sort_column(modelColumns_.time, Gtk::SortType::SORT_ASCENDING);
-	});
-	ls_.get_column(lsViewColumns_.name)->signal_clicked().connect([this] {
-			modelSort_->set_sort_column(modelColumns_.name, Gtk::SortType::SORT_ASCENDING);
-	});
+	for (int columnNr = lsViewColumns_.perms; columnNr <= lsViewColumns_.name; columnNr++)
+	{
+		ls_.get_column(columnNr)->signal_clicked().connect(
+			sigc::bind(
+				sigc::mem_fun(*this, &LsGui::on_ls_column_clicked),
+				columnNr));
+	}
 
 #if 0
 	Gtk::TreeModel::Row row = *model_->append();
@@ -702,6 +688,11 @@ void LsGui::on_ls_row_activated(const Gtk::TreeModel::Path &path, Gtk::TreeViewC
 			ls_.error_bell();
 		}
 	}
+}
+
+void LsGui::on_ls_column_clicked(int columnNr)
+{
+	modelSort_->set_sort_column(columnNr, Gtk::SortType::SORT_ASCENDING);
 }
 
 void LsGui::on_action_open()
