@@ -14,7 +14,8 @@
 
   * Allow sorting: Allow switching back to unsorted.
 
-  * Have auto-completion in the location entry.
+  * Have auto-completion in the location entry:
+    Test, test, test and adjust for corner cases.
 
   * Move directory processing to a background thread.
 
