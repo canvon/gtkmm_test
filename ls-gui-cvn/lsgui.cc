@@ -265,11 +265,11 @@ LsGui::LsGui() :
 	outerVBox_.pack_start(scrollLs_);
 
 	location_.signal_activate().connect(
-		sigc::mem_fun(*this, &LsGui::on_location_activate));
+		sigc::mem_fun(*this, &LsGui::on_locationEntry_activate));
 	location_.signal_changed().connect(
-		sigc::mem_fun(*this, &LsGui::on_location_changed));
+		sigc::mem_fun(*this, &LsGui::on_locationEntry_changed));
 	location_.signal_key_press_event().connect(
-		sigc::mem_fun(*this, &LsGui::on_location_key_press_event));
+		sigc::mem_fun(*this, &LsGui::on_locationEntry_key_press_event));
 
 	errorsInfoBar_.signal_response().connect(
 		sigc::mem_fun(*this, &LsGui::on_errorsInfoBar_response));
@@ -685,12 +685,12 @@ void LsGui::update_locationCompletion()
 	}
 }
 
-void LsGui::on_location_activate()
+void LsGui::on_locationEntry_activate()
 {
 	set_location_str(location_.get_text());
 }
 
-void LsGui::on_location_changed()
+void LsGui::on_locationEntry_changed()
 {
 	Glib::ustring text = location_.get_text();
 	if (text.empty())
@@ -707,7 +707,7 @@ void LsGui::on_location_changed()
 	}
 }
 
-bool LsGui::on_location_key_press_event(GdkEventKey* key_event)
+bool LsGui::on_locationEntry_key_press_event(GdkEventKey* key_event)
 {
 	if (key_event) {
 		switch (key_event->keyval) {
