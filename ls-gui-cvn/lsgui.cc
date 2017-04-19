@@ -2,8 +2,6 @@
 #include "lsstat.hh"
 #include "lsdirent.hh"
 #include "util.hh"
-#include <gtkmm/menubar.h>
-#include <gtkmm/toolbar.h>
 #include <gtkmm/dialog.h>  // For Gtk::RESPONSE_CLOSE
 #include <glibmm/main.h>
 #include <iostream>
@@ -150,28 +148,43 @@ LsGui::LsGui() :
 			break;
 		}
 
-		auto gmenu_ptr = Glib::RefPtr<Gio::Menu>::cast_dynamic(obj_ptr);
-		if (!gmenu_ptr) {
+		gmenu_ptr_ = Glib::RefPtr<Gio::Menu>::cast_dynamic(obj_ptr);
+		if (!gmenu_ptr_) {
 			Glib::ustring errmsg("Object 'menubar' is not a Gio::Menu");
 			g_warning("%s", errmsg.c_str());
 			errorMessages_lst_.push_back(errmsg);
 			break;
 		}
 
-		auto menubar_ptr = Gtk::manage(new Gtk::MenuBar(gmenu_ptr));
-		outerVBox_.pack_start(*menubar_ptr, Gtk::PACK_SHRINK);
+		menubar_gtk_ptr_ = Gtk::manage(new Gtk::MenuBar(gmenu_ptr_));
+		outerVBox_.pack_start(*menubar_gtk_ptr_, Gtk::PACK_SHRINK);
+
+#if 0
+		// This will not work as we are still in the constructor,
+		// and if we didn't get the application instance passed
+		// as constructor argument, we don't have an application, yet.
+		auto app = get_application();
+		if (!app) {
+			Glib::ustring errmsg("Couldn't get application instance");
+			g_warning("%s", errmsg.c_str());
+			errorMessages_lst_.push_back(errmsg);
+			break;
+		}
+
+		app->set_menubar(gmenu_ptr);
+#endif
 	}
 	while (false);
 
-	Gtk::Toolbar *toolbar_ptr = nullptr;
-	builder_ptr_->get_widget("toolbar", toolbar_ptr);
-	if (!toolbar_ptr) {
+	toolbar_ptr_ = nullptr;
+	builder_ptr_->get_widget("toolbar", toolbar_ptr_);  // implicitly managed
+	if (!toolbar_ptr_) {
 		Glib::ustring errmsg("Couldn't get widget 'toolbar'");
 		g_warning("%s", errmsg.c_str());
 		errorMessages_lst_.push_back(errmsg);
 	}
 	else {
-		outerVBox_.pack_start(*toolbar_ptr, Gtk::PACK_SHRINK);
+		outerVBox_.pack_start(*toolbar_ptr_, Gtk::PACK_SHRINK);
 	}
 
 
@@ -411,6 +424,21 @@ void LsGui::fill_row(Gtk::TreeModel::Row &row, const int *dirfdptr, const std::s
 		}
 	}
 	row[modelColumns_.name] = name_field;
+}
+
+Glib::RefPtr<Gio::MenuModel> LsGui::get_gmenu()
+{
+	return gmenu_ptr_;
+}
+
+Gtk::MenuBar *LsGui::get_menubar_gtk()
+{
+	return menubar_gtk_ptr_;
+}
+
+Gtk::Toolbar *LsGui::get_toolbar()
+{
+	return toolbar_ptr_;
 }
 
 void LsGui::update_errorsInfoBar()

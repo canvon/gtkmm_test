@@ -12,6 +12,8 @@
 #include <gtkmm/liststore.h>
 #include <gtkmm/treeview.h>
 #include <gtkmm/builder.h>
+#include <gtkmm/menubar.h>
+#include <gtkmm/toolbar.h>
 #include <giomm/simpleactiongroup.h>
 
 // (Forward-declare so we don't need to include the header from here.)
@@ -55,6 +57,10 @@ public:
 
 	static const char *menubar_markup;
 
+	Glib::RefPtr<Gio::MenuModel>  get_gmenu();
+	Gtk::MenuBar                 *get_menubar_gtk();
+	Gtk::Toolbar                 *get_toolbar();
+
 protected:
 	void update_errorsInfoBar();
 
@@ -92,7 +98,10 @@ protected:
 		int perms, nlink, user, group, size, time, name;
 	} lsViewColumns_;
 
-	Glib::RefPtr<Gtk::Builder> builder_ptr_;
+	Glib::RefPtr<Gtk::Builder>  builder_ptr_;
+	Glib::RefPtr<Gio::Menu>     gmenu_ptr_;
+	Gtk::MenuBar               *menubar_gtk_ptr_;
+	Gtk::Toolbar               *toolbar_ptr_;
 	Glib::RefPtr<Gio::SimpleActionGroup>
 		directory_actionGroup_ptr_,
 		navigation_actionGroup_ptr_;
