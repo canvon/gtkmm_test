@@ -12,6 +12,7 @@
 #include <gtkmm/scrolledwindow.h>
 #include <gtkmm/liststore.h>
 #include <gtkmm/treeview.h>
+#include <gtkmm/treemodelsort.h>
 #include <gtkmm/builder.h>
 #include <gtkmm/menubar.h>
 #include <gtkmm/toolbar.h>
@@ -87,6 +88,7 @@ protected:
 
 	LsModelColumns modelColumns_;
 	Glib::RefPtr<Gtk::ListStore> model_;
+	Glib::RefPtr<Gtk::TreeModelSort> modelSort_;
 
 	Glib::ustring location_str_;
 	bool location_is_dirlisting_;

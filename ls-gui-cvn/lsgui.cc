@@ -88,7 +88,9 @@ LsGui::LsGui() :
 	set_default_size(800, 600);
 
 	model_ = Gtk::ListStore::create(modelColumns_);
-	ls_.set_model(model_);
+	modelSort_ = Gtk::TreeModelSort::create(model_);
+	modelSort_->set_sort_column(modelColumns_.name, Gtk::SortType::SORT_ASCENDING);
+	ls_.set_model(modelSort_);
 
 	lsViewColumns_.perms = ls_.append_column("Permissions", modelColumns_.perms) - 1;
 	lsViewColumns_.nlink = ls_.append_column("#links",      modelColumns_.nlink) - 1;
