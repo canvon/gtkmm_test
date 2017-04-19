@@ -48,6 +48,11 @@ public:
 
 	LsModelColumns &get_modelColumns();
 	Glib::RefPtr<Gtk::ListStore> get_model();
+
+	bool history_is_valid() const;
+	bool history_can_backward() const;
+	bool history_can_forward() const;
+
 	Glib::ustring get_location_str() const;
 	bool get_location_is_dirlisting() const;
 	void set_location_str();

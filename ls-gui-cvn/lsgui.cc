@@ -290,6 +290,38 @@ Glib::RefPtr<Gtk::ListStore> LsGui::get_model()
 	return model_;
 }
 
+bool LsGui::history_is_valid() const
+{
+	if (location_history_.empty())
+		return false;
+	if (location_history_pos_ == location_history_.end())
+		return false;
+	// TODO: Possibly add further checks?
+
+	return true;
+}
+
+bool LsGui::history_can_backward() const
+{
+	if (location_history_.empty())
+		return false;
+	if (location_history_pos_ == location_history_.begin())
+		return false;
+
+	return true;
+}
+
+bool LsGui::history_can_forward() const
+{
+	if (location_history_.empty())
+		return false;
+	// FIXME: This does not suffice.
+	if (location_history_pos_ == location_history_.end())
+		return false;
+
+	return true;
+}
+
 Glib::ustring LsGui::get_location_str() const
 {
 	return Glib::ustring(location_str_);
@@ -302,7 +334,7 @@ bool LsGui::get_location_is_dirlisting() const
 
 void LsGui::set_location_str()
 {
-	if (location_history_pos_ == location_history_.end()) {
+	if (!history_is_valid()) {
 		std::cerr << "We're outside history!" << std::endl;
 
 #if 0
@@ -624,7 +656,7 @@ void LsGui::on_action_reload()
 
 void LsGui::on_action_backward()
 {
-	if (location_history_pos_ == location_history_.begin()) {
+	if (!history_can_backward()) {
 		std::cerr << "Can't go backwards in history!" << std::endl;
 		error_bell();
 		return;
@@ -637,7 +669,7 @@ void LsGui::on_action_backward()
 
 void LsGui::on_action_forward()
 {
-	if (location_history_pos_ == location_history_.end()) {
+	if (!history_can_forward()) {
 		std::cerr << "Can't go forward in history!" << std::endl;
 		error_bell();
 		return;
