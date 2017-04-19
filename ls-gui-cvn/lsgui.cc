@@ -79,6 +79,7 @@ NL "</interface>"
 NL;
 
 LsGui::LsGui() :
+	location_is_dirlisting_(false),
 	location_history_pos_(location_history_.end()),
 	outerVBox_(Gtk::ORIENTATION_VERTICAL),
 	locationLabel_("_Location", true)
