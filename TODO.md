@@ -10,8 +10,6 @@
 
   * Right-align more numbers: uid/gid
 
-  * Filter out dot-files/dot-dirs, with option to turn that off again.
-
   * Replace ListStore by TreeStore and allow manual descend into child directories.
 
   * Allow sorting.

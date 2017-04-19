@@ -43,6 +43,16 @@ NL "        </item>"
 NL "      </section>"
 NL "    </submenu>"
 NL "    <submenu>"
+NL "      <attribute name='label' translatable='yes'>_View</attribute>"
+NL "      <section>"
+NL "        <item>"
+NL "          <attribute name='label' translatable='yes'>Show _Hidden</attribute>"
+NL "          <attribute name='action'>win.show-hidden</attribute>"
+NL "          <attribute name='accel'>&lt;Primary&gt;h</attribute>"
+NL "        </item>"
+NL "      </section>"
+NL "    </submenu>"
+NL "    <submenu>"
 NL "      <attribute name='label' translatable='yes'>_Navigation</attribute>"
 NL "      <section>"
 NL "        <item>"
@@ -251,6 +261,7 @@ LsGui::LsGui() :
 	action_reload_ptr_ = add_action("reload", sigc::mem_fun(*this, &LsGui::on_action_reload));
 	action_backward_ptr_ = add_action("backward", sigc::mem_fun(*this, &LsGui::on_action_backward));
 	action_forward_ptr_ = add_action("forward", sigc::mem_fun(*this, &LsGui::on_action_forward));
+	action_show_hidden_ptr_ = add_action_bool("show-hidden", sigc::mem_fun(*this, &LsGui::on_action_show_hidden));
 
 	update_actions();
 
@@ -391,6 +402,7 @@ void LsGui::set_location_str()
 
 		if (loc_stat.get_is_dir()) {
 			location_is_dirlisting_ = true;
+			bool show_hidden = get_show_hidden();
 
 			std::cout << "Reading in directory "
 			          << std::quoted(location_str_.raw())
@@ -403,6 +415,11 @@ void LsGui::set_location_str()
 			while (dir.read()) {
 				std::string    ent_name = dir.get_name();
 				LsFstatat      ent_stat(dir_fd, ent_name, /* symlink nofollow: */ true);
+
+				if (!show_hidden && !ent_name.empty() && ent_name[0] == '.') {
+					// Skip hidden files/directories.
+					continue;
+				}
 
 				// Put the directory entry's stat results into one row each entry.
 				Gtk::TreeModel::Row row = *model_->append();
@@ -525,6 +542,13 @@ Gtk::MenuBar *LsGui::get_menubar_gtk()
 Gtk::Toolbar *LsGui::get_toolbar()
 {
 	return toolbar_ptr_;
+}
+
+bool LsGui::get_show_hidden() const
+{
+	bool show_hidden = false;
+	action_show_hidden_ptr_->get_state(show_hidden);
+	return show_hidden;
 }
 
 void LsGui::update_errorsInfoBar()
@@ -695,4 +719,16 @@ void LsGui::on_action_forward()
 	location_history_pos_++;
 	update_actions();
 	set_location_str();
+}
+
+void LsGui::on_action_show_hidden()
+{
+	// Toggle state of the action.
+	bool show_hidden = get_show_hidden();
+	action_show_hidden_ptr_->change_state(!show_hidden);
+
+	if (location_is_dirlisting_) {
+		// Re-read directory with new state.
+		set_location_str();
+	}
 }

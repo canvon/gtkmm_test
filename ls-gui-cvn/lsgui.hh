@@ -68,6 +68,8 @@ public:
 	Gtk::MenuBar                 *get_menubar_gtk();
 	Gtk::Toolbar                 *get_toolbar();
 
+	bool get_show_hidden() const;
+
 protected:
 	void update_actions();
 	void update_errorsInfoBar();
@@ -81,6 +83,7 @@ protected:
 	void on_action_reload();
 	void on_action_backward();
 	void on_action_forward();
+	void on_action_show_hidden();
 
 	LsModelColumns modelColumns_;
 	Glib::RefPtr<Gtk::ListStore> model_;
@@ -120,7 +123,8 @@ protected:
 		action_close_ptr_,
 		action_reload_ptr_,
 		action_backward_ptr_,
-		action_forward_ptr_;
+		action_forward_ptr_,
+		action_show_hidden_ptr_;
 };
 
 #endif  // LS_GUI_HH
