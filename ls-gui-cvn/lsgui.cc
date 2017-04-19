@@ -128,6 +128,31 @@ LsGui::LsGui() :
 		renderer->property_xalign().set_value(1.0);
 	}
 
+	ls_.set_headers_clickable();
+
+	// React on clicking the columns, by changing the sort key.
+	ls_.get_column(lsViewColumns_.perms)->signal_clicked().connect([this] {
+			modelSort_->set_sort_column(modelColumns_.perms, Gtk::SortType::SORT_ASCENDING);
+	});
+	ls_.get_column(lsViewColumns_.nlink)->signal_clicked().connect([this] {
+			modelSort_->set_sort_column(modelColumns_.nlink, Gtk::SortType::SORT_ASCENDING);
+	});
+	ls_.get_column(lsViewColumns_.user)->signal_clicked().connect([this] {
+			modelSort_->set_sort_column(modelColumns_.user, Gtk::SortType::SORT_ASCENDING);
+	});
+	ls_.get_column(lsViewColumns_.group)->signal_clicked().connect([this] {
+			modelSort_->set_sort_column(modelColumns_.group, Gtk::SortType::SORT_ASCENDING);
+	});
+	ls_.get_column(lsViewColumns_.size)->signal_clicked().connect([this] {
+			modelSort_->set_sort_column(modelColumns_.size, Gtk::SortType::SORT_ASCENDING);
+	});
+	ls_.get_column(lsViewColumns_.time)->signal_clicked().connect([this] {
+			modelSort_->set_sort_column(modelColumns_.time, Gtk::SortType::SORT_ASCENDING);
+	});
+	ls_.get_column(lsViewColumns_.name)->signal_clicked().connect([this] {
+			modelSort_->set_sort_column(modelColumns_.name, Gtk::SortType::SORT_ASCENDING);
+	});
+
 #if 0
 	Gtk::TreeModel::Row row = *model_->append();
 	row[modelColumns_.name] = "test1";
