@@ -654,11 +654,19 @@ void LsGui::update_locationCompletion()
 		LsDirent  dir(dir_path);
 
 		while (dir.read()) {
+			std::string ent_name = dir.get_name();
+			if (ent_name == "." ||
+			    ent_name == "..") {
+				// Skip current directory and parent directory
+				// for completion as they usually will not help.
+				continue;
+			}
+
 			Gtk::TreeModel::Row row = *locationCompletionModel_ptr_->append();
 			if (prepend_dir_path)
-				row[modelColumns_.name_raw] = dir_path + dir.get_name();
+				row[modelColumns_.name_raw] = dir_path + ent_name;
 			else
-				row[modelColumns_.name_raw] = dir.get_name();
+				row[modelColumns_.name_raw] = ent_name;
 		}
 	}
 	catch (const std::system_error &ex) {
