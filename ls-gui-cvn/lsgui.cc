@@ -724,8 +724,9 @@ void LsGui::on_action_forward()
 void LsGui::on_action_show_hidden()
 {
 	// Toggle state of the action.
-	bool show_hidden = get_show_hidden();
-	action_show_hidden_ptr_->change_state(!show_hidden);
+	bool show_hidden_new = !get_show_hidden();
+	std::cout << "Toggling show hidden to " << show_hidden_new << "..." << std::endl;
+	action_show_hidden_ptr_->change_state(show_hidden_new);
 
 	if (location_is_dirlisting_) {
 		// Re-read directory with new state.
