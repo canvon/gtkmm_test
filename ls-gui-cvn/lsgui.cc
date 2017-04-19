@@ -668,11 +668,19 @@ void LsGui::update_locationCompletion()
 				// Ignore.
 				break;
 			default:
+#if 0
 				// (Don't use what() so we skip unnecessary details.
 				// This is just a completion error, after all...)
 				// TODO: (Perhaps this shouldn't log anything at all?)
 				std::cerr << "Location completion: Got system error: "
 					  << ex.code().message() << std::endl;
+#else
+				// (Use full exception message as it's
+				// really not helpful to see this
+				// on stderr without.)
+				std::cerr << "Location completion: Got system error: "
+					  << ex.what() << std::endl;
+#endif
 				break;
 			}
 		}
