@@ -156,8 +156,16 @@ LsGui::LsGui() :
 			break;
 		}
 
+#if 0
+		// As the menubar is now application-wide and we're deriving
+		// from Gtk::ApplicationWindow, creating a Gtk::MenuBar is
+		// not necessary any longer and will just lead to a duplicate
+		// menubar...
 		menubar_gtk_ptr_ = Gtk::manage(new Gtk::MenuBar(gmenu_ptr_));
 		outerVBox_.pack_start(*menubar_gtk_ptr_, Gtk::PACK_SHRINK);
+#else
+		menubar_gtk_ptr_ = nullptr;
+#endif
 
 #if 0
 		// This will not work as we are still in the constructor,
