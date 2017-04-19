@@ -69,6 +69,7 @@ NL "</interface>"
 NL;
 
 LsGui::LsGui() :
+	location_history_pos_(location_history_.end()),
 	outerVBox_(Gtk::ORIENTATION_VERTICAL),
 	locationLabel_("_Location", true)
 {
@@ -299,9 +300,26 @@ bool LsGui::get_location_is_dirlisting() const
 	return location_is_dirlisting_;
 }
 
-void LsGui::set_location_str(const Glib::ustring &new_location_str)
+void LsGui::set_location_str()
 {
-	location_str_ = Glib::ustring(new_location_str);
+	if (location_history_pos_ == location_history_.end()) {
+		std::cerr << "We're outside history!" << std::endl;
+
+#if 0
+		// Go on with the empty location.
+		location_str_ = "";
+#else
+		// Indicate input error (Is that really right?),
+		// and stay at current state.
+		error_bell();
+		return;
+#endif
+	}
+	else {
+		// Fetch location from current history position.
+		location_str_ = Glib::ustring(*location_history_pos_);
+	}
+
 	location_is_dirlisting_ = false;
 
 	std::cout << "New location: " << location_str_ << std::endl;
@@ -365,6 +383,30 @@ void LsGui::set_location_str(const Glib::ustring &new_location_str)
 		// closed immediately to get any more work done).
 		update_errorsInfoBar();
 	}
+}
+
+void LsGui::set_location_str(const Glib::ustring &new_location_str)
+{
+	// Nothing in the history, yet?
+	if (location_history_pos_ == location_history_.end()) {
+		// Simply insert as last element, and go
+		// from one-past-the-last-element to the last element.
+		location_history_.push_back(new_location_str);
+		location_history_pos_--;
+	}
+	else {
+		// Erase forward history, in case there is one.
+		location_history_type::iterator to_erase = location_history_pos_;
+		to_erase++;
+		location_history_.erase(to_erase, location_history_.end());
+
+		// Add new location as new history element,
+		// and advance position to point to it.
+		location_history_.push_back(new_location_str);
+		location_history_pos_++;
+	}
+
+	set_location_str();
 }
 
 void LsGui::set_location_str_relative(const Glib::ustring &rel_path)
@@ -577,17 +619,31 @@ void LsGui::on_action_close()
 
 void LsGui::on_action_reload()
 {
-	set_location_str(location_str_);
+	set_location_str();
 }
 
 void LsGui::on_action_backward()
 {
-	// FIXME
-	g_warning("Navigation -> Go backward in history: Not implemented, yet!");
+	if (location_history_pos_ == location_history_.begin()) {
+		std::cerr << "Can't go backwards in history!" << std::endl;
+		error_bell();
+		return;
+	}
+
+	std::cout << "Going backwards in history..." << std::endl;
+	location_history_pos_--;
+	set_location_str();
 }
 
 void LsGui::on_action_forward()
 {
-	// FIXME
-	g_warning("Navigation -> Go forward in history: Not implemented, yet!");
+	if (location_history_pos_ == location_history_.end()) {
+		std::cerr << "Can't go forward in history!" << std::endl;
+		error_bell();
+		return;
+	}
+
+	std::cout << "Going forward in history..." << std::endl;
+	location_history_pos_++;
+	set_location_str();
 }

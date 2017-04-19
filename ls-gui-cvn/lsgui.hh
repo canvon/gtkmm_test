@@ -1,6 +1,7 @@
 #ifndef LS_GUI_HH
 #define LS_GUI_HH
 
+#include <list>
 #include <vector>
 
 #include <gtkmm/applicationwindow.h>
@@ -49,6 +50,7 @@ public:
 	Glib::RefPtr<Gtk::ListStore> get_model();
 	Glib::ustring get_location_str() const;
 	bool get_location_is_dirlisting() const;
+	void set_location_str();
 	void set_location_str(const Glib::ustring &new_location_str);
 	void set_location_str_relative(const Glib::ustring &rel_path);
 
@@ -78,6 +80,11 @@ protected:
 
 	Glib::ustring location_str_;
 	bool location_is_dirlisting_;
+
+	typedef std::list<Glib::ustring> location_history_type;
+	location_history_type            location_history_;
+	location_history_type::iterator  location_history_pos_;
+
 	typedef std::vector<std::string> errmsgs_type;
 	errmsgs_type errorMessages_lst_;
 
