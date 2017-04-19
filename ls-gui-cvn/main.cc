@@ -1,5 +1,6 @@
 #include "lsgui.hh"
 #include <gtkmm/application.h>
+#include <iostream>
 
 int main(int argc, char *argv[])
 {
@@ -16,6 +17,8 @@ int main(int argc, char *argv[])
 	});
 
 	app->add_action("quit", [&window] {
+		std::cout << "Quit." << std::endl;
+
 		// TODO: This needs to be extended when we implement multi-window mode.
 		window.hide();
 	});
