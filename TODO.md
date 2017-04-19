@@ -15,7 +15,23 @@
   * Allow sorting: Allow switching back to unsorted.
 
   * Have auto-completion in the location entry:
-    Test, test, test and adjust for corner cases.
+
+    * Test, test, test and adjust for corner cases.
+
+    * Sort.
+
+    * Possibility to turn auto-completion off.
+
+    * Give annotations what type of directory entry this is?
+
+      * E.g., append '/' for directory? (Can be seen from readlink() result.)
+        Or, rather:
+
+      * Make the completion TreeView(?) look like the dirlisting?
+        With all information readily available? That would need lstat()
+        on each directory entry... Performance loss?
+        If this should get implemented, it must be configurable!
+        It must be possible to turn this off!
 
   * Move directory processing to a background thread.
 
