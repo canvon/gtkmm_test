@@ -270,6 +270,8 @@ LsGui::LsGui() :
 		sigc::mem_fun(*this, &LsGui::on_locationEntry_changed));
 	location_.signal_key_press_event().connect(
 		sigc::mem_fun(*this, &LsGui::on_locationEntry_key_press_event));
+	locationCompletion_ptr_->signal_no_matches().connect(
+		sigc::mem_fun(*this, &LsGui::on_locationEntryCompletion_no_matches));
 
 	errorsInfoBar_.signal_response().connect(
 		sigc::mem_fun(*this, &LsGui::on_errorsInfoBar_response));
@@ -724,6 +726,12 @@ bool LsGui::on_locationEntry_key_press_event(GdkEventKey* key_event)
 
 	// Don't stop signal propagation.
 	return false;
+}
+
+void LsGui::on_locationEntryCompletion_no_matches()
+{
+	// FIXME: Rate-limit?
+	update_locationCompletion();
 }
 
 void LsGui::on_errorsInfoBar_response(int response_id)

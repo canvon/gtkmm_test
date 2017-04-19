@@ -79,6 +79,7 @@ protected:
 	void on_locationEntry_activate();
 	void on_locationEntry_changed();
 	bool on_locationEntry_key_press_event(GdkEventKey* key_event);
+	void on_locationEntryCompletion_no_matches();
 	void on_errorsInfoBar_response(int response_id);
 	void on_ls_row_activated(const Gtk::TreeModel::Path &path, Gtk::TreeViewColumn *column);
 	void on_ls_column_clicked(int columnNr);
