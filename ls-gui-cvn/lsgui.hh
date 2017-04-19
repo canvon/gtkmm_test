@@ -74,8 +74,10 @@ public:
 protected:
 	void update_actions();
 	void update_errorsInfoBar();
+	void update_locationCompletion();
 
 	void on_location_activate();
+	void on_location_changed();
 	bool on_location_key_press_event(GdkEventKey* key_event);
 	void on_errorsInfoBar_response(int response_id);
 	void on_ls_row_activated(const Gtk::TreeModel::Path &path, Gtk::TreeViewColumn *column);
@@ -105,6 +107,8 @@ protected:
 	Gtk::Box locationHBox_;
 	Gtk::Label locationLabel_;
 	Gtk::Entry location_;
+	Glib::RefPtr<Gtk::ListStore> locationCompletionModel_ptr_;
+	Glib::RefPtr<Gtk::EntryCompletion> locationCompletion_ptr_;
 	Gtk::InfoBar errorsInfoBar_; int posErrorsInfoBar_;
 	Gtk::ScrolledWindow scrollErrorMessage_;
 	Gtk::Label errorMessage_;

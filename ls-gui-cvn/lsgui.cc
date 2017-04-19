@@ -92,6 +92,12 @@ LsGui::LsGui() :
 	modelSort_->set_sort_column(modelColumns_.name, Gtk::SortType::SORT_ASCENDING);
 	ls_.set_model(modelSort_);
 
+	locationCompletionModel_ptr_ = Gtk::ListStore::create(modelColumns_);
+	locationCompletion_ptr_ = Gtk::EntryCompletion::create();
+	locationCompletion_ptr_->set_model(locationCompletionModel_ptr_);
+	locationCompletion_ptr_->set_text_column(modelColumns_.name_raw);
+	location_.set_completion(locationCompletion_ptr_);
+
 	lsViewColumns_.perms = ls_.append_column("Permissions", modelColumns_.perms) - 1;
 	lsViewColumns_.nlink = ls_.append_column("#links",      modelColumns_.nlink) - 1;
 	lsViewColumns_.user  = ls_.append_column("User",        modelColumns_.user)  - 1;
@@ -260,6 +266,8 @@ LsGui::LsGui() :
 
 	location_.signal_activate().connect(
 		sigc::mem_fun(*this, &LsGui::on_location_activate));
+	location_.signal_changed().connect(
+		sigc::mem_fun(*this, &LsGui::on_location_changed));
 	location_.signal_key_press_event().connect(
 		sigc::mem_fun(*this, &LsGui::on_location_key_press_event));
 
@@ -626,9 +634,77 @@ void LsGui::update_errorsInfoBar()
 	}
 }
 
+void LsGui::update_locationCompletion()
+{
+	locationCompletionModel_ptr_->clear();
+
+	Glib::ustring typed_str = location_.get_text();
+	Glib::ustring::size_type pos_slash = typed_str.rfind("/");
+
+	Glib::ustring dir_path(".");
+	bool prepend_dir_path = false;
+	if (pos_slash >= 0 && typed_str[pos_slash] == '/') {
+		dir_path = typed_str.substr(0, pos_slash + 1);
+		prepend_dir_path = true;
+	}
+
+	try {
+		LsDirent  dir(dir_path);
+
+		while (dir.read()) {
+			Gtk::TreeModel::Row row = *locationCompletionModel_ptr_->append();
+			if (prepend_dir_path)
+				row[modelColumns_.name_raw] = dir_path + dir.get_name();
+			else
+				row[modelColumns_.name_raw] = dir.get_name();
+		}
+	}
+	catch (const std::system_error &ex) {
+		if (ex.code().category() == std::generic_category()) {
+			switch (static_cast<std::errc>(ex.code().value())) {
+			case std::errc::no_such_file_or_directory:
+				// Ignore.
+				break;
+			default:
+				// (Don't use what() so we skip unnecessary details.
+				// This is just a completion error, after all...)
+				// TODO: (Perhaps this shouldn't log anything at all?)
+				std::cerr << "Location completion: Got system error: "
+					  << ex.code().message() << std::endl;
+				break;
+			}
+		}
+		else {
+			std::cerr << "Location completion: Got system error of non-generic category: "
+			          << ex.code().message() << std::endl;
+		}
+	}
+	catch (const std::exception &ex) {
+		std::cerr << "Location completion: Got exception: "
+		          << ex.what() << std::endl;
+	}
+}
+
 void LsGui::on_location_activate()
 {
 	set_location_str(location_.get_text());
+}
+
+void LsGui::on_location_changed()
+{
+	Glib::ustring text = location_.get_text();
+	if (text.empty())
+		return;
+
+	int pos = location_.get_position();
+	if (text[pos] == '/') {
+		// It's possible the user has just input a slash
+		// (as in "directory separator"), so try to rebuild
+		// the completion cache.
+		//
+		// TODO: Let this happen in an idle handler or background thread.
+		update_locationCompletion();
+	}
 }
 
 bool LsGui::on_location_key_press_event(GdkEventKey* key_event)
