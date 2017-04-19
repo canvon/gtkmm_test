@@ -246,11 +246,13 @@ LsGui::LsGui() :
 		sigc::mem_fun(*this, &LsGui::on_ls_row_activated));
 
 	// These will be prefixed "win.":
-	add_action("open", sigc::mem_fun(*this, &LsGui::on_action_open));
-	add_action("close", sigc::mem_fun(*this, &LsGui::on_action_close));
-	add_action("reload", sigc::mem_fun(*this, &LsGui::on_action_reload));
-	add_action("backward", sigc::mem_fun(*this, &LsGui::on_action_backward));
-	add_action("forward", sigc::mem_fun(*this, &LsGui::on_action_forward));
+	action_open_ptr_ = add_action("open", sigc::mem_fun(*this, &LsGui::on_action_open));
+	action_close_ptr_ = add_action("close", sigc::mem_fun(*this, &LsGui::on_action_close));
+	action_reload_ptr_ = add_action("reload", sigc::mem_fun(*this, &LsGui::on_action_reload));
+	action_backward_ptr_ = add_action("backward", sigc::mem_fun(*this, &LsGui::on_action_backward));
+	action_forward_ptr_ = add_action("forward", sigc::mem_fun(*this, &LsGui::on_action_forward));
+
+	update_actions();
 
 
 	show_all_children();
@@ -320,6 +322,13 @@ bool LsGui::history_can_forward() const
 		return false;
 
 	return true;
+}
+
+void LsGui::update_actions()
+{
+	action_reload_ptr_->set_enabled(history_is_valid());
+	action_backward_ptr_->set_enabled(history_can_backward());
+	action_forward_ptr_->set_enabled(history_can_forward());
 }
 
 Glib::ustring LsGui::get_location_str() const
@@ -437,6 +446,8 @@ void LsGui::set_location_str(const Glib::ustring &new_location_str)
 		location_history_.push_back(new_location_str);
 		location_history_pos_++;
 	}
+
+	update_actions();
 
 	set_location_str();
 }
@@ -664,6 +675,7 @@ void LsGui::on_action_backward()
 
 	std::cout << "Going backwards in history..." << std::endl;
 	location_history_pos_--;
+	update_actions();
 	set_location_str();
 }
 
@@ -677,5 +689,6 @@ void LsGui::on_action_forward()
 
 	std::cout << "Going forward in history..." << std::endl;
 	location_history_pos_++;
+	update_actions();
 	set_location_str();
 }

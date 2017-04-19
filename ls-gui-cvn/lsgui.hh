@@ -15,6 +15,7 @@
 #include <gtkmm/builder.h>
 #include <gtkmm/menubar.h>
 #include <gtkmm/toolbar.h>
+#include <giomm/simpleaction.h>
 
 // (Forward-declare so we don't need to include the header from here.)
 class LsStat;
@@ -68,6 +69,7 @@ public:
 	Gtk::Toolbar                 *get_toolbar();
 
 protected:
+	void update_actions();
 	void update_errorsInfoBar();
 
 	void on_location_activate();
@@ -112,6 +114,13 @@ protected:
 	Glib::RefPtr<Gio::Menu>     gmenu_ptr_;
 	Gtk::MenuBar               *menubar_gtk_ptr_;
 	Gtk::Toolbar               *toolbar_ptr_;
+
+	Glib::RefPtr<Gio::SimpleAction>
+		action_open_ptr_,
+		action_close_ptr_,
+		action_reload_ptr_,
+		action_backward_ptr_,
+		action_forward_ptr_;
 };
 
 #endif  // LS_GUI_HH
