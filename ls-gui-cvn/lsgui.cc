@@ -16,28 +16,28 @@ const char *LsGui::menubar_markup =
    "<interface>"
 NL "  <menu id='menubar'>"
 NL "    <submenu>"
-NL "      <attribute name='label' translatable='yes'>_Directory</attribute>"
+NL "      <attribute name='label' translatable='yes'>_File</attribute>"
 NL "      <section>"
 NL "        <item>"
 NL "          <attribute name='label' translatable='yes'>New _Tab</attribute>"
-NL "          <attribute name='action'>directory.newtab</attribute>"
+NL "          <attribute name='action'>win.newtab</attribute>"
 NL "          <attribute name='accel'>&lt;Primary&gt;t</attribute>"
 NL "        </item>"
 NL "        <item>"
 NL "          <attribute name='label' translatable='yes'>_Open</attribute>"
-NL "          <attribute name='action'>directory.open</attribute>"
+NL "          <attribute name='action'>win.open</attribute>"
 NL "          <attribute name='accel'>&lt;Primary&gt;o</attribute>"
 NL "        </item>"
 NL "        <item>"
 NL "          <attribute name='label' translatable='yes'>_Close</attribute>"
-NL "          <attribute name='action'>directory.close</attribute>"
+NL "          <attribute name='action'>win.close</attribute>"
 NL "          <attribute name='accel'>&lt;Primary&gt;w</attribute>"
 NL "        </item>"
 NL "      </section>"
 NL "      <section>"
 NL "        <item>"
 NL "          <attribute name='label' translatable='yes'>_Quit</attribute>"
-NL "          <attribute name='action'>directory.quit</attribute>"
+NL "          <attribute name='action'>app.quit</attribute>"
 NL "          <attribute name='accel'>&lt;Primary&gt;q</attribute>"
 NL "        </item>"
 NL "      </section>"
@@ -47,19 +47,19 @@ NL "      <attribute name='label' translatable='yes'>_Navigation</attribute>"
 NL "      <section>"
 NL "        <item>"
 NL "          <attribute name='label' translatable='yes'>_Reload</attribute>"
-NL "          <attribute name='action'>navigation.reload</attribute>"
+NL "          <attribute name='action'>win.reload</attribute>"
 NL "          <attribute name='accel'>&lt;Primary&gt;r</attribute>"
 NL "        </item>"
 NL "      </section>"
 NL "      <section>"
 NL "        <item>"
 NL "          <attribute name='label' translatable='yes'>_Backward</attribute>"
-NL "          <attribute name='action'>navigation.backward</attribute>"
+NL "          <attribute name='action'>win.backward</attribute>"
 NL "          <attribute name='accel'>&lt;Secondary&gt;left</attribute>"
 NL "        </item>"
 NL "        <item>"
 NL "          <attribute name='label' translatable='yes'>_Forward</attribute>"
-NL "          <attribute name='action'>navigation.forward</attribute>"
+NL "          <attribute name='action'>win.forward</attribute>"
 NL "          <attribute name='accel'>&lt;Secondary&gt;right</attribute>"
 NL "        </item>"
 NL "      </section>"
@@ -236,23 +236,12 @@ LsGui::LsGui() :
 	ls_.signal_row_activated().connect(
 		sigc::mem_fun(*this, &LsGui::on_ls_row_activated));
 
-
-	directory_actionGroup_ptr_ = Gio::SimpleActionGroup::create();
-
-	directory_actionGroup_ptr_->add_action("open", sigc::mem_fun(*this, &LsGui::on_action_directory_open));
-	directory_actionGroup_ptr_->add_action("close", sigc::mem_fun(*this, &LsGui::on_action_directory_close));
-	directory_actionGroup_ptr_->add_action("quit", sigc::mem_fun(*this, &LsGui::on_action_directory_quit));
-
-	insert_action_group("directory", directory_actionGroup_ptr_);
-
-
-	navigation_actionGroup_ptr_ = Gio::SimpleActionGroup::create();
-
-	navigation_actionGroup_ptr_->add_action("reload", sigc::mem_fun(*this, &LsGui::on_action_navigation_reload));
-	navigation_actionGroup_ptr_->add_action("backward", sigc::mem_fun(*this, &LsGui::on_action_navigation_backward));
-	navigation_actionGroup_ptr_->add_action("forward", sigc::mem_fun(*this, &LsGui::on_action_navigation_forward));
-
-	insert_action_group("navigation", navigation_actionGroup_ptr_);
+	// These will be prefixed "win.":
+	add_action("open", sigc::mem_fun(*this, &LsGui::on_action_open));
+	add_action("close", sigc::mem_fun(*this, &LsGui::on_action_close));
+	add_action("reload", sigc::mem_fun(*this, &LsGui::on_action_reload));
+	add_action("backward", sigc::mem_fun(*this, &LsGui::on_action_backward));
+	add_action("forward", sigc::mem_fun(*this, &LsGui::on_action_forward));
 
 
 	show_all_children();
@@ -566,36 +555,30 @@ void LsGui::on_ls_row_activated(const Gtk::TreeModel::Path &path, Gtk::TreeViewC
 	}
 }
 
-void LsGui::on_action_directory_open()
+void LsGui::on_action_open()
 {
 	// FIXME
 	g_warning("Directory -> Open: Not implemented, yet!");
 }
 
-void LsGui::on_action_directory_close()
+void LsGui::on_action_close()
 {
 	// FIXME
 	g_warning("Directory -> Close: Not implemented, yet!");
 }
 
-void LsGui::on_action_directory_quit()
-{
-	// TODO: This needs to be extended when we implement multi-window mode.
-	hide();
-}
-
-void LsGui::on_action_navigation_reload()
+void LsGui::on_action_reload()
 {
 	set_location_str(location_str_);
 }
 
-void LsGui::on_action_navigation_backward()
+void LsGui::on_action_backward()
 {
 	// FIXME
 	g_warning("Navigation -> Go backward in history: Not implemented, yet!");
 }
 
-void LsGui::on_action_navigation_forward()
+void LsGui::on_action_forward()
 {
 	// FIXME
 	g_warning("Navigation -> Go forward in history: Not implemented, yet!");

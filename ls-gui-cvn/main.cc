@@ -7,5 +7,10 @@ int main(int argc, char *argv[])
 
 	LsGui window;
 
+	app->add_action("quit", [&window] {
+		// TODO: This needs to be extended when we implement multi-window mode.
+		window.hide();
+	});
+
 	return app->run(window);
 }

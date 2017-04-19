@@ -10,7 +10,7 @@
       <object class="GtkToolButton">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
-        <property name="action_name">directory.quit</property>
+        <property name="action_name">app.quit</property>
         <property name="label" translatable="yes">_Quit</property>
         <property name="use_underline">True</property>
         <property name="stock_id">gtk-quit</property>
@@ -24,7 +24,7 @@
       <object class="GtkToolButton">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
-        <property name="action_name">directory.close</property>
+        <property name="action_name">win.close</property>
         <property name="label" translatable="yes">_Close</property>
         <property name="use_underline">True</property>
         <property name="stock_id">gtk-close</property>
@@ -38,7 +38,7 @@
       <object class="GtkToolButton">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
-        <property name="action_name">directory.open</property>
+        <property name="action_name">win.open</property>
         <property name="label" translatable="yes">_Open</property>
         <property name="use_underline">True</property>
         <property name="stock_id">gtk-open</property>
@@ -62,7 +62,7 @@
       <object class="GtkToolButton">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
-        <property name="action_name">navigation.reload</property>
+        <property name="action_name">win.reload</property>
         <property name="label" translatable="yes">_Reload</property>
         <property name="use_underline">True</property>
         <property name="stock_id">gtk-refresh</property>
@@ -76,7 +76,7 @@
       <object class="GtkToolButton">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
-        <property name="action_name">navigation.backward</property>
+        <property name="action_name">win.backward</property>
         <property name="label" translatable="yes">_Backward</property>
         <property name="use_underline">True</property>
         <property name="stock_id">gtk-go-back</property>
@@ -90,7 +90,7 @@
       <object class="GtkToolButton">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
-        <property name="action_name">navigation.forward</property>
+        <property name="action_name">win.forward</property>
         <property name="label" translatable="yes">_Forward</property>
         <property name="use_underline">True</property>
         <property name="stock_id">gtk-go-forward</property>

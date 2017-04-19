@@ -3,7 +3,7 @@
 
 #include <vector>
 
-#include <gtkmm/window.h>
+#include <gtkmm/applicationwindow.h>
 #include <gtkmm/box.h>
 #include <gtkmm/label.h>
 #include <gtkmm/entry.h>
@@ -14,12 +14,11 @@
 #include <gtkmm/builder.h>
 #include <gtkmm/menubar.h>
 #include <gtkmm/toolbar.h>
-#include <giomm/simpleactiongroup.h>
 
 // (Forward-declare so we don't need to include the header from here.)
 class LsStat;
 
-class LsGui : public Gtk::Window
+class LsGui : public Gtk::ApplicationWindow
 {
 public:
 	LsGui();
@@ -68,12 +67,11 @@ protected:
 	bool on_location_key_press_event(GdkEventKey* key_event);
 	void on_errorsInfoBar_response(int response_id);
 	void on_ls_row_activated(const Gtk::TreeModel::Path &path, Gtk::TreeViewColumn *column);
-	void on_action_directory_open();
-	void on_action_directory_close();
-	void on_action_directory_quit();
-	void on_action_navigation_reload();
-	void on_action_navigation_backward();
-	void on_action_navigation_forward();
+	void on_action_open();
+	void on_action_close();
+	void on_action_reload();
+	void on_action_backward();
+	void on_action_forward();
 
 	LsModelColumns modelColumns_;
 	Glib::RefPtr<Gtk::ListStore> model_;
@@ -102,9 +100,6 @@ protected:
 	Glib::RefPtr<Gio::Menu>     gmenu_ptr_;
 	Gtk::MenuBar               *menubar_gtk_ptr_;
 	Gtk::Toolbar               *toolbar_ptr_;
-	Glib::RefPtr<Gio::SimpleActionGroup>
-		directory_actionGroup_ptr_,
-		navigation_actionGroup_ptr_;
 };
 
 #endif  // LS_GUI_HH
