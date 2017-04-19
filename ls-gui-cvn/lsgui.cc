@@ -317,8 +317,12 @@ bool LsGui::history_can_forward() const
 {
 	if (location_history_.empty())
 		return false;
-	// FIXME: This does not suffice.
 	if (location_history_pos_ == location_history_.end())
+		return false;
+
+	location_history_type::const_iterator last_elem_ptr = location_history_.end();
+	last_elem_ptr--;
+	if (location_history_pos_ == last_elem_ptr)
 		return false;
 
 	return true;
