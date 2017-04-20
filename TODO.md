@@ -10,6 +10,8 @@
 
   * Right-align more numbers: uid/gid
 
+    * Also sort numerically when these fields are displayed as numbers.
+
   * Replace ListStore by TreeStore and allow manual descend into child directories.
 
   * Allow sorting: Allow switching back to unsorted.
@@ -21,6 +23,8 @@
     * Sort.
 
     * Possibility to turn auto-completion off.
+
+    * Respect state of Show Hidden in auto-completion, too?
 
     * Give annotations what type of directory entry this is?
 
@@ -41,4 +45,22 @@
 
   * Allow toggling symlink nofollow, to be able to see the symlink target's stats?
     Or can this be done in another way?
+
+  * Compatibility to Debian 8 'jessie' (Debian stable as of 2017-04-19):
+
+    > set_propagate_natural_width
+
+    Requires gtkmm 3.22 -- can this be tested from the preprocessor?
+
+    > Building menu bar & tool bar failed: <resource>/toolbar/toolbar.glade: required gtk+ version 3.20, current version is 3.14
+
+    Lower glade-declared required GTK version number to what is in stable?
+    Apparently then the toolbar "just works".
+
+  * Streamline toolbar creation to create a single error. (?)
+    At least split the menu bar & tool bar generation which might well succeed independently of each other.
+
+  * Implement Open.
+
+  * Implement Close.
 
