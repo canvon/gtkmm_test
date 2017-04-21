@@ -5,6 +5,7 @@
   <Project Name="radiobuttons" Path="radiobuttons/radiobuttons_codelite.project" Active="No"/>
   <Project Name="entrycvn" Path="entrycvn/entrycvn_codelite.project" Active="No"/>
   <Project Name="ls-gui-cvn" Path="ls-gui-cvn/ls-gui-cvn_codelite.project" Active="Yes"/>
+  <Project Name="misc" Path="misc_codelite.project"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Debug" Selected="yes">
       <Environment/>
@@ -13,6 +14,7 @@
       <Project Name="radiobuttons" ConfigName="Debug"/>
       <Project Name="entrycvn" ConfigName="Debug"/>
       <Project Name="ls-gui-cvn" ConfigName="Debug"/>
+      <Project Name="misc" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Release" Selected="no">
       <Environment/>
@@ -21,6 +23,7 @@
       <Project Name="radiobuttons" ConfigName="Release"/>
       <Project Name="entrycvn" ConfigName="Release"/>
       <Project Name="ls-gui-cvn" ConfigName="Release"/>
+      <Project Name="misc" ConfigName="Release"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>
