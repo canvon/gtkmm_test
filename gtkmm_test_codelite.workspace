@@ -14,7 +14,7 @@
       <Project Name="entrycvn" ConfigName="Debug"/>
       <Project Name="ls-gui-cvn" ConfigName="Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Release" Selected="yes">
+    <WorkspaceConfiguration Name="Release" Selected="no">
       <Environment/>
       <Project Name="simple" ConfigName="Release"/>
       <Project Name="helloworld" ConfigName="Release"/>
