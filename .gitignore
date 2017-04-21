@@ -8,3 +8,6 @@
 /ls-gui-cvn/resources.c
 /ls-gui-cvn/main
 /ls-gui-cvn/ls-gui-cvn
+
+# per-user IDE settings/state
+.codelite

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeLite_Workspace Name="gtkmm_test" Database="" Version="10.0.0">
+  <Project Name="simple" Path="simple_codelite.project" Active="No"/>
+  <Project Name="helloworld" Path="helloworld/helloworld_codelite.project" Active="No"/>
+  <Project Name="radiobuttons" Path="radiobuttons/radiobuttons_codelite.project" Active="No"/>
+  <Project Name="entrycvn" Path="entrycvn/entrycvn_codelite.project" Active="No"/>
+  <Project Name="ls-gui-cvn" Path="ls-gui-cvn/ls-gui-cvn_codelite.project" Active="Yes"/>
+  <BuildMatrix>
+    <WorkspaceConfiguration Name="Debug" Selected="yes">
+      <Environment/>
+      <Project Name="simple" ConfigName="Debug"/>
+      <Project Name="helloworld" ConfigName="Debug"/>
+      <Project Name="radiobuttons" ConfigName="Debug"/>
+      <Project Name="entrycvn" ConfigName="Debug"/>
+      <Project Name="ls-gui-cvn" ConfigName="Debug"/>
+    </WorkspaceConfiguration>
+    <WorkspaceConfiguration Name="Release" Selected="yes">
+      <Environment/>
+      <Project Name="simple" ConfigName="Release"/>
+      <Project Name="helloworld" ConfigName="Release"/>
+      <Project Name="radiobuttons" ConfigName="Release"/>
+      <Project Name="entrycvn" ConfigName="Release"/>
+      <Project Name="ls-gui-cvn" ConfigName="Release"/>
+    </WorkspaceConfiguration>
+  </BuildMatrix>
+</CodeLite_Workspace>
