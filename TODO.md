@@ -35,6 +35,9 @@
         If this should get implemented, it must be configurable!
         It must be possible to turn this off!
 
+    * On Esc, *don't* replace the input with the previous location
+	  when the user probably just wants to close the location window!
+
   * Move directory processing to a background thread.
 
   * Make directory processing background thread cancellable via the GUI.
