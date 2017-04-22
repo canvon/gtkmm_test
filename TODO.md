@@ -46,9 +46,6 @@
   * Allow toggling symlink nofollow, to be able to see the symlink target's stats?
     Or can this be done in another way?
 
-  * Streamline toolbar creation to create a single error. (?)
-    At least split the menu bar & tool bar generation which might well succeed independently of each other.
-
   * Implement Open.
 
   * Implement Close.
