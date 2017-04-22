@@ -76,6 +76,15 @@ NL "          <attribute name='accel'>&lt;Alt&gt;Right</attribute>"
 NL "        </item>"
 NL "      </section>"
 NL "    </submenu>"
+NL "    <submenu>"
+NL "      <attribute name='label' translatable='yes'>_Options</attribute>"
+NL "      <section>"
+NL "        <item>"
+NL "          <attribute name='label' translatable='yes'>_Complete Location</attribute>"
+NL "          <attribute name='action'>win.complete-location</attribute>"
+NL "        </item>"
+NL "      </section>"
+NL "    </submenu>"
 NL "  </menu>"
 NL "</interface>"
 NL;
@@ -314,7 +323,13 @@ LsGui::LsGui() :
 	action_reload_ptr_ = add_action("reload", sigc::mem_fun(*this, &LsGui::on_action_reload));
 	action_backward_ptr_ = add_action("backward", sigc::mem_fun(*this, &LsGui::on_action_backward));
 	action_forward_ptr_ = add_action("forward", sigc::mem_fun(*this, &LsGui::on_action_forward));
-	action_show_hidden_ptr_ = add_action_bool("show-hidden", sigc::mem_fun(*this, &LsGui::on_action_show_hidden));
+	//
+	// Stateful actions.
+	action_show_hidden_ptr_ = add_action_bool("show-hidden",
+		sigc::mem_fun(*this, &LsGui::on_action_show_hidden));
+	action_complete_location_ptr_ = add_action_bool("complete-location",
+		sigc::mem_fun(*this, &LsGui::on_action_complete_location),
+		true);
 
 	update_actions();
 
@@ -602,6 +617,13 @@ bool LsGui::get_show_hidden() const
 	bool show_hidden = false;
 	action_show_hidden_ptr_->get_state(show_hidden);
 	return show_hidden;
+}
+
+bool LsGui::get_complete_location() const
+{
+	bool complete_location = true;
+	action_complete_location_ptr_->get_state(complete_location);
+	return complete_location;
 }
 
 void LsGui::update_errorsInfoBar()
@@ -929,11 +951,24 @@ void LsGui::on_action_show_hidden()
 {
 	// Toggle state of the action.
 	bool show_hidden_new = !get_show_hidden();
-	std::cout << "Toggling show hidden to " << show_hidden_new << "..." << std::endl;
+	std::cout << "Toggling show hidden to "
+	          << show_hidden_new << "..." << std::endl;
 	action_show_hidden_ptr_->change_state(show_hidden_new);
 
 	if (location_is_dirlisting_) {
 		// Re-read directory with new state.
 		set_location_str();
 	}
+}
+
+void LsGui::on_action_complete_location()
+{
+	// Toggle state of the action.
+	bool complete_location_new = !get_complete_location();
+	std::cout << "Toggling complete location to "
+	          << complete_location_new << "..." << std::endl;
+	action_complete_location_ptr_->change_state(complete_location_new);
+
+	location_.set_completion(complete_location_new ?
+		locationCompletion_ptr_ : Glib::RefPtr<Gtk::EntryCompletion>());
 }

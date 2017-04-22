@@ -123,5 +123,18 @@
         <property name="homogeneous">True</property>
       </packing>
     </child>
+    <child>
+      <object class="GtkToggleToolButton">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="action_name">win.complete-location</property>
+        <property name="label" translatable="yes">_Complete Location</property>
+        <property name="use_underline">True</property>
+      </object>
+      <packing>
+        <property name="expand">False</property>
+        <property name="homogeneous">True</property>
+      </packing>
+    </child>
   </object>
 </interface>

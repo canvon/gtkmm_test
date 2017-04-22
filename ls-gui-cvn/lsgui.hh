@@ -70,6 +70,7 @@ public:
 	Gtk::Toolbar                 *get_toolbar();
 
 	bool get_show_hidden() const;
+	bool get_complete_location() const;
 
 protected:
 	void update_actions();
@@ -89,6 +90,7 @@ protected:
 	void on_action_backward();
 	void on_action_forward();
 	void on_action_show_hidden();
+	void on_action_complete_location();
 
 	LsModelColumns modelColumns_;
 	Glib::RefPtr<Gtk::ListStore> model_;
@@ -133,7 +135,8 @@ protected:
 		action_reload_ptr_,
 		action_backward_ptr_,
 		action_forward_ptr_,
-		action_show_hidden_ptr_;
+		action_show_hidden_ptr_,
+		action_complete_location_ptr_;
 };
 
 #endif  // LS_GUI_HH

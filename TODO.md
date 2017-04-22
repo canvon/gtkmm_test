@@ -20,8 +20,6 @@
 
     * Test, test, test and adjust for corner cases.
 
-    * Possibility to turn auto-completion off.
-
     * Give annotations what type of directory entry this is?
 
       * E.g., append '/' for directory? (Can be seen from readlink() result.)
