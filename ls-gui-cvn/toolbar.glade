@@ -115,7 +115,7 @@
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="action_name">win.show-hidden</property>
-        <property name="label" translatable="yes">Show _Hidden</property>
+        <property name="label" translatable="yes">Show&#10;_Hidden</property>
         <property name="use_underline">True</property>
       </object>
       <packing>
@@ -128,7 +128,7 @@
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="action_name">win.complete-location</property>
-        <property name="label" translatable="yes">_Complete Location</property>
+        <property name="label" translatable="yes">_Complete&#10;Location</property>
         <property name="use_underline">True</property>
       </object>
       <packing>
