@@ -52,11 +52,6 @@
 
     Requires gtkmm 3.22 -- can this be tested from the preprocessor?
 
-    > Building menu bar & tool bar failed: <resource>/toolbar/toolbar.glade: required gtk+ version 3.20, current version is 3.14
-
-    Lower glade-declared required GTK version number to what is in stable?
-    Apparently then the toolbar "just works".
-
   * Streamline toolbar creation to create a single error. (?)
     At least split the menu bar & tool bar generation which might well succeed independently of each other.
 
