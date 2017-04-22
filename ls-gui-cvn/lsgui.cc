@@ -680,6 +680,8 @@ void LsGui::update_locationCompletion()
 		prepend_dir_path = true;
 	}
 
+	bool show_hidden = get_show_hidden();
+
 	try {
 		LsDirent  dir(dir_path);
 
@@ -689,6 +691,11 @@ void LsGui::update_locationCompletion()
 			    ent_name == "..") {
 				// Skip current directory and parent directory
 				// for completion as they usually will not help.
+				continue;
+			}
+
+			if (!show_hidden && !ent_name.empty() && ent_name[0] == '.') {
+				// Skip hidden files/directories.
 				continue;
 			}
 

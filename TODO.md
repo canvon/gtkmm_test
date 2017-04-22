@@ -22,8 +22,6 @@
 
     * Possibility to turn auto-completion off.
 
-    * Respect state of Show Hidden in auto-completion, too?
-
     * Give annotations what type of directory entry this is?
 
       * E.g., append '/' for directory? (Can be seen from readlink() result.)
