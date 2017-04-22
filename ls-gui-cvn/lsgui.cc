@@ -160,19 +160,19 @@ LsGui::LsGui() :
 
 	builder_ptr_ = Gtk::Builder::create();
 
-	try {
-		builder_ptr_->add_from_string(menubar_markup);
-		builder_ptr_->add_from_resource("/toolbar/toolbar.glade");
-	}
-	catch (const Glib::Error &ex)
-	{
-		auto errmsg = Glib::ustring("Building menu bar & tool bar failed: ") + ex.what();
-		g_warning("%s", errmsg.c_str());
-		errorMessages_lst_.push_back(errmsg);
-	}
-
 	// menubar
 	do {
+		try {
+			builder_ptr_->add_from_string(menubar_markup);
+		}
+		catch (const Glib::Error &ex)
+		{
+			auto errmsg = Glib::ustring("Building menu bar failed: ") + ex.what();
+			g_warning("%s", errmsg.c_str());
+			errorMessages_lst_.push_back(errmsg);
+			break;
+		}
+
 		auto obj_ptr = builder_ptr_->get_object("menubar");
 		if (!obj_ptr) {
 			Glib::ustring errmsg("Object 'menubar' not found");
@@ -217,16 +217,31 @@ LsGui::LsGui() :
 	}
 	while (false);
 
-	toolbar_ptr_ = nullptr;
-	builder_ptr_->get_widget("toolbar", toolbar_ptr_);  // implicitly managed
-	if (!toolbar_ptr_) {
-		Glib::ustring errmsg("Couldn't get widget 'toolbar'");
-		g_warning("%s", errmsg.c_str());
-		errorMessages_lst_.push_back(errmsg);
-	}
-	else {
+	// toolbar
+	do {
+		try {
+			builder_ptr_->add_from_resource("/toolbar/toolbar.glade");
+		}
+		catch (const Glib::Error &ex)
+		{
+			auto errmsg = Glib::ustring("Building tool bar failed: ") + ex.what();
+			g_warning("%s", errmsg.c_str());
+			errorMessages_lst_.push_back(errmsg);
+			break;
+		}
+
+		toolbar_ptr_ = nullptr;
+		builder_ptr_->get_widget("toolbar", toolbar_ptr_);  // implicitly managed
+		if (!toolbar_ptr_) {
+			Glib::ustring errmsg("Couldn't get widget 'toolbar'");
+			g_warning("%s", errmsg.c_str());
+			errorMessages_lst_.push_back(errmsg);
+			break;
+		}
+
 		outerVBox_.pack_start(*toolbar_ptr_, Gtk::PACK_SHRINK);
 	}
+	while (false);
 
 
 	outerVBox_.pack_start(locationHBox_, Gtk::PACK_SHRINK);
