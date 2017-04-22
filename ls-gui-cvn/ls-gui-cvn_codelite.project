@@ -14,6 +14,7 @@
     <File Name="toolbar.gresource.xml"/>
     <File Name="util.cc"/>
     <File Name="util.hh"/>
+    <File Name="versioncheck.hh"/>
   </VirtualDirectory>
   <Settings Type="Executable">
     <GlobalSettings>

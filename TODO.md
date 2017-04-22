@@ -46,12 +46,6 @@
   * Allow toggling symlink nofollow, to be able to see the symlink target's stats?
     Or can this be done in another way?
 
-  * Compatibility to Debian 8 'jessie' (Debian stable as of 2017-04-19):
-
-    > set_propagate_natural_width
-
-    Requires gtkmm 3.22 -- can this be tested from the preprocessor?
-
   * Streamline toolbar creation to create a single error. (?)
     At least split the menu bar & tool bar generation which might well succeed independently of each other.
 

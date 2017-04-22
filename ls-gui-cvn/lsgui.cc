@@ -9,6 +9,8 @@
 #include <stdexcept>
 #include <system_error>
 
+#include "versioncheck.hh"
+
 
 #define NL "\n"
 
@@ -239,7 +241,16 @@ LsGui::LsGui() :
 	// of the error message.
 	errorMessage_.set_hexpand();
 	errorMessage_.set_alignment(Gtk::ALIGN_FILL);
+#if GTKMM_VERSION_GE(3,22)
 	scrollErrorMessage_.set_propagate_natural_width();
+#else
+#pragma message("Warning: Skipping call to Gtk::ScrolledWindow::set_propagate_natural_width()," \
+	" requires gtkmm 3.22.0 but compiling against " GTKMM_VERSION_STRING)
+
+	g_warning("Skipping call to Gtk::ScrolledWindow::set_propagate_natural_width(),"
+		" requires gtkmm 3.22.0 but was compiled against %s",
+		GTKMM_VERSION_STRING);
+#endif
 	scrollErrorMessage_.set_min_content_height(80);
 	scrollErrorMessage_.add(errorMessage_);
 
