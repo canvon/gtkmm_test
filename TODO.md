@@ -20,8 +20,6 @@
 
     * Test, test, test and adjust for corner cases.
 
-    * Sort.
-
     * Possibility to turn auto-completion off.
 
     * Respect state of Show Hidden in auto-completion, too?

@@ -95,6 +95,8 @@ LsGui::LsGui() :
 	ls_.set_model(modelSort_);
 
 	locationCompletionModel_ptr_ = Gtk::ListStore::create(modelColumns_);
+	locationCompletionModel_ptr_->set_sort_column(
+		modelColumns_.name_raw, Gtk::SortType::SORT_ASCENDING);
 	locationCompletion_ptr_ = Gtk::EntryCompletion::create();
 	locationCompletion_ptr_->set_model(locationCompletionModel_ptr_);
 	locationCompletion_ptr_->set_text_column(modelColumns_.name_raw);
