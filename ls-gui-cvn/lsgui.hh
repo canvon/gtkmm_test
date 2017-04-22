@@ -96,6 +96,7 @@ protected:
 
 	Glib::ustring location_str_;
 	bool location_is_dirlisting_;
+	bool location_esc_pressed_;
 
 	typedef std::list<Glib::ustring> location_history_type;
 	location_history_type            location_history_;

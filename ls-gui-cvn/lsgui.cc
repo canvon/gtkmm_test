@@ -82,6 +82,7 @@ NL;
 
 LsGui::LsGui() :
 	location_is_dirlisting_(false),
+	location_esc_pressed_(false),
 	location_history_pos_(location_history_.end()),
 	outerVBox_(Gtk::ORIENTATION_VERTICAL),
 	locationLabel_("_Location", true)
@@ -776,11 +777,25 @@ bool LsGui::on_locationEntry_key_press_event(GdkEventKey* key_event)
 		switch (key_event->keyval) {
 		case GDK_KEY_Escape:
 			if ((key_event->state & GDK_MODIFIER_MASK) == 0) {
-				// On Esc pressed on the location entry
-				// with no modifiers, reset the entry text.
-				location_.set_text(location_str_);
-				location_.set_position(-1);
+				if (location_esc_pressed_) {
+					// On Esc pressed on the location entry
+					// with no modifiers, reset the entry text.
+					location_.set_text(location_str_);
+					location_.set_position(-1);
+					location_esc_pressed_ = false;
+				}
+				else {
+					// ..but only if it has been hit twice.
+					// This lets a single press close the
+					// location entry completion window.
+					location_esc_pressed_ = true;
+				}
 			}
+			else
+				location_esc_pressed_ = false;
+			break;
+		default:
+			location_esc_pressed_ = false;
 			break;
 		}
 	}
