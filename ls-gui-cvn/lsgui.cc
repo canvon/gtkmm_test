@@ -671,13 +671,18 @@ void LsGui::update_locationCompletion()
 	Glib::ustring typed_str = location_.get_text();
 	Glib::ustring::size_type pos_slash = typed_str.rfind("/");
 
-	Glib::ustring dir_path(".");
+	Glib::ustring dir_path("."), rel_name(typed_str);
 	bool prepend_dir_path = false;
 	if (pos_slash != Glib::ustring::npos &&
 	    pos_slash >= 0 && typed_str[pos_slash] == '/')
 	{
 		dir_path = typed_str.substr(0, pos_slash + 1);
 		prepend_dir_path = true;
+
+		if (pos_slash + 1 < typed_str.length())
+			rel_name = typed_str.substr(pos_slash + 1);
+		else
+			rel_name.clear();
 	}
 
 	bool show_hidden = get_show_hidden();
@@ -695,8 +700,11 @@ void LsGui::update_locationCompletion()
 			}
 
 			if (!show_hidden && !ent_name.empty() && ent_name[0] == '.') {
-				// Skip hidden files/directories.
-				continue;
+				if (rel_name.empty() || rel_name != ent_name.substr(0, rel_name.length())) {
+					// Skip hidden files/directories
+					// that have not been entered explicitly.
+					continue;
+				}
 			}
 
 			Gtk::TreeModel::Row row = *locationCompletionModel_ptr_->append();
