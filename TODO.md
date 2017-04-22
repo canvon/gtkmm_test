@@ -31,6 +31,9 @@
         If this should get implemented, it must be configurable!
         It must be possible to turn this off!
 
+    * Update when backspacing over a slash '/'.
+      (Or rather, when the directory part of the typed location changes?)
+
   * Move directory processing to a background thread.
 
   * Make directory processing background thread cancellable via the GUI.
