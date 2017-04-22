@@ -671,7 +671,9 @@ void LsGui::update_locationCompletion()
 
 	Glib::ustring dir_path(".");
 	bool prepend_dir_path = false;
-	if (pos_slash >= 0 && typed_str[pos_slash] == '/') {
+	if (pos_slash != Glib::ustring::npos &&
+	    pos_slash >= 0 && typed_str[pos_slash] == '/')
+	{
 		dir_path = typed_str.substr(0, pos_slash + 1);
 		prepend_dir_path = true;
 	}
