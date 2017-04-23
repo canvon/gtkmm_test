@@ -1,5 +1,5 @@
-#ifndef LS_STAT_HH
-#define LS_STAT_HH
+#ifndef STAT_CVN_HH
+#define STAT_CVN_HH
 
 #include <memory>
 #include <string>
@@ -73,4 +73,4 @@ public:
 	LsFstatat(const std::string &pathname_str) = delete;
 };
 
-#endif  // LS_STAT_HH
+#endif  // STAT_CVN_HH

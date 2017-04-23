@@ -3,13 +3,13 @@
   <Description/>
   <Dependencies/>
   <VirtualDirectory Name="ls-gui-cvn">
-    <File Name="lsdirent.cc"/>
-    <File Name="lsdirent.hh"/>
+    <File Name="dirent-cvn.cc"/>
+    <File Name="dirent-cvn.hh"/>
     <File Name="lsgui.cc"/>
     <File Name="lsgui.hh"/>
-    <File Name="lsstat.cc"/>
-    <File Name="lsstat.hh"/>
     <File Name="main.cc"/>
+    <File Name="stat-cvn.cc"/>
+    <File Name="stat-cvn.hh"/>
     <File Name="toolbar.glade"/>
     <File Name="toolbar.gresource.xml"/>
     <File Name="util.cc"/>

@@ -1,6 +1,6 @@
 #include "lsgui.hh"
-#include "lsstat.hh"
-#include "lsdirent.hh"
+#include "stat-cvn.hh"
+#include "dirent-cvn.hh"
 #include "util.hh"
 #include <gtkmm/dialog.h>  // For Gtk::RESPONSE_CLOSE
 #include <glibmm/main.h>

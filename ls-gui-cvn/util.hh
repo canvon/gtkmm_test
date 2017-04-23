@@ -1,7 +1,7 @@
 #ifndef LS_UTILITY_HH
 #define LS_UTILITY_HH
 
-#include "lsstat.hh"
+#include "stat-cvn.hh"
 
 #include <string>
 

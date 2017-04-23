@@ -1,5 +1,5 @@
-#ifndef LS_DIRENT_HH
-#define LS_DIRENT_HH
+#ifndef DIRENT_CVN_HH
+#define DIRENT_CVN_HH
 
 #include <memory>
 #include <string>
@@ -27,4 +27,4 @@ private:
 	std::shared_ptr<impl> pimpl;
 };
 
-#endif  // LS_DIRENT_HH
+#endif  // DIRENT_CVN_HH
