@@ -765,7 +765,7 @@ void LsGui::update_locationCompletion()
 		}
 		else {
 			std::cerr << "Location completion: Got system error of non-generic category: "
-			          << ex.code().message() << std::endl;
+			          << ex.what() << std::endl;
 		}
 	}
 	catch (const std::exception &ex) {
