@@ -60,4 +60,7 @@ ls-gui-cvn/resources.deps: ls-gui-cvn/toolbar.gresource.xml
 	  grep -q -F "$@" <<<"$$OUT" && \
 	  cat <<<"$$OUT" >$@
 
-include $(DEPS)
+# Use "-include" instead of "include", to ignore errors due to the
+# dependency makefiles. Before this change, you might have needed
+# to run "make -k clean" (-k as in "keep going") to get things going again.
+-include $(DEPS)
