@@ -23,7 +23,7 @@ namespace cvn::fs
 		// Other cases will likely throw an exception.
 		bool read();
 
-		std::string get_name();
+		std::string get_ent_name();
 
 	private:
 		class impl;

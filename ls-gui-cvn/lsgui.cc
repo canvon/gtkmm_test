@@ -481,7 +481,7 @@ void LsGui::set_location_str()
 			int              dir_fd = dir.fd();
 
 			while (dir.read()) {
-				std::string       ent_name = dir.get_name();
+				std::string       ent_name = dir.get_ent_name();
 				cvn::fs::Fstatat  ent_stat(dir_fd, ent_name, /* symlink nofollow: */ true);
 
 				if (!show_hidden && !ent_name.empty() && ent_name[0] == '.') {
@@ -717,7 +717,7 @@ void LsGui::update_locationCompletion()
 		cvn::fs::Dirent  dir(dir_path);
 
 		while (dir.read()) {
-			std::string ent_name = dir.get_name();
+			std::string ent_name = dir.get_ent_name();
 			if (ent_name == "." ||
 			    ent_name == "..") {
 				// Skip current directory and parent directory

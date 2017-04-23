@@ -86,13 +86,13 @@ namespace cvn::fs
 		return pimpl->entp != nullptr;
 	}
 
-	std::string Dirent::get_name()
+	std::string Dirent::get_ent_name()
 	{
 		if (!pimpl->dirp)
-			throw std::logic_error("Dirent get_name(): invalid operation: directory stream not open");
+			throw std::logic_error("Dirent get_ent_name(): invalid operation: directory stream not open");
 
 		if (!pimpl->entp)
-			throw std::logic_error("Dirent get_name(): invalid operation: no current directory entry");
+			throw std::logic_error("Dirent get_ent_name(): invalid operation: no current directory entry");
 
 		return pimpl->entp->d_name;
 	}
