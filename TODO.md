@@ -50,8 +50,6 @@
   * Don't add history element when current location is re-entered.
     Should stop adding more and more duplicates when pressing Enter again.
 
-  * Use (different) namespace(s) for ls-gui-cvn specific classes?
-
   * Generalize hidden files/directories check,
     perhaps so it can be different on Windows?
 
