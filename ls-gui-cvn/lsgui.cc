@@ -487,7 +487,7 @@ namespace cvn::lsgui
 					std::string       ent_name = dir.get_ent_name();
 					cvn::fs::Fstatat  ent_stat(dir_fd, ent_name, /* symlink nofollow: */ true);
 
-					if (!show_hidden && !ent_name.empty() && ent_name[0] == '.') {
+					if (!show_hidden && cvn::fs::is_hidden(dir_fd, ent_name)) {
 						// Skip hidden files/directories.
 						continue;
 					}
@@ -718,6 +718,7 @@ namespace cvn::lsgui
 
 		try {
 			cvn::fs::Dirent  dir(dir_path);
+			int              dir_fd = dir.fd();
 
 			while (dir.read()) {
 				std::string ent_name = dir.get_ent_name();
@@ -728,7 +729,7 @@ namespace cvn::lsgui
 					continue;
 				}
 
-				if (!show_hidden && !ent_name.empty() && ent_name[0] == '.') {
+				if (!show_hidden && cvn::fs::is_hidden(dir_fd, ent_name)) {
 					if (rel_name.empty() || rel_name != ent_name.substr(0, rel_name.length())) {
 						// Skip hidden files/directories
 						// that have not been entered explicitly.
