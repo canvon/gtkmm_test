@@ -146,4 +146,54 @@ namespace cvn::fs
 	}
 
 
+	//
+	// dirname(), basename() & is_hidden()
+	//
+
+	std::string dirname(const std::string &pathname_str)
+	{
+		std::string::size_type slash_pos = pathname_str.rfind('/');
+		if (slash_pos == std::string::npos || slash_pos < 0)
+			return "";
+
+		return pathname_str.substr(0, slash_pos);
+	}
+
+	std::string basename(const std::string &pathname_str, const std::string &extension_str)
+	{
+		std::string bn_with_ext("");
+		std::string::size_type slash_pos = pathname_str.rfind('/');
+		if (slash_pos == std::string::npos || slash_pos < 0)
+			bn_with_ext = pathname_str;
+		else {
+			if (slash_pos + 1 < pathname_str.length())
+				bn_with_ext = pathname_str.substr(slash_pos + 1);
+		}
+
+		if (extension_str.empty() || extension_str.length() >= bn_with_ext.length())
+			return bn_with_ext;
+
+		std::string::size_type ext_start = bn_with_ext.length() - extension_str.length();
+		if (bn_with_ext.substr(ext_start) == extension_str)
+			return bn_with_ext.substr(0, ext_start);
+
+		return bn_with_ext;
+	}
+
+	bool is_hidden(const std::string &pathname_str)
+	{
+		std::string bn = basename(pathname_str);
+
+		// On UNIX-like, a hidden file/directory is just a dot-file /
+		// starts with a dot '.'
+		return !bn.empty() && bn[0] == '.';
+	}
+	
+	bool is_hidden(int dirfd, const std::string &pathname_str)
+	{
+		// As long as is_hidden(string) just compares the basename against .*,
+		// we'll simply defer to it.
+		return is_hidden(pathname_str);
+	}
+
 }

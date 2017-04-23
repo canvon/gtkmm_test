@@ -20,6 +20,12 @@ namespace cvn::fs
 	std::string readlinkat(int dirfd, const std::string &pathname_str, const Stat &symlink_stat);
 	std::string readlinkat(int dirfd, const char *pathname, int expected_size);
 	std::string readlinkat(int dirfd, const std::string &pathname_str, int expected_size);
+
+	std::string dirname(const std::string &pathname_str);
+	std::string basename(const std::string &pathname_str, const std::string &extension_str = "");
+
+	bool is_hidden(const std::string &pathname_str);
+	bool is_hidden(int dirfd, const std::string &pathname_str);
 }
 
 #endif  // LS_UTILITY_HH
