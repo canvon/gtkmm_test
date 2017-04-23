@@ -4,12 +4,19 @@
 #include <memory>
 #include <string>
 
+// (Forward-declare so that we can return a reference to the stat buffer
+// without needing to include the system headers in using code.)
+struct stat;
+
+namespace cvn::fs
+{
+
 // A stat() and struct stat wrapper.
-class LsStat
+class Stat
 {
 public:
-	LsStat(const char *pathname);
-	LsStat(const std::string &pathname_str);
+	Stat(const char *pathname);
+	Stat(const std::string &pathname_str);
 
 	bool get_is_reg () const,
 	     get_is_dir () const,
@@ -44,33 +51,35 @@ public:
 
 	// TODO: Give access to mtime, ctime, atime.
 
-	struct stat &get_stat();
-	const struct stat &get_stat() const;
+	struct ::stat &get_stat();
+	const struct ::stat &get_stat() const;
 
 protected:
-	LsStat();  // For use by derived classes.
+	Stat();  // For use by derived classes.
 
 	class impl;
 	std::shared_ptr<impl> pimpl;
 };
 
-// LsLstat retrieves information about the symbolic link instead of
+// Lstat retrieves information about the symbolic link instead of
 // the symlink target. (Uses lstat() internally instead of stat().)
-class LsLstat : public LsStat
+class Lstat : public Stat
 {
 public:
-	LsLstat(const char *pathname);
-	LsLstat(const std::string &pathname_str);
+	Lstat(const char *pathname);
+	Lstat(const std::string &pathname_str);
 };
 
-// LsFstatat works from an already opened directory. (Uses fstatat().)
-class LsFstatat : public LsStat
+// Fstatat works from an already opened directory. (Uses fstatat().)
+class Fstatat : public Stat
 {
 public:
-	LsFstatat(int dirfd, const char *pathname, bool symlink_nofollow = false);
-	LsFstatat(int dirfd, const std::string &pathname_str, bool symlink_nofollow = false);
-	LsFstatat(const char *pathname) = delete;
-	LsFstatat(const std::string &pathname_str) = delete;
+	Fstatat(int dirfd, const char *pathname, bool symlink_nofollow = false);
+	Fstatat(int dirfd, const std::string &pathname_str, bool symlink_nofollow = false);
+	Fstatat(const char *pathname) = delete;
+	Fstatat(const std::string &pathname_str) = delete;
 };
+
+}
 
 #endif  // STAT_CVN_HH

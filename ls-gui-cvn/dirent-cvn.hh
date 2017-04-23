@@ -4,12 +4,15 @@
 #include <memory>
 #include <string>
 
-class LsDirent
+namespace cvn::fs
+{
+
+class Dirent
 {
 public:
-	LsDirent(const char *pathname);
-	LsDirent(const std::string &pathname_str);
-	~LsDirent();
+	Dirent(const char *pathname);
+	Dirent(const std::string &pathname_str);
+	~Dirent();
 
 	void close();
 
@@ -26,5 +29,7 @@ private:
 	class impl;
 	std::shared_ptr<impl> pimpl;
 };
+
+}
 
 #endif  // DIRENT_CVN_HH

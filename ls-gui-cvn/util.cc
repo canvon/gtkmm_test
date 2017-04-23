@@ -8,19 +8,23 @@
 #include <cerrno>
 
 
+namespace cvn::fs
+{
+
+
 //
-// cvn::readlink() family of functions
+// cvn::fs::readlink() family of functions
 //
 
 
 // From path name, as C or C++ string.
 
-std::string cvn::readlink(const char *pathname)
+std::string readlink(const char *pathname)
 {
-	return readlink(pathname, LsLstat(pathname));
+	return readlink(pathname, Lstat(pathname));
 }
 
-std::string cvn::readlink(const std::string &pathname_str)
+std::string readlink(const std::string &pathname_str)
 {
 	return readlink(pathname_str.c_str());
 }
@@ -28,12 +32,12 @@ std::string cvn::readlink(const std::string &pathname_str)
 
 // From path name and stat result, as C or C++ string.
 
-std::string cvn::readlink(const char *pathname, const LsStat &symlink_stat)
+std::string readlink(const char *pathname, const Stat &symlink_stat)
 {
 	return readlink(pathname, static_cast<int>(symlink_stat.get_size()));
 }
 
-std::string cvn::readlink(const std::string &pathname_str, const LsStat &symlink_stat)
+std::string readlink(const std::string &pathname_str, const Stat &symlink_stat)
 {
 	return readlink(pathname_str.c_str(), symlink_stat);
 }
@@ -43,30 +47,30 @@ std::string cvn::readlink(const std::string &pathname_str, const LsStat &symlink
 //
 // This is implemented using readlinkat() now, to keep code duplication down.
 
-std::string cvn::readlink(const char *pathname, int expected_size)
+std::string readlink(const char *pathname, int expected_size)
 {
 	return readlinkat(AT_FDCWD, pathname, expected_size);
 }
 
-std::string cvn::readlink(const std::string &pathname_str, int expected_size)
+std::string readlink(const std::string &pathname_str, int expected_size)
 {
 	return readlink(pathname_str.c_str(), expected_size);
 }
 
 
 //
-// cvn::readlinkat() family of functions
+// cvn::fs::readlinkat() family of functions
 //
 
 
 // From directory file descriptor and path name, as C or C++ string.
 
-std::string cvn::readlinkat(int dirfd, const char *pathname)
+std::string readlinkat(int dirfd, const char *pathname)
 {
-	return readlinkat(dirfd, pathname, LsLstat(pathname));
+	return readlinkat(dirfd, pathname, Lstat(pathname));
 }
 
-std::string cvn::readlinkat(int dirfd, const std::string &pathname_str)
+std::string readlinkat(int dirfd, const std::string &pathname_str)
 {
 	return readlinkat(dirfd, pathname_str.c_str());
 }
@@ -74,12 +78,12 @@ std::string cvn::readlinkat(int dirfd, const std::string &pathname_str)
 
 // From directory file descriptor, path name and stat result, as C or C++ string.
 
-std::string cvn::readlinkat(int dirfd, const char *pathname, const LsStat &symlink_stat)
+std::string readlinkat(int dirfd, const char *pathname, const Stat &symlink_stat)
 {
 	return readlinkat(dirfd, pathname, static_cast<int>(symlink_stat.get_size()));
 }
 
-std::string cvn::readlinkat(int dirfd, const std::string &pathname_str, const LsStat &symlink_stat)
+std::string readlinkat(int dirfd, const std::string &pathname_str, const Stat &symlink_stat)
 {
 	return readlinkat(dirfd, pathname_str.c_str(), symlink_stat);
 }
@@ -89,7 +93,7 @@ std::string cvn::readlinkat(int dirfd, const std::string &pathname_str, const Ls
 //
 // This is the "real" implementation, for now.
 
-std::string cvn::readlinkat(int dirfd, const char *pathname, int expected_size)
+std::string readlinkat(int dirfd, const char *pathname, int expected_size)
 {
 	int symlink_size = expected_size;
 
@@ -136,7 +140,10 @@ std::string cvn::readlinkat(int dirfd, const char *pathname, int expected_size)
 	throw std::runtime_error(os.str());
 }
 
-std::string cvn::readlinkat(int dirfd, const std::string &pathname_str, int expected_size)
+std::string readlinkat(int dirfd, const std::string &pathname_str, int expected_size)
 {
 	return readlinkat(dirfd, pathname_str.c_str(), expected_size);
+}
+
+
 }

@@ -19,7 +19,7 @@
 #include <giomm/simpleaction.h>
 
 // (Forward-declare so we don't need to include the header from here.)
-class LsStat;
+namespace cvn::fs { class Stat; }
 
 class LsGui : public Gtk::ApplicationWindow
 {
@@ -61,7 +61,10 @@ public:
 	void set_location_str(const Glib::ustring &new_location_str);
 	void set_location_str_relative(const Glib::ustring &rel_path);
 
-	void fill_row(Gtk::TreeModel::Row &row, const int *dirfdptr, const std::string &name, const LsStat &name_stat);
+	void fill_row(Gtk::TreeModel::Row &row,
+		const int *dirfdptr,
+		const std::string &name,
+		const cvn::fs::Stat &name_stat);
 
 	static const char *menubar_markup;
 

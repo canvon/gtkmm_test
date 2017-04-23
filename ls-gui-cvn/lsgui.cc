@@ -466,7 +466,7 @@ void LsGui::set_location_str()
 
 	try {
 		// Retrieve stat information of the location itself.
-		LsLstat loc_stat(location_str_);
+		cvn::fs::Lstat  loc_stat(location_str_);
 
 		if (loc_stat.get_is_dir()) {
 			location_is_dirlisting_ = true;
@@ -477,12 +477,12 @@ void LsGui::set_location_str()
 			          << "..."
 			          << std::endl;
 
-			LsDirent  dir(location_str_);
-			int       dir_fd = dir.fd();
+			cvn::fs::Dirent  dir(location_str_);
+			int              dir_fd = dir.fd();
 
 			while (dir.read()) {
-				std::string    ent_name = dir.get_name();
-				LsFstatat      ent_stat(dir_fd, ent_name, /* symlink nofollow: */ true);
+				std::string       ent_name = dir.get_name();
+				cvn::fs::Fstatat  ent_stat(dir_fd, ent_name, /* symlink nofollow: */ true);
 
 				if (!show_hidden && !ent_name.empty() && ent_name[0] == '.') {
 					// Skip hidden files/directories.
@@ -565,7 +565,10 @@ void LsGui::set_location_str_relative(const Glib::ustring &rel_path)
 	set_location_str(new_path);
 }
 
-void LsGui::fill_row(Gtk::TreeModel::Row &row, const int *dirfdptr, const std::string &name, const LsStat &name_stat)
+void LsGui::fill_row(Gtk::TreeModel::Row &row,
+	const int *dirfdptr,
+	const std::string &name,
+	const cvn::fs::Stat &name_stat)
 {
 	row[modelColumns_.perms] = name_stat.get_mode_str();
 	row[modelColumns_.nlink] = name_stat.get_nlink();
@@ -579,9 +582,9 @@ void LsGui::fill_row(Gtk::TreeModel::Row &row, const int *dirfdptr, const std::s
 	if (name_stat.get_is_lnk()) {
 		try {
 			if (dirfdptr)
-				name_field = name_field + " -> " + cvn::readlinkat(*dirfdptr, name, name_stat);
+				name_field = name_field + " -> " + cvn::fs::readlinkat(*dirfdptr, name, name_stat);
 			else
-				name_field = name_field + " -> " + cvn::readlink(name, name_stat);
+				name_field = name_field + " -> " + cvn::fs::readlink(name, name_stat);
 		}
 		catch (std::system_error &ex) {
 			// Special-case for system errors: Avoid information
@@ -711,7 +714,7 @@ void LsGui::update_locationCompletion()
 	bool show_hidden = get_show_hidden();
 
 	try {
-		LsDirent  dir(dir_path);
+		cvn::fs::Dirent  dir(dir_path);
 
 		while (dir.read()) {
 			std::string ent_name = dir.get_name();
@@ -859,7 +862,7 @@ void LsGui::on_ls_row_activated(const Gtk::TreeModel::Path &path, Gtk::TreeViewC
 		set_location_str_relative(Glib::ustring(row[modelColumns_.name_raw]));
 	}
 	else {
-		LsStat loc_stat(location_str_);
+		cvn::fs::Stat loc_stat(location_str_);
 		if (loc_stat.get_is_dir()) {
 			// Append a slash '/', in the hopes to
 			// dereference a directory symlink...
