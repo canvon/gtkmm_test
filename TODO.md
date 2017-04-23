@@ -50,15 +50,8 @@
   * Don't add history element when current location is re-entered.
     Should stop adding more and more duplicates when pressing Enter again.
 
-  * Use namespaces for utility classes instead of Ls prefixes?
-
   * Use (different) namespace(s) for ls-gui-cvn specific classes?
 
   * Generalize hidden files/directories check,
     perhaps so it can be different on Windows?
-
-    * Rename util.{hh,cc} to fsutil.*, change the namespace
-	  from cvn to cvn::fs or cvn::fsutil or something?
-
-    * Or use namespace cvn::fs in both fsutil.* and cvnstat etc.?
 
