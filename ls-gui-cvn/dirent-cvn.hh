@@ -7,28 +7,28 @@
 namespace cvn::fs
 {
 
-class Dirent
-{
-public:
-	Dirent(const char *pathname);
-	Dirent(const std::string &pathname_str);
-	~Dirent();
+	class Dirent
+	{
+	public:
+		Dirent(const char *pathname);
+		Dirent(const std::string &pathname_str);
+		~Dirent();
 
-	void close();
+		void close();
 
-	int fd();
+		int fd();
 
-	// Returns true if a directory entry has been read,
-	//         false if the end of the directory stream has been reached.
-	// Other cases will likely throw an exception.
-	bool read();
+		// Returns true if a directory entry has been read,
+		//         false if the end of the directory stream has been reached.
+		// Other cases will likely throw an exception.
+		bool read();
 
-	std::string get_name();
+		std::string get_name();
 
-private:
-	class impl;
-	std::shared_ptr<impl> pimpl;
-};
+	private:
+		class impl;
+		std::shared_ptr<impl> pimpl;
+	};
 
 }
 
