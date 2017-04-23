@@ -6,7 +6,7 @@ int main(int argc, char *argv[])
 {
 	auto app = Gtk::Application::create(argc, argv, "de.canvon.gtkmm-test.ls");
 
-	LsGui window;
+	cvn::lsgui::LsGui window;
 
 	app->signal_startup().connect([app, &window] {
 		// Set application-wide menubar.

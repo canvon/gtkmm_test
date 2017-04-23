@@ -12,6 +12,9 @@
 #include "versioncheck.hh"
 
 
+namespace cvn::lsgui
+{
+
 #define NL "\n"
 
 const char *LsGui::menubar_markup =
@@ -974,4 +977,6 @@ void LsGui::on_action_complete_location()
 
 	location_.set_completion(complete_location_new ?
 		locationCompletion_ptr_ : Glib::RefPtr<Gtk::EntryCompletion>());
+}
+
 }

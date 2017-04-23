@@ -21,6 +21,9 @@
 // (Forward-declare so we don't need to include the header from here.)
 namespace cvn::fs { class Stat; }
 
+namespace cvn::lsgui
+{
+
 class LsGui : public Gtk::ApplicationWindow
 {
 public:
@@ -141,5 +144,7 @@ protected:
 		action_show_hidden_ptr_,
 		action_complete_location_ptr_;
 };
+
+}
 
 #endif  // LS_GUI_HH
