@@ -534,10 +534,14 @@ namespace cvn { namespace lsgui
 			to_erase++;
 			location_history_.erase(to_erase, location_history_.end());
 
-			// Add new location as new history element,
-			// and advance position to point to it.
-			location_history_.push_back(new_location_str);
-			location_history_pos_++;
+			// (Prevent entering the same location into history
+			// multiple times.)
+			if (new_location_str != *location_history_pos_) {
+				// Add new location as new history element,
+				// and advance position to point to it.
+				location_history_.push_back(new_location_str);
+				location_history_pos_++;
+			}
 		}
 
 		update_actions();

@@ -47,6 +47,3 @@
 
   * Implement Close.
 
-  * Don't add history element when current location is re-entered.
-    Should stop adding more and more duplicates when pressing Enter again.
-
