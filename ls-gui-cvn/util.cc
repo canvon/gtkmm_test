@@ -108,7 +108,7 @@ namespace cvn { namespace fs
 		for (int attempts_left = attempts_max; attempts_left > 0; attempts_left--)
 		{
 			char buf[symlink_size + 1];
-			size_t  buf_size = sizeof buf / sizeof *buf;
+			size_t  buf_size = sizeof buf;
 			ssize_t ret;
 
 			if ((ret = ::readlinkat(dirfd, pathname, buf, buf_size)) < 0) {
