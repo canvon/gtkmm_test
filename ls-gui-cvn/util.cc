@@ -113,7 +113,7 @@ namespace cvn { namespace fs
 
 			if ((ret = ::readlinkat(dirfd, pathname, buf, buf_size)) < 0) {
 				std::ostringstream os;
-				os << "cvn::readlinkat(): syscall readlinkat() failed"
+				os << "cvn::fs::readlinkat(): syscall readlinkat() failed"
 				   << " at directory file descriptor " << dirfd
 				   << " for " << std::quoted(pathname)
 				   << " (with buffer size " << buf_size << ")";
@@ -132,7 +132,7 @@ namespace cvn { namespace fs
 
 		// Couldn't avoid truncation.
 		std::ostringstream os;
-		os << "cvn::readlinkat(): couldn't avoid truncation after "
+		os << "cvn::fs::readlinkat(): couldn't avoid truncation after "
 		   << attempts_max << " attempts";
 		os << " (next expected symlink size would have been "
 		   << symlink_size << ")";
