@@ -7,7 +7,8 @@
 #include <errno.h>
 
 
-namespace cvn::fs
+//namespace cvn::fs
+namespace cvn { namespace fs
 {
 
 	class Dirent::impl
@@ -97,4 +98,5 @@ namespace cvn::fs
 		return pimpl->entp->d_name;
 	}
 
-}
+}  // cvn::fs
+}  // cvn, when not able to use nested namespace declarations from C++17 or GCC6

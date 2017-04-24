@@ -5,7 +5,8 @@
 
 #include <string>
 
-namespace cvn::fs
+//namespace cvn::fs
+namespace cvn { namespace fs
 {
 	std::string readlink(const char *pathname);
 	std::string readlink(const std::string &pathname_str);
@@ -26,6 +27,8 @@ namespace cvn::fs
 
 	bool is_hidden(const std::string &pathname_str);
 	bool is_hidden(int dirfd, const std::string &pathname_str);
-}
+
+}  // cvn::fs
+}  // cvn, when not able to use nested namespace declarations from C++17 or GCC6
 
 #endif  // LS_UTILITY_HH

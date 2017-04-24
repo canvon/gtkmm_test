@@ -8,7 +8,8 @@
 // without needing to include the system headers in using code.)
 struct stat;
 
-namespace cvn::fs
+//namespace cvn::fs
+namespace cvn { namespace fs
 {
 
 	// A stat() and struct stat wrapper.
@@ -80,6 +81,7 @@ namespace cvn::fs
 		Fstatat(const std::string &pathname_str) = delete;
 	};
 
-}
+}  // cvn::fs
+}  // cvn, when not able to use nested namespace declarations from C++17 or GCC6
 
 #endif  // STAT_CVN_HH

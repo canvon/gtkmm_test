@@ -19,9 +19,11 @@
 #include <giomm/simpleaction.h>
 
 // (Forward-declare so we don't need to include the header from here.)
-namespace cvn::fs { class Stat; }
+//namespace cvn::fs { class Stat; }
+namespace cvn { namespace fs { class Stat; } }
 
-namespace cvn::lsgui
+//namespace cvn::lsgui
+namespace cvn { namespace lsgui
 {
 
 	class LsGui : public Gtk::ApplicationWindow
@@ -145,6 +147,7 @@ namespace cvn::lsgui
 			action_complete_location_ptr_;
 	};
 
-}
+}  // cvn::lsgui
+}  // cvn, when not able to use nested namespace declarations from C++17 or GCC6
 
 #endif  // LS_GUI_HH

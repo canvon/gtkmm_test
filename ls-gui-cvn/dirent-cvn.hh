@@ -4,7 +4,8 @@
 #include <memory>
 #include <string>
 
-namespace cvn::fs
+//namespace cvn::fs
+namespace cvn { namespace fs
 {
 
 	class Dirent
@@ -30,6 +31,7 @@ namespace cvn::fs
 		std::shared_ptr<impl> pimpl;
 	};
 
-}
+}  // cvn::fs
+}  // cvn, when not able to use nested namespace declarations from C++17 or GCC6
 
 #endif  // DIRENT_CVN_HH

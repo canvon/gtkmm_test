@@ -12,7 +12,8 @@
 #include "versioncheck.hh"
 
 
-namespace cvn::lsgui
+//namespace cvn::lsgui
+namespace cvn { namespace lsgui
 {
 
 #define NL "\n"
@@ -980,4 +981,5 @@ namespace cvn::lsgui
 			locationCompletion_ptr_ : Glib::RefPtr<Gtk::EntryCompletion>());
 	}
 
-}
+}  // cvn::lsgui
+}  // cvn, when not able to use nested namespace declarations from C++17 or GCC6

@@ -8,7 +8,8 @@
 #include <cerrno>
 
 
-namespace cvn::fs
+//namespace cvn::fs
+namespace cvn { namespace fs
 {
 
 
@@ -196,4 +197,5 @@ namespace cvn::fs
 		return is_hidden(pathname_str);
 	}
 
-}
+}  // cvn::fs
+}  // cvn, when not able to use nested namespace declarations from C++17 or GCC6
