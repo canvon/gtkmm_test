@@ -3,6 +3,8 @@
 #include "dirent-cvn.hh"
 #include "util.hh"
 #include <gtkmm/dialog.h>  // For Gtk::RESPONSE_CLOSE
+#include <gtkmm/filechooserdialog.h>
+#include <glibmm/convert.h>
 #include <glibmm/main.h>
 #include <iostream>
 #include <iomanip>
@@ -916,8 +918,22 @@ namespace cvn { namespace lsgui
 
 	void LsGui::on_action_open()
 	{
-		// FIXME
-		g_warning("Directory -> Open: Not implemented, yet!");
+		auto dialog = Gtk::FileChooserDialog(
+			*this, "Open directory - ls",
+			Gtk::FileChooserAction::FILE_CHOOSER_ACTION_SELECT_FOLDER);
+		dialog.set_show_hidden(get_show_hidden());
+		dialog.set_create_folders(false);
+		dialog.add_button("_Cancel", Gtk::ResponseType::RESPONSE_CANCEL);
+		dialog.add_button("_Open", Gtk::ResponseType::RESPONSE_OK);
+
+		int result = dialog.run();
+		switch (result) {
+		case Gtk::ResponseType::RESPONSE_OK:
+			set_location_str(Glib::filename_to_utf8(dialog.get_filename()));
+			break;
+		default:
+			return;
+		}
 	}
 
 	void LsGui::on_action_close()

@@ -43,7 +43,5 @@
   * Allow toggling symlink nofollow, to be able to see the symlink target's stats?
     Or can this be done in another way?
 
-  * Implement Open.
-
   * Implement Close.
 
