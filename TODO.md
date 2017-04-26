@@ -49,8 +49,6 @@
   * Use more try-catch where things might fail, e.g. at charset conversion
     (like in Glib::filename_to_utf8()).
 
-  * Implement Close.
-
   * Have a Home button, for easily opening $HOME?
     Have a Current working directory button, for easily opening "."?
     Or is both sufficiently easily to achieve by using the file open dialog?

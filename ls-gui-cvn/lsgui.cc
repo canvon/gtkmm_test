@@ -465,18 +465,17 @@ namespace cvn { namespace lsgui
 
 	void LsGui::set_location_str()
 	{
-		if (!history_is_valid()) {
-			std::cerr << "We're outside history!" << std::endl;
-
-#if 0
+		if (location_history_.empty()) {
 			// Go on with the empty location.
 			location_str_ = "";
-#else
+		}
+		else if (!history_is_valid()) {
+			std::cerr << "We're outside history!" << std::endl;
+
 			// Indicate input error (Is that really right?),
 			// and stay at current state.
 			error_bell();
 			return;
-#endif
 		}
 		else {
 			// Fetch location from current history position.
@@ -952,8 +951,10 @@ namespace cvn { namespace lsgui
 
 	void LsGui::on_action_close()
 	{
-		// FIXME
-		g_warning("Directory -> Close: Not implemented, yet!");
+		// Just clean up current state, for now.
+		// (Will need change when introducing tab pages.)
+		history_clear();
+		set_location_str();
 	}
 
 	void LsGui::on_action_reload()
