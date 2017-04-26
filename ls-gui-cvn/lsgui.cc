@@ -384,7 +384,12 @@ namespace cvn { namespace lsgui
 
 	void LsGui::display_errmsg(const Glib::ustring &errmsg)
 	{
-		display_glib_msg(G_LOG_DOMAIN, G_LOG_LEVEL_WARNING, errmsg, nullptr);
+		display_glib_msg(G_LOG_DOMAIN, G_LOG_LEVEL_WARNING, errmsg);
+	}
+
+	void LsGui::display_msg(const Glib::ustring &msg)
+	{
+		display_glib_msg(G_LOG_DOMAIN, G_LOG_LEVEL_MESSAGE, msg);
 	}
 
 	void LsGui::display_glib_msg(
@@ -585,7 +590,7 @@ namespace cvn { namespace lsgui
 		{
 			std::cerr << "Error: " << ex.what() << std::endl;
 
-			display_errmsg(ex.what());
+			display_msg(Glib::ustring("Error: ") + ex.what());
 		}
 	}
 
@@ -974,9 +979,9 @@ namespace cvn { namespace lsgui
 				}
 			}
 			catch (const std::exception &ex) {
-				display_errmsg(
+				display_msg(
 					std::string("Couldn't activate ls TreeView row: ")
-					+ "Couldn't get stat information for current location: "
+					+ "Trying to find out whether this is a directory: "
 					+ ex.what());
 			}
 		}

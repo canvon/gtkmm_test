@@ -58,11 +58,12 @@ namespace cvn { namespace lsgui
 		Glib::RefPtr<Gtk::ListStore> get_model();
 
 		void display_errmsg(const Glib::ustring &errmsg);
+		void display_msg(const Glib::ustring &msg);
 		void display_glib_msg(
 			const Glib::ustring &log_domain,
 			GLogLevelFlags log_level,
 			const Glib::ustring &msg,
-			const GLogField *fields);
+			const GLogField *fields = nullptr);
 
 		bool history_is_valid() const;
 		bool history_can_backward() const;
