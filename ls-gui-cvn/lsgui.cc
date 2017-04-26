@@ -695,9 +695,13 @@ namespace cvn { namespace lsgui
 			// InfoBar not opening again after first close.
 			//
 			// Remove and readd again.
-			outerVBox_.remove(errorsInfoBar_);
-			outerVBox_.pack_start(errorsInfoBar_, Gtk::PACK_SHRINK);
-			outerVBox_.reorder_child(errorsInfoBar_, posErrorsInfoBar_);
+			// (But protect against doing this when already visible,
+			// as its visualization becomes empty when overdoing this.)
+			if (!errorsInfoBar_.is_visible()) {
+				outerVBox_.remove(errorsInfoBar_);
+				outerVBox_.pack_start(errorsInfoBar_, Gtk::PACK_SHRINK);
+				outerVBox_.reorder_child(errorsInfoBar_, posErrorsInfoBar_);
+			}
 
 			// Put error message into errorsInfoBar.
 			Glib::ustring markup;
