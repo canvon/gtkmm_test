@@ -28,7 +28,7 @@ namespace cvn { namespace fs
 
 		if ((pimpl->dirp = opendir(pathname)) == nullptr) {
 			std::ostringstream os;
-			os << "Dirent ctor: library function opendir() failed for " << std::quoted(pathname);
+			os << "Dirent ctor: cannot open directory " << std::quoted(pathname);
 			throw std::system_error(errno, std::generic_category(), os.str());
 		}
 	}

@@ -39,7 +39,7 @@ namespace cvn { namespace fs
 
 		if (stat(pathname, &pimpl->sb)) {
 			std::ostringstream os;
-			os << "Stat ctor: syscall stat() failed for " << std::quoted(pathname);
+			os << "Stat ctor: cannot retrieve stat information for " << std::quoted(pathname);
 			throw std::system_error(errno, std::generic_category(), os.str());
 		}
 	}
@@ -60,7 +60,7 @@ namespace cvn { namespace fs
 
 		if (lstat(pathname, &pimpl->sb)) {
 			std::ostringstream os;
-			os << "Lstat ctor: syscall lstat() failed for " << std::quoted(pathname);
+			os << "Lstat ctor: cannot retrieve lstat information for " << std::quoted(pathname);
 			throw std::system_error(errno, std::generic_category(), os.str());
 		}
 	}
@@ -85,7 +85,7 @@ namespace cvn { namespace fs
 			flags |= AT_SYMLINK_NOFOLLOW;
 		if (fstatat(dirfd, pathname, &pimpl->sb, flags)) {
 			std::ostringstream os;
-			os << "Fstatat ctor: syscall fstatat() failed at file descriptor "
+			os << "Fstatat ctor: cannot retrieve fstatat information at file descriptor "
 			   << dirfd << " for " << std::quoted(pathname);
 			if (flags)
 				os << " (with flags " << flags << ")";
