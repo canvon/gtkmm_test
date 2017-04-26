@@ -127,7 +127,13 @@ namespace cvn { namespace lsgui
 		location_history_type            location_history_;
 		location_history_type::iterator  location_history_pos_;
 
-		typedef std::vector<std::string> errmsgs_type;
+		struct ErrMsg
+		{
+			Glib::ustring   log_domain;
+			GLogLevelFlags  log_level;
+			Glib::ustring   msg;
+		};
+		typedef std::vector<ErrMsg> errmsgs_type;
 		errmsgs_type errorMessages_lst_;
 
 		Gtk::Box outerVBox_;

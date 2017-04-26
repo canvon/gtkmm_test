@@ -113,7 +113,7 @@ namespace cvn { namespace lsgui
 			// the glib structed log writer installed in the main module
 			// will not have access to us via the Gtk::Application instance.
 			// So we'll have to update our InfoBar ourselves.
-			errorMessages_lst_.push_back(msg);
+			errorMessages_lst_.push_back(ErrMsg { G_LOG_DOMAIN, G_LOG_LEVEL_WARNING, msg });
 		};
 
 		set_title_addition();
@@ -394,10 +394,14 @@ namespace cvn { namespace lsgui
 		const GLogField *fields)
 	{
 		// Accumulate messages.
+#if 0
 		errorMessages_lst_.push_back(
 			((log_domain.empty() || log_domain == G_LOG_DOMAIN)
 				? "" : "From " + log_domain + ": ")
 			+ msg);
+#else
+		errorMessages_lst_.push_back(ErrMsg { log_domain, log_level, msg });
+#endif
 
 		// Display message to the user in a nice InfoBar
 		// that can be closed when the user pleases
@@ -721,7 +725,7 @@ namespace cvn { namespace lsgui
 			     iter != errorMessages_lst_.end();
 			     iter++, n++)
 			{
-				const std::string &msg(*iter);
+				const Glib::ustring &domain(iter->log_domain), &msg(iter->msg);
 				gchar *msg_markup_ptr = g_markup_escape_text(msg.c_str(), -1);
 				if (msg_markup_ptr == nullptr) {
 					g_warning("Set location string: g_markup_escape_text() failed, will skip error message %d/%d",
@@ -734,14 +738,23 @@ namespace cvn { namespace lsgui
 						+ " N.A. </span></big>";
 				}
 				else {
+					gchar *domain_markup_ptr = nullptr;
+					if (!domain.empty() && domain != G_LOG_DOMAIN)
+						domain_markup_ptr = g_markup_escape_text(domain.c_str(), -1);
+
 					if (n > 1)
 						markup += "\n";
 					markup = markup
 						+ "<big>Error "
 						+ std::to_string(n) + "/" + std::to_string(total)
+						+ (domain_markup_ptr ? Glib::ustring(", from ") + domain_markup_ptr : "")
 						+ ": <span background=\"red\"> "
 						+ msg_markup_ptr + " </span></big>";
 
+					if (domain_markup_ptr) {
+						g_free(domain_markup_ptr);
+						domain_markup_ptr = nullptr;
+					}
 					g_free(msg_markup_ptr);
 					msg_markup_ptr = nullptr;
 				}
