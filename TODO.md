@@ -45,3 +45,22 @@
 
   * Implement Close.
 
+  * Have a Home button, for easily opening $HOME?
+    Have a Current working directory button, for easily opening "."?
+    Or is both sufficiently easily to achieve by using the file open dialog?
+
+  * Support ~/ and ~USERNAME tilde expansion?
+    But what about $HOME vs. getpwnam() inconsistency?
+    For our user, $HOME should be used, but should ~/ and ~OURUSER/ potentially differ?
+    Maybe have a look at what exactly bash (or some other shell) does?
+
+  * Support environment variable expansion, e.g., on Ctrl-Enter?
+    (Or maybe according to toggle button?)
+
+  * Let file open dialog be a member? It would continue to live, then,
+    potentially giving the user the last used state as starting point
+    for further opens. (This could be a problem when introducing tabs, though.)
+
+  * Use inotify/dnotify, to (optionally?) automatically update the displayed data
+    when it changes on-disk? (Need to be able to disable this!)
+
