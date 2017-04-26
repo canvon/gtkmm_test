@@ -3,8 +3,8 @@ SHELL = /bin/bash
 
 CXX      := g++
 PCCFLAGS := $(shell pkg-config gtkmm-3.0 --cflags)
-CXXFLAGS := $(PCCFLAGS) -std=c++14 -Wall -O2
-CFLAGS   := $(PCCFLAGS)            -Wall -O2
+CXXFLAGS := $(PCCFLAGS) -std=c++14 -Wall -O2 -g
+CFLAGS   := $(PCCFLAGS)            -Wall -O2 -g
 LDFLAGS  := $(shell pkg-config gtkmm-3.0 --libs)
 
 # Let GNU make implicit rule link in a C++ way.
