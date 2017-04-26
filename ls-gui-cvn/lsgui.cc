@@ -488,7 +488,7 @@ namespace cvn { namespace lsgui
 
 		location_is_dirlisting_ = false;
 
-		std::cout << "New location: " << location_str_ << std::endl;
+		std::cout << "New location: " << std::quoted(location_str_.raw()) << std::endl;
 
 		// Put new location into location entry.
 		// (Apparently this doesn't risk looping...
