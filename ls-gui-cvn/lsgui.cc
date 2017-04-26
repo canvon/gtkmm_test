@@ -515,7 +515,9 @@ namespace cvn { namespace lsgui
 
 		// Update window title as well.
 		// FIXME: Give an opsys-encoded std::string to filename_display_basename()!
-		set_title_addition(location_str_, Glib::filename_display_basename(location_str_));
+		set_title_addition(
+			location_str_,
+			location_str_.empty() ? "" : Glib::filename_display_basename(location_str_));
 
 		// (N.B.: Be sure to use "->", as "." compiles fine
 		//        but frees the smartpointer => Segmentation fault.)
