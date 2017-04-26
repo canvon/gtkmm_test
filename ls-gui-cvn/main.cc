@@ -5,6 +5,8 @@
 #include <gtkmm/messagedialog.h>
 #include <iostream>
 #include <iomanip>
+#include <stdexcept>
+#include <typeinfo>
 
 
 #undef G_LOG_DOMAIN
@@ -86,7 +88,8 @@ GLogWriterOutput ls_gui_log_writer(
 	}
 	catch (const std::exception &ex) {
 		std::cerr
-			<< "Error: Caught exception while in glib log writer " << __func__
+			<< "Error: Caught exception of type " << typeid(ex).name()
+			<< " while in glib log writer " << __func__
 			<< " (ignoring): "
 			<< ex.what() << std::endl;
 	}
