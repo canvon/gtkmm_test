@@ -725,6 +725,7 @@ namespace cvn { namespace lsgui
 			     iter != errorMessages_lst_.end();
 			     iter++, n++)
 			{
+				GLogLevelFlags level = iter->log_level;
 				const Glib::ustring &domain(iter->log_domain), &msg(iter->msg);
 				gchar *msg_markup_ptr = g_markup_escape_text(msg.c_str(), -1);
 				if (msg_markup_ptr == nullptr) {
@@ -742,13 +743,26 @@ namespace cvn { namespace lsgui
 					if (!domain.empty() && domain != G_LOG_DOMAIN)
 						domain_markup_ptr = g_markup_escape_text(domain.c_str(), -1);
 
+					Glib::ustring msg_type_name("(Unknown message type)");
+					switch (level & G_LOG_LEVEL_MASK) {
+					case G_LOG_LEVEL_DEBUG:     msg_type_name = "Debug";       break;
+					case G_LOG_LEVEL_INFO:      msg_type_name = "Info";        break;
+					case G_LOG_LEVEL_MESSAGE:   msg_type_name = "Message";     break;
+					case G_LOG_LEVEL_WARNING:   msg_type_name = "Warning";     break;
+					case G_LOG_LEVEL_CRITICAL:  msg_type_name = "Critical";    break;
+					case G_LOG_LEVEL_ERROR:     msg_type_name = "Fatal error"; break;
+					}
+
 					if (n > 1)
 						markup += "\n";
 					markup = markup
-						+ "<big>Error "
-						+ std::to_string(n) + "/" + std::to_string(total)
-						+ (domain_markup_ptr ? Glib::ustring(", from ") + domain_markup_ptr : "")
-						+ ": <span background=\"red\"> "
+						+ "<big>"
+						+ std::to_string(n) + "/" + std::to_string(total) + ": "
+						+ (domain_markup_ptr ? Glib::ustring("From ") + domain_markup_ptr + ": " : "")
+						+ msg_type_name + ": <span"
+						+ (((level & G_LOG_LEVEL_MASK) <= G_LOG_LEVEL_WARNING)
+							? " background=\"red\"" : "")
+						+ "> "
 						+ msg_markup_ptr + " </span></big>";
 
 					if (domain_markup_ptr) {
