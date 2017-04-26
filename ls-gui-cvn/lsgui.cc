@@ -384,10 +384,19 @@ namespace cvn { namespace lsgui
 
 	void LsGui::display_errmsg(const Glib::ustring &errmsg)
 	{
-		// Accumulate errors.
-		errorMessages_lst_.push_back(errmsg);
+		display_glib_msg(G_LOG_DOMAIN, G_LOG_LEVEL_WARNING, errmsg, nullptr);
+	}
 
-		// Display error to the user in a nice InfoBar
+	void LsGui::display_glib_msg(
+		const Glib::ustring &log_domain,
+		GLogLevelFlags log_level,
+		const Glib::ustring &msg,
+		const GLogField *fields)
+	{
+		// Accumulate messages.
+		errorMessages_lst_.push_back(msg);
+
+		// Display message to the user in a nice InfoBar
 		// that can be closed when the user pleases
 		// (compared to a message dialog, which must be
 		// closed immediately to get any more work done).

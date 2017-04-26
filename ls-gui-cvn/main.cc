@@ -21,7 +21,7 @@ GLogWriterOutput ls_gui_log_writer(
 	try {
 		// (Think: priority)
 		if ((log_level & G_LOG_LEVEL_MASK) < G_LOG_LEVEL_DEBUG) {
-			Glib::ustring msg;
+			Glib::ustring msg, domain;
 			for (guint i = 0; i < n_fields; i++) {
 				const GLogField &field(fields[i]);
 				if (field.length >= 0)
@@ -30,8 +30,11 @@ GLogWriterOutput ls_gui_log_writer(
 					continue;
 
 				auto key = std::string(field.key);
+				auto value_cstr = static_cast<const char *>(field.value);
 				if (key == "MESSAGE")
-					msg = Glib::ustring(static_cast<const char *>(field.value));
+					msg = value_cstr;
+				else if (key == "GLIB_DOMAIN")
+					domain = value_cstr;
 			}
 
 			if (msg.empty())
@@ -41,10 +44,14 @@ GLogWriterOutput ls_gui_log_writer(
 				// Fatal errors get a message box
 				// instead of the more user-friendly InfoBar handling.
 				std::cerr
-					<< "Launching a message box for fatal message: "
-					<< std::quoted(msg.raw()) << std::endl;
+					<< "Launching a message box for fatal message"
+					<< " from domain " << std::quoted(domain.raw())
+					<< ": " << std::quoted(msg.raw()) << std::endl;
 				auto dialog = Gtk::MessageDialog(
-					"Fatal: " + msg, false,
+					"Fatal"
+					+ (domain.empty() ? "" : ", from " + domain)
+					+ ": " + msg,
+					false,
 					Gtk::MessageType::MESSAGE_ERROR,
 					Gtk::ButtonsType::BUTTONS_OK,
 					true);
@@ -75,7 +82,7 @@ GLogWriterOutput ls_gui_log_writer(
 						break;
 					}
 
-					window_ptr->display_errmsg(msg);
+					window_ptr->display_glib_msg(domain, log_level, msg, fields);
 				}
 				while (false);
 			}
