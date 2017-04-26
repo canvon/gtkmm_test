@@ -384,7 +384,13 @@ namespace cvn { namespace lsgui
 
 	void LsGui::display_errmsg(const Glib::ustring &errmsg)
 	{
+		// Accumulate errors.
 		errorMessages_lst_.push_back(errmsg);
+
+		// Display error to the user in a nice InfoBar
+		// that can be closed when the user pleases
+		// (compared to a message dialog, which must be
+		// closed immediately to get any more work done).
 		update_errorsInfoBar();
 	}
 
@@ -561,14 +567,7 @@ namespace cvn { namespace lsgui
 		{
 			std::cerr << "Error: " << ex.what() << std::endl;
 
-			// Accumulate errors.
-			errorMessages_lst_.push_back(ex.what());
-
-			// Display error to the user in a nice InfoBar
-			// that can be closed when the user pleases
-			// (compared to a message dialog, which must be
-			// closed immediately to get any more work done).
-			update_errorsInfoBar();
+			display_errmsg(ex.what());
 		}
 	}
 
@@ -934,13 +933,10 @@ namespace cvn { namespace lsgui
 				}
 			}
 			catch (const std::exception &ex) {
-				auto errmsg =
+				display_errmsg(
 					std::string("Couldn't activate ls TreeView row: ")
 					+ "Couldn't get stat information for current location: "
-					+ ex.what();
-				g_warning("%s", errmsg.c_str());
-				errorMessages_lst_.push_back(errmsg);
-				update_errorsInfoBar();
+					+ ex.what());
 			}
 		}
 	}
