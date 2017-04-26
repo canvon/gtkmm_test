@@ -102,7 +102,7 @@ namespace cvn { namespace lsgui
 		outerVBox_(Gtk::ORIENTATION_VERTICAL),
 		locationLabel_("_Location", true)
 	{
-		set_title("ls");
+		set_title_addition();
 		set_default_size(800, 600);
 
 		model_ = Gtk::ListStore::create(modelColumns_);
@@ -496,6 +496,9 @@ namespace cvn { namespace lsgui
 		if (location_.get_text() != location_str_)
 			location_.set_text(location_str_);
 
+		// Update window title as well.
+		set_title_addition(location_str_);
+
 		// (N.B.: Be sure to use "->", as "." compiles fine
 		//        but frees the smartpointer => Segmentation fault.)
 		model_->clear();
@@ -654,6 +657,14 @@ namespace cvn { namespace lsgui
 		bool complete_location = true;
 		action_complete_location_ptr_->get_state(complete_location);
 		return complete_location;
+	}
+
+	void LsGui::set_title_addition(const Glib::ustring &title_addition)
+	{
+		if (title_addition.empty())
+			set_title("ls");
+		else
+			set_title(title_addition + " - ls");
 	}
 
 	void LsGui::update_errorsInfoBar()

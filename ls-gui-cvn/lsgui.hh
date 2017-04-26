@@ -84,6 +84,8 @@ namespace cvn { namespace lsgui
 		bool get_complete_location() const;
 
 	protected:
+		void set_title_addition(const Glib::ustring &title_addition = "");
+
 		void update_actions();
 		void update_errorsInfoBar();
 		void update_locationCompletion();
