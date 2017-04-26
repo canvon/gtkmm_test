@@ -906,15 +906,26 @@ namespace cvn { namespace lsgui
 			set_location_str_relative(Glib::ustring(row[modelColumns_.name_raw]));
 		}
 		else {
-			cvn::fs::Stat loc_stat(location_str_);
-			if (loc_stat.get_is_dir()) {
-				// Append a slash '/', in the hopes to
-				// dereference a directory symlink...
-				set_location_str(location_str_ + '/');
+			try {
+				cvn::fs::Stat loc_stat(location_str_);
+				if (loc_stat.get_is_dir()) {
+					// Append a slash '/', in the hopes to
+					// dereference a directory symlink...
+					set_location_str(location_str_ + '/');
+				}
+				else {
+					// "Bing!" & stay with current state.
+					ls_.error_bell();
+				}
 			}
-			else {
-				// "Bing!" & stay with current state.
-				ls_.error_bell();
+			catch (const std::exception &ex) {
+				auto errmsg =
+					std::string("Couldn't activate ls TreeView row: ")
+					+ "Couldn't get stat information for current location: "
+					+ ex.what();
+				g_warning("%s", errmsg.c_str());
+				errorMessages_lst_.push_back(errmsg);
+				update_errorsInfoBar();
 			}
 		}
 	}
