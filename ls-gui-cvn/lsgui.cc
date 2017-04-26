@@ -497,7 +497,8 @@ namespace cvn { namespace lsgui
 			location_.set_text(location_str_);
 
 		// Update window title as well.
-		set_title_addition(location_str_);
+		// FIXME: Give an opsys-encoded std::string to filename_display_basename()!
+		set_title_addition(location_str_, Glib::filename_display_basename(location_str_));
 
 		// (N.B.: Be sure to use "->", as "." compiles fine
 		//        but frees the smartpointer => Segmentation fault.)
@@ -659,12 +660,16 @@ namespace cvn { namespace lsgui
 		return complete_location;
 	}
 
-	void LsGui::set_title_addition(const Glib::ustring &title_addition)
+	void LsGui::set_title_addition(
+		const Glib::ustring &title_addition,
+		const Glib::ustring &short_name)
 	{
-		if (title_addition.empty())
-			set_title("ls");
-		else
-			set_title(title_addition + " - ls");
+		Glib::ustring title("ls");
+		if (!title_addition.empty())
+			title = title_addition + " - " + title;
+		if (!short_name.empty())
+			title = "[" + short_name + "] " + title;
+		set_title(title);
 	}
 
 	void LsGui::update_errorsInfoBar()
