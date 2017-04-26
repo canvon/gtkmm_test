@@ -210,7 +210,13 @@ namespace cvn { namespace fs
 		uid_t uid = pimpl->sb.st_uid;
 
 		// TODO: Use reentrant getpwuid_r(), to support threading?
+		errno = 0;
 		::passwd *user = ::getpwuid(uid);
+		if (!user && errno)
+			throw std::system_error(
+				errno, std::generic_category(),
+				"Stat::get_user(): library function getpwuid() failed for uid "
+				+ std::to_string(uid));
 		if (user)
 			return user->pw_name;
 
@@ -223,7 +229,13 @@ namespace cvn { namespace fs
 		gid_t gid = pimpl->sb.st_gid;
 
 		// TODO: Use reentrant getgrgid_r(), to support threading?
+		errno = 0;
 		::group *group = ::getgrgid(gid);
+		if (!group && errno)
+			throw std::system_error(
+				errno, std::generic_category(),
+				"Stat::get_group(): library function getgrgid() failed for gid "
+				+ std::to_string(gid));
 		if (group)
 			return group->gr_name;
 
