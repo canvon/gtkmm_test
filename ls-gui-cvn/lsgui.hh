@@ -60,6 +60,9 @@ namespace cvn { namespace lsgui
 		bool history_can_backward() const;
 		bool history_can_forward() const;
 
+		void history_clear();
+		void history_add(const Glib::ustring &new_item_str);
+
 		Glib::ustring get_location_str() const;
 		bool get_location_is_dirlisting() const;
 		void set_location_str();

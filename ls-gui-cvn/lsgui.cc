@@ -420,6 +420,43 @@ namespace cvn { namespace lsgui
 		action_forward_ptr_->set_enabled(history_can_forward());
 	}
 
+	void LsGui::history_clear()
+	{
+		// Restore state after ctor, hopefully.
+		location_history_.clear();
+		location_history_pos_ = location_history_.end();
+
+		update_actions();
+	}
+
+	void LsGui::history_add(const Glib::ustring &new_item_str)
+	{
+		// Nothing in the history, yet?
+		if (location_history_pos_ == location_history_.end()) {
+			// Simply insert as last element, and go
+			// from one-past-the-last-element to the last element.
+			location_history_.push_back(new_item_str);
+			location_history_pos_--;
+		}
+		else {
+			// Erase forward history, in case there is one.
+			location_history_type::iterator to_erase = location_history_pos_;
+			to_erase++;
+			location_history_.erase(to_erase, location_history_.end());
+
+			// (Prevent entering the same location into history
+			// multiple times.)
+			if (new_item_str != *location_history_pos_) {
+				// Add new location as new history element,
+				// and advance position to point to it.
+				location_history_.push_back(new_item_str);
+				location_history_pos_++;
+			}
+		}
+
+		update_actions();
+	}
+
 	Glib::ustring LsGui::get_location_str() const
 	{
 		return Glib::ustring(location_str_);
@@ -523,30 +560,7 @@ namespace cvn { namespace lsgui
 
 	void LsGui::set_location_str(const Glib::ustring &new_location_str)
 	{
-		// Nothing in the history, yet?
-		if (location_history_pos_ == location_history_.end()) {
-			// Simply insert as last element, and go
-			// from one-past-the-last-element to the last element.
-			location_history_.push_back(new_location_str);
-			location_history_pos_--;
-		}
-		else {
-			// Erase forward history, in case there is one.
-			location_history_type::iterator to_erase = location_history_pos_;
-			to_erase++;
-			location_history_.erase(to_erase, location_history_.end());
-
-			// (Prevent entering the same location into history
-			// multiple times.)
-			if (new_location_str != *location_history_pos_) {
-				// Add new location as new history element,
-				// and advance position to point to it.
-				location_history_.push_back(new_location_str);
-				location_history_pos_++;
-			}
-		}
-
-		update_actions();
+		history_add(new_location_str);
 
 		set_location_str();
 	}
