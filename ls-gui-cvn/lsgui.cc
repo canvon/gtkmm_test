@@ -394,7 +394,10 @@ namespace cvn { namespace lsgui
 		const GLogField *fields)
 	{
 		// Accumulate messages.
-		errorMessages_lst_.push_back(msg);
+		errorMessages_lst_.push_back(
+			((log_domain.empty() || log_domain == G_LOG_DOMAIN)
+				? "" : "From " + log_domain + ": ")
+			+ msg);
 
 		// Display message to the user in a nice InfoBar
 		// that can be closed when the user pleases
