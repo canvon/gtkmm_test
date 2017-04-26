@@ -418,6 +418,10 @@ namespace cvn { namespace lsgui
 		action_reload_ptr_->set_enabled(history_is_valid());
 		action_backward_ptr_->set_enabled(history_can_backward());
 		action_forward_ptr_->set_enabled(history_can_forward());
+
+		// (Don't advertise an ability to further close something
+		// when there is nothing left to close, as the history is empty.)
+		action_close_ptr_->set_enabled(!location_history_.empty());
 	}
 
 	void LsGui::history_clear()
