@@ -107,6 +107,15 @@ namespace cvn { namespace lsgui
 		outerVBox_(Gtk::ORIENTATION_VERTICAL),
 		locationLabel_("_Location", true)
 	{
+		auto warn = [this](const Glib::ustring &msg) {
+			g_warning("%s", msg.c_str());
+			// As we're still in the constructor,
+			// the glib structed log writer installed in the main module
+			// will not have access to us via the Gtk::Application instance.
+			// So we'll have to update our InfoBar ourselves.
+			errorMessages_lst_.push_back(msg);
+		};
+
 		set_title_addition();
 		set_default_size(800, 600);
 
@@ -133,26 +142,26 @@ namespace cvn { namespace lsgui
 
 		Gtk::CellRenderer *renderer = nullptr;
 		if ((renderer = ls_.get_column_cell_renderer(lsViewColumns_.perms)) == nullptr) {
-			g_warning("LsGui ctor: Can't get cell renderer for ls view column perms, get_column_cell_renderer() failed");
+			warn("LsGui ctor: Can't get cell renderer for ls view column perms, get_column_cell_renderer() failed");
 		}
 		else {
 			auto text_renderer = dynamic_cast<Gtk::CellRendererText*>(renderer);
 			if (text_renderer == nullptr) {
-				g_warning("LsGui ctor: Can't get text cell renderer for ls view column perms, cast gave null pointer");
+				warn("LsGui ctor: Can't get text cell renderer for ls view column perms, cast gave null pointer");
 			}
 			else {
 				text_renderer->property_family().set_value("mono");
 			}
 		}
 		if ((renderer = ls_.get_column_cell_renderer(lsViewColumns_.nlink)) == nullptr) {
-			g_warning("LsGui ctor: Can't get cell renderer for ls view column nlink, get_column_cell_renderer() failed");
+			warn("LsGui ctor: Can't get cell renderer for ls view column nlink, get_column_cell_renderer() failed");
 		}
 		else {
 			// right-align
 			renderer->property_xalign().set_value(1.0);
 		}
 		if ((renderer = ls_.get_column_cell_renderer(lsViewColumns_.size)) == nullptr) {
-			g_warning("LsGui ctor: Can't get cell renderer for ls view column size, get_column_cell_renderer() failed");
+			warn("LsGui ctor: Can't get cell renderer for ls view column size, get_column_cell_renderer() failed");
 		}
 		else {
 			// right-align
@@ -190,25 +199,19 @@ namespace cvn { namespace lsgui
 			}
 			catch (const Glib::Error &ex)
 			{
-				auto errmsg = Glib::ustring("Building menu bar failed: ") + ex.what();
-				g_warning("%s", errmsg.c_str());
-				errorMessages_lst_.push_back(errmsg);
+				warn(Glib::ustring("Building menu bar failed: ") + ex.what());
 				break;
 			}
 
 			auto obj_ptr = builder_ptr_->get_object("menubar");
 			if (!obj_ptr) {
-				Glib::ustring errmsg("Object 'menubar' not found");
-				g_warning("%s", errmsg.c_str());
-				errorMessages_lst_.push_back(errmsg);
+				warn("Object 'menubar' not found");
 				break;
 			}
 
 			gmenu_ptr_ = Glib::RefPtr<Gio::Menu>::cast_dynamic(obj_ptr);
 			if (!gmenu_ptr_) {
-				Glib::ustring errmsg("Object 'menubar' is not a Gio::Menu");
-				g_warning("%s", errmsg.c_str());
-				errorMessages_lst_.push_back(errmsg);
+				warn("Object 'menubar' is not a Gio::Menu");
 				break;
 			}
 
@@ -229,9 +232,7 @@ namespace cvn { namespace lsgui
 			// as constructor argument, we don't have an application, yet.
 			auto app = get_application();
 			if (!app) {
-				Glib::ustring errmsg("Couldn't get application instance");
-				g_warning("%s", errmsg.c_str());
-				errorMessages_lst_.push_back(errmsg);
+				warn("Couldn't get application instance");
 				break;
 			}
 
@@ -247,18 +248,14 @@ namespace cvn { namespace lsgui
 			}
 			catch (const Glib::Error &ex)
 			{
-				auto errmsg = Glib::ustring("Building tool bar failed: ") + ex.what();
-				g_warning("%s", errmsg.c_str());
-				errorMessages_lst_.push_back(errmsg);
+				warn(Glib::ustring("Building tool bar failed: ") + ex.what());
 				break;
 			}
 
 			toolbar_ptr_ = nullptr;
 			builder_ptr_->get_widget("toolbar", toolbar_ptr_);  // implicitly managed
 			if (!toolbar_ptr_) {
-				Glib::ustring errmsg("Couldn't get widget 'toolbar'");
-				g_warning("%s", errmsg.c_str());
-				errorMessages_lst_.push_back(errmsg);
+				warn("Couldn't get widget 'toolbar'");
 				break;
 			}
 
@@ -285,7 +282,7 @@ namespace cvn { namespace lsgui
 #pragma message("Warning: Skipping call to Gtk::ScrolledWindow::set_propagate_natural_width()," \
 	" requires gtkmm 3.22.0 but compiling against " GTKMM_VERSION_STRING)
 
-		g_warning("Skipping call to Gtk::ScrolledWindow::set_propagate_natural_width(),"
+		warn("Skipping call to Gtk::ScrolledWindow::set_propagate_natural_width(),"
 			" requires gtkmm 3.22.0 but was compiled against %s",
 			GTKMM_VERSION_STRING);
 #endif
@@ -300,7 +297,7 @@ namespace cvn { namespace lsgui
 
 		auto containerptr = dynamic_cast<Gtk::Container*>(errorsInfoBar_.get_content_area());
 		if (containerptr == nullptr) {
-			g_warning("Can't prepare GTK InfoBar: get_content_area() is not a Gtk::Container*!");
+			warn("Can't prepare GTK InfoBar: get_content_area() is not a Gtk::Container*!");
 		}
 		else {
 			containerptr->add(scrollErrorMessage_);
