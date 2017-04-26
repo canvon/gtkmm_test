@@ -289,6 +289,9 @@ namespace cvn { namespace lsgui
 
 		// Allow copy & paste of error messages.
 		errorMessage_.set_selectable();
+		// Allow error messages to wrap, so the user does not need to
+		// scroll to read the important part of the message.
+		errorMessage_.set_line_wrap();
 
 		auto containerptr = dynamic_cast<Gtk::Container*>(errorsInfoBar_.get_content_area());
 		if (containerptr == nullptr) {
