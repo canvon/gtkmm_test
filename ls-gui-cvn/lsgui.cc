@@ -1,3 +1,5 @@
+#define G_LOG_USE_STRUCTURED
+
 #include "lsgui.hh"
 #include "stat-cvn.hh"
 #include "dirent-cvn.hh"
@@ -13,6 +15,9 @@
 
 #include "versioncheck.hh"
 
+
+#undef G_LOG_DOMAIN
+#define G_LOG_DOMAIN "lsgui"
 
 //namespace cvn::lsgui
 namespace cvn { namespace lsgui
@@ -378,6 +383,12 @@ namespace cvn { namespace lsgui
 	Glib::RefPtr<Gtk::ListStore> LsGui::get_model()
 	{
 		return model_;
+	}
+
+	void LsGui::display_errmsg(const Glib::ustring &errmsg)
+	{
+		errorMessages_lst_.push_back(errmsg);
+		update_errorsInfoBar();
 	}
 
 	bool LsGui::history_is_valid() const

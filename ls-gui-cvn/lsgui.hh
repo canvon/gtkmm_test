@@ -56,6 +56,8 @@ namespace cvn { namespace lsgui
 		LsModelColumns &get_modelColumns();
 		Glib::RefPtr<Gtk::ListStore> get_model();
 
+		void display_errmsg(const Glib::ustring &errmsg);
+
 		bool history_is_valid() const;
 		bool history_can_backward() const;
 		bool history_can_forward() const;
