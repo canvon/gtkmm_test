@@ -5,6 +5,8 @@
 #include <fcntl.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <pwd.h>
+#include <grp.h>
 #include <unistd.h>
 #include <errno.h>
 
@@ -205,14 +207,28 @@ namespace cvn { namespace fs
 
 	std::string Stat::get_user() const
 	{
-		// FIXME
-		return std::to_string(pimpl->sb.st_uid);
+		uid_t uid = pimpl->sb.st_uid;
+
+		// TODO: Use reentrant getpwuid_r(), to support threading?
+		::passwd *user = ::getpwuid(uid);
+		if (user)
+			return user->pw_name;
+
+		// Fall back to uid stringification.
+		return std::to_string(uid);
 	}
 
 	std::string Stat::get_group() const
 	{
-		// FIXME
-		return std::to_string(pimpl->sb.st_gid);
+		gid_t gid = pimpl->sb.st_gid;
+
+		// TODO: Use reentrant getgrgid_r(), to support threading?
+		::group *group = ::getgrgid(gid);
+		if (group)
+			return group->gr_name;
+
+		// Fall back to gid stringification.
+		return std::to_string(gid);
 	}
 
 	long long Stat::get_size() const

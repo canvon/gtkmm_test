@@ -6,7 +6,7 @@
 
   * Implement date/time processing & display.
 
-  * Implement uid/gid -> user/group lookup.
+  * Allow switching back to numerical uid/gid display.
 
   * Right-align more numbers: uid/gid
 
