@@ -66,7 +66,7 @@ namespace cvn { namespace lsgui
 			// TODO: Put window id into logging data.
 			// TODO: Respect local_only somehow.
 			// FIXME: This does not compile:
-			g_log_structured(G_LOG_DOMAIN, log_level, std::forward(v)...);
+			g_log_structured(G_LOG_DOMAIN, log_level, v...);
 			// ^ "error: no matching function for call to 'forward(const char [10])'"
 			//   (which probably refers to the "CODE_FILE" string literal below?)
 		}
