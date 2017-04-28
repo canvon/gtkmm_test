@@ -57,6 +57,29 @@ namespace cvn { namespace lsgui
 		LsModelColumns &get_modelColumns();
 		Glib::RefPtr<Gtk::ListStore> get_model();
 
+
+		template<class ...T> void log_structured_direct(
+			bool local_only,
+			GLogLevelFlags log_level,
+			T &&...v)
+		{
+			// TODO: Put window id into logging data.
+			// TODO: Respect local_only somehow.
+			// FIXME: This does not compile:
+			g_log_structured(G_LOG_DOMAIN, log_level, std::forward(v)...);
+			// ^ "error: no matching function for call to 'forward(const char [10])'"
+			//   (which probably refers to the "CODE_FILE" string literal below?)
+		}
+
+// (Let's hope that this won't name-clash...)
+#define log_structured(local_only, log_level, ...) \
+	log_structured_direct(local_only, log_level, \
+		"CODE_FILE", __FILE__, \
+		/* "CODE_LINE", std::to_string(__LINE__).c_str(), */ \
+		"CODE_FUNC", __func__, \
+		__VA_ARGS__)
+
+
 		void display_errmsg(const Glib::ustring &errmsg);
 		void display_msg(const Glib::ustring &msg);
 		void display_glib_msg(

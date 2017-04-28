@@ -588,9 +588,11 @@ namespace cvn { namespace lsgui
 		}
 		catch (std::exception &ex)
 		{
-			std::cerr << "Error: " << ex.what() << std::endl;
-
-			display_msg(Glib::ustring("Error: ") + ex.what());
+			//std::cerr << "Error: " << ex.what() << std::endl;
+			//
+			//display_msg(Glib::ustring("Error: ") + ex.what());
+			log_structured(true, G_LOG_LEVEL_MESSAGE,
+				"MESSAGE", "Error: %s", ex.what());
 		}
 	}
 
