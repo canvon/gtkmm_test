@@ -283,8 +283,7 @@ namespace cvn { namespace lsgui
 	" requires gtkmm 3.22.0 but compiling against " GTKMM_VERSION_STRING)
 
 		warn("Skipping call to Gtk::ScrolledWindow::set_propagate_natural_width(),"
-			" requires gtkmm 3.22.0 but was compiled against %s",
-			GTKMM_VERSION_STRING);
+			" requires gtkmm 3.22.0 but was compiled against " GTKMM_VERSION_STRING);
 #endif
 		scrollErrorMessage_.set_min_content_height(80);
 		scrollErrorMessage_.add(errorMessage_);
