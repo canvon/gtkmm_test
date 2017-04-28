@@ -20,7 +20,7 @@ GLogWriterOutput ls_gui_log_writer(
 {
 	try {
 		// (Think: priority)
-		if ((log_level & G_LOG_LEVEL_MASK) < G_LOG_LEVEL_DEBUG) {
+		if ((log_level & G_LOG_LEVEL_MASK) < G_LOG_LEVEL_INFO) {
 			Glib::ustring msg, domain;
 			for (guint i = 0; i < n_fields; i++) {
 				const GLogField &field(fields[i]);
@@ -89,7 +89,7 @@ GLogWriterOutput ls_gui_log_writer(
 		}
 #if 0
 		else {
-			std::cout << "(Debug message ignored.)" << std::endl;
+			std::cout << "(Debug/Info message ignored.)" << std::endl;
 		}
 #endif
 	}
