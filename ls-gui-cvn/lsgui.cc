@@ -391,11 +391,18 @@ namespace cvn { namespace lsgui
 		display_glib_msg(G_LOG_DOMAIN, G_LOG_LEVEL_MESSAGE, msg);
 	}
 
+#ifndef HAVE_STRUCTURED_LOGGING
+#pragma message("Warning: Omitting parameter \"fields\" from LsGui::display_glib_msg() definition, " REQUIRES_STRUCTURED_LOGGING)
+#endif
 	void LsGui::display_glib_msg(
 		const Glib::ustring &log_domain,
 		GLogLevelFlags log_level,
-		const Glib::ustring &msg,
-		const GLogField *fields)
+		const Glib::ustring &msg
+#if HAVE_STRUCTURED_LOGGING
+		,
+		const GLogField *fields
+#endif
+		)
 	{
 		// Accumulate messages.
 #if 0

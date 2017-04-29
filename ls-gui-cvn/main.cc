@@ -8,10 +8,13 @@
 #include <stdexcept>
 #include <typeinfo>
 
+#include "versioncheck.hh"
+
 
 #undef G_LOG_DOMAIN
 #define G_LOG_DOMAIN "lsgui"
 
+#ifdef HAVE_STRUCTURED_LOGGING
 GLogWriterOutput ls_gui_log_writer(
 	GLogLevelFlags log_level,
 	const GLogField *fields,
@@ -104,13 +107,18 @@ GLogWriterOutput ls_gui_log_writer(
 	// Pass logging data on to the default writer.
 	return g_log_writer_default(log_level, fields, n_fields, user_data);
 }
+#endif
 
 int main(int argc, char *argv[])
 {
 	auto app = Gtk::Application::create(argc, argv, "de.canvon.gtkmm-test.ls");
 
+#ifdef HAVE_STRUCTURED_LOGGING
 	// Set a glib log writer which will display to the user.
 	g_log_set_writer_func(ls_gui_log_writer, &app, NULL);
+#else
+#pragma message("Warning: Won't set a log writer function, " REQUIRES_STRUCTURED_LOGGING)
+#endif
 
 	// The main window.
 	cvn::lsgui::LsGui window;
