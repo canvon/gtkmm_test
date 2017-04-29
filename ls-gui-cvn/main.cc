@@ -123,6 +123,14 @@ int main(int argc, char *argv[])
 	// The main window.
 	cvn::lsgui::LsGui window;
 
+#ifndef HAVE_STRUCTURED_LOGGING
+	{
+		Glib::ustring msg("Startup warning: Compiled without structured logging support; won't show glib log messages in the GUI!");
+		g_warning("%s", msg.c_str());
+		window.display_errmsg(msg);
+	}
+#endif
+
 	app->signal_startup().connect([app, &window] {
 		// Set application-wide menubar.
 		//
