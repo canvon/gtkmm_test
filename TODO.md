@@ -38,6 +38,8 @@
 
   * Make directory processing background thread cancellable via the GUI.
 
+  * Add "Up" button/action. e.g., from /home/fabian/subdir to /home/fabian
+
   * Add UI for (partially/fully?) canonicalize location.
 
   * Allow toggling symlink nofollow, to be able to see the symlink target's stats?
