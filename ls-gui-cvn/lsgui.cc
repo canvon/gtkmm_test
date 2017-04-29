@@ -283,8 +283,7 @@ namespace cvn { namespace lsgui
 	" requires gtkmm 3.22.0 but compiling against " GTKMM_VERSION_STRING)
 
 		warn("Skipping call to Gtk::ScrolledWindow::set_propagate_natural_width(),"
-			" requires gtkmm 3.22.0 but was compiled against %s",
-			GTKMM_VERSION_STRING);
+			" requires gtkmm 3.22.0 but was compiled against " GTKMM_VERSION_STRING);
 #endif
 		scrollErrorMessage_.set_min_content_height(80);
 		scrollErrorMessage_.add(errorMessage_);
@@ -392,11 +391,18 @@ namespace cvn { namespace lsgui
 		display_glib_msg(G_LOG_DOMAIN, G_LOG_LEVEL_MESSAGE, msg);
 	}
 
+#ifndef HAVE_STRUCTURED_LOGGING
+#pragma message("Warning: Omitting parameter \"fields\" from LsGui::display_glib_msg() definition, " REQUIRES_STRUCTURED_LOGGING)
+#endif
 	void LsGui::display_glib_msg(
 		const Glib::ustring &log_domain,
 		GLogLevelFlags log_level,
-		const Glib::ustring &msg,
-		const GLogField *fields)
+		const Glib::ustring &msg
+#if HAVE_STRUCTURED_LOGGING
+		,
+		const GLogField *fields
+#endif
+		)
 	{
 		// Accumulate messages.
 #if 0
@@ -1019,7 +1025,7 @@ namespace cvn { namespace lsgui
 
 	void LsGui::on_action_open()
 	{
-		auto dialog = Gtk::FileChooserDialog(
+		Gtk::FileChooserDialog dialog(
 			*this, "Open directory - ls",
 			Gtk::FileChooserAction::FILE_CHOOSER_ACTION_SELECT_FOLDER);
 		dialog.set_show_hidden(get_show_hidden());

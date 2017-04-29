@@ -107,8 +107,15 @@ namespace cvn { namespace fs
 		const int attempts_max = 3;
 		for (int attempts_left = attempts_max; attempts_left > 0; attempts_left--)
 		{
-			char buf[symlink_size + 1];
-			size_t  buf_size = sizeof buf;
+			// (This does not work on Debian 8 'jessie'
+			// with g++ 4.9.2, as it compiles the sizeof of a
+			// variable-length array to constant 1...
+			// With Debian testing 'stretch' g++ 6.3.0,
+			// it just worked.)
+			//char    buf[symlink_size + 1];
+			//size_t  buf_size = sizeof buf;
+			size_t  buf_size = symlink_size + 1;
+			char    buf[buf_size];
 			ssize_t ret;
 
 			if ((ret = ::readlinkat(dirfd, pathname, buf, buf_size)) < 0) {

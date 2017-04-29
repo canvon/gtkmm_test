@@ -19,6 +19,9 @@
 #include <gtkmm/toolbar.h>
 #include <giomm/simpleaction.h>
 
+#include "versioncheck.hh"
+
+
 // (Forward-declare so we don't need to include the header from here.)
 //namespace cvn::fs { class Stat; }
 namespace cvn { namespace fs { class Stat; } }
@@ -59,11 +62,18 @@ namespace cvn { namespace lsgui
 
 		void display_errmsg(const Glib::ustring &errmsg);
 		void display_msg(const Glib::ustring &msg);
+#ifndef HAVE_STRUCTURED_LOGGING
+#pragma message("Warning: Omitting parameter \"fields\" from LsGui::display_glib_msg() declaration, " REQUIRES_STRUCTURED_LOGGING)
+#endif
 		void display_glib_msg(
 			const Glib::ustring &log_domain,
 			GLogLevelFlags log_level,
-			const Glib::ustring &msg,
-			const GLogField *fields = nullptr);
+			const Glib::ustring &msg
+#ifdef HAVE_STRUCTURED_LOGGING
+			,
+			const GLogField *fields = nullptr
+#endif
+			);
 
 		bool history_is_valid() const;
 		bool history_can_backward() const;
