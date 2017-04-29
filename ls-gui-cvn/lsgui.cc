@@ -1018,7 +1018,7 @@ namespace cvn { namespace lsgui
 
 	void LsGui::on_action_open()
 	{
-		auto dialog = Gtk::FileChooserDialog(
+		Gtk::FileChooserDialog dialog(
 			*this, "Open directory - ls",
 			Gtk::FileChooserAction::FILE_CHOOSER_ACTION_SELECT_FOLDER);
 		dialog.set_show_hidden(get_show_hidden());
