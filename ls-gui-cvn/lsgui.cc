@@ -398,7 +398,7 @@ namespace cvn { namespace lsgui
 		const Glib::ustring &log_domain,
 		GLogLevelFlags log_level,
 		const Glib::ustring &msg
-#if HAVE_STRUCTURED_LOGGING
+#ifdef HAVE_STRUCTURED_LOGGING
 		,
 		const GLogField *fields
 #endif
