@@ -85,6 +85,11 @@ namespace cvn { namespace lsgui
 	NL "          <attribute name='action'>win.forward</attribute>"
 	NL "          <attribute name='accel'>&lt;Alt&gt;Right</attribute>"
 	NL "        </item>"
+	NL "        <item>"
+	NL "          <attribute name='label' translatable='yes'>_Up</attribute>"
+	NL "          <attribute name='action'>win.up</attribute>"
+	NL "          <attribute name='accel'>&lt;Alt&gt;Up</attribute>"
+	NL "        </item>"
 	NL "      </section>"
 	NL "    </submenu>"
 	NL "    <submenu>"
@@ -333,6 +338,7 @@ namespace cvn { namespace lsgui
 		action_reload_ptr_ = add_action("reload", sigc::mem_fun(*this, &LsGui::on_action_reload));
 		action_backward_ptr_ = add_action("backward", sigc::mem_fun(*this, &LsGui::on_action_backward));
 		action_forward_ptr_ = add_action("forward", sigc::mem_fun(*this, &LsGui::on_action_forward));
+		action_up_ptr_ = add_action("up", sigc::mem_fun(*this, &LsGui::on_action_up));
 		//
 		// Stateful actions.
 		action_show_hidden_ptr_ = add_action_bool("show-hidden",
@@ -1082,6 +1088,22 @@ namespace cvn { namespace lsgui
 		location_history_pos_++;
 		update_actions();
 		set_location_str();
+	}
+
+	void LsGui::on_action_up()
+	{
+		if (location_str_.empty()) {
+			error_bell();
+			return;
+		}
+
+		std::string dir_name = cvn::fs::dirname(location_str_);
+		if (dir_name == location_str_) {
+			error_bell();
+			return;
+		}
+
+		set_location_str(dir_name);
 	}
 
 	void LsGui::on_action_show_hidden()

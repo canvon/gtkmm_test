@@ -160,10 +160,16 @@ namespace cvn { namespace fs
 
 	std::string dirname(const std::string &pathname_str)
 	{
+		// Find right-most slash.
 		std::string::size_type slash_pos = pathname_str.rfind('/');
+		// No slash found means filename-only; assume current directory.
 		if (slash_pos == std::string::npos || slash_pos < 0)
-			return "";
+			return ".";
+		// Root directory should keep its slash.
+		if (slash_pos == 0)
+			return "/";
 
+		// Remove everything from the right-most slash onwards.
 		return pathname_str.substr(0, slash_pos);
 	}
 

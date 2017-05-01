@@ -123,6 +123,7 @@ namespace cvn { namespace lsgui
 		void on_action_reload();
 		void on_action_backward();
 		void on_action_forward();
+		void on_action_up();
 		void on_action_show_hidden();
 		void on_action_complete_location();
 
@@ -175,6 +176,7 @@ namespace cvn { namespace lsgui
 			action_reload_ptr_,
 			action_backward_ptr_,
 			action_forward_ptr_,
+			action_up_ptr_,
 			action_show_hidden_ptr_,
 			action_complete_location_ptr_;
 	};
