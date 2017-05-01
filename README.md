@@ -50,6 +50,10 @@ To build the binaries, issue (as user, in the directory of the code base):
 
 	gtkmm_test$ make all
 
+This is also the default target, so you could simply use:
+
+	gtkmm_test$ make
+
 If you're only interested in the ls-gui-cvn, instead use:
 
 	gtkmm_test$ make ls-gui-cvn/ls-gui-cvn
