@@ -1107,7 +1107,7 @@ namespace cvn { namespace lsgui
 		std::string prev_location(location_str_);
 		if (prev_location == ".") {
 			prev_location = cvn::fs::get_current_dir_name();
-			history_add(prev_location);
+			// A history element will be added further below.
 		}
 
 		std::string dir_name = cvn::fs::dirname(prev_location);
@@ -1120,6 +1120,14 @@ namespace cvn { namespace lsgui
 			return;
 		}
 
+		// If the previous location from which the dirname
+		// was determined differs from the actually used
+		// location, add an additional history element
+		// to go back to (and see the absolute path).
+		if (prev_location != location_str_)
+			history_add(prev_location);
+
+		// Actually switch location to the determined directory name.
 		set_location_str(dir_name);
 	}
 
