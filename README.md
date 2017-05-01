@@ -11,6 +11,8 @@ Table of Contents:
 
   * [How to run the created application(s)](#run)
 
+  * [Development, or programming on this](#develop)
+
   * [Origin of the software or where does the code come from](#origin)
 
 
@@ -68,6 +70,31 @@ To use the built application(s), start them from the terminal like this:
 If you should have non-UTF-8 path name encodings, use this (for latin1):
 
 	gtkmm_test$ G_FILENAME_ENCODING=ISO-8859-1 ./ls-gui-cvn/ls-gui-cvn
+
+
+## Develop
+
+This project started out being edited in VIM (vi improved, text editor
+for programmers), with the distribution-installed book "Programming
+with gtkmm 3" open in the web browser as reference. Later, Devhelp
+was always open to look up the API reference for gtkmm or sometimes
+GTK and glib.
+
+After some search for a free (as in speech) C++ code completion tool,
+the CodeLite IDE (Integrated Development Environment) was chosen.
+It is currently used to edit this code base and associated files
+when possible, though some edits in relation with the git source code
+management system are still done in VIM, some of the time.
+
+Also, porting to Debian 8 'jessie' (as of 2017-05-01, Debian stable)
+is made using VIM in an edit-compile-run cycle in a systemd-nspawn
+container. The host (which I do usual development on) is running
+upcoming Debian 9 'stretch' (as of 2017-05-01, Debian testing).
+
+If you should have tried (or even succeeded in) building and/or running this
+on something non-GNU/Linux (e.g., some UNIX, MacOS X or even Windows),
+I'd be happy to hear about it. Maybe the source and/or build system
+can be adapted so it'll work out-of-the-box on that platform, soon.
 
 
 ## Origin
