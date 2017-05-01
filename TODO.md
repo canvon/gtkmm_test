@@ -65,12 +65,6 @@
   * Use inotify/dnotify, to (optionally?) automatically update the displayed data
     when it changes on-disk? (Need to be able to disable this!)
 
-  * Change location history to track the opsys path (in filename encoding),
-    as an std::string, instead of tracking the user-visible Glib::ustring's?
-    Could have pros/cons either way! The idea for a change being that
-    the GUI can access filesystem objects by their "real" name and as such
-    better cope with reencoding errors, which would be display-only, then.
-
   * Use pimpl (pointer to implementation) technique with gtkmm-based classes,
     too? Hide the details, have less inter-dependency between modules,
     require less recompilation on an internal-only change.
