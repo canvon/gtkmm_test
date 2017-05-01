@@ -29,6 +29,8 @@
 
   * Allow sorting: Allow switching back to unsorted.
 
+  * Allow sorting directories first.
+
   * Have auto-completion in the location entry:
 
     * Test, test, test and adjust for corner cases.
