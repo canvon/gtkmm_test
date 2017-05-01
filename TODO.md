@@ -89,3 +89,7 @@
     too? Hide the details, have less inter-dependency between modules,
     require less recompilation on an internal-only change.
 
+  * Add an Application/Desktop file to be placed in, e.g.,
+    ~/.local/share/applications/ or installed system-wide.
+    (Needed for making the GUI known to the GNOME Shell.)
+
