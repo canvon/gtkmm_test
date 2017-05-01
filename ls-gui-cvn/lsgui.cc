@@ -1111,8 +1111,11 @@ namespace cvn { namespace lsgui
 		}
 
 		std::string dir_name = cvn::fs::dirname(prev_location);
-		
-		if (dir_name == prev_location) {
+
+		// (N.B.: Don't compare against prev_location
+		// as that would error out when conversion
+		// from "." to "/" would be desired.)
+		if (dir_name == location_str_) {
 			error_bell();
 			return;
 		}
