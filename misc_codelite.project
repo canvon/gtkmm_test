@@ -5,6 +5,7 @@
   <VirtualDirectory Name="gtkmm_test_codelite">
     <File Name="TODO.md"/>
     <File Name="Makefile"/>
+    <File Name="README.md"/>
   </VirtualDirectory>
   <Settings Type="Executable">
     <GlobalSettings>

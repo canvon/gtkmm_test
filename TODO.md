@@ -1,5 +1,18 @@
 # canvon/gtkmm\_test - TODO list
 
+
+## Common
+
+  * Add attribution & copyright claim headers to all source files.
+
+  * License, as possible.  Find out what the original source code
+    from "Programming with gtkmm 3" may be licensed as. (Can be
+	different than the book's license, or could be dual-licensed
+	GFDL + GPL or something.)
+
+  * Switch to CMake?
+
+
 ## ls-gui-cvn
 
   * Complete the symlink support -- but what would still need to get implemented?
