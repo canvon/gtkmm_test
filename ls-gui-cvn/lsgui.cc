@@ -468,6 +468,7 @@ namespace cvn { namespace lsgui
 		action_reload_ptr_->set_enabled(history_is_valid());
 		action_backward_ptr_->set_enabled(history_can_backward());
 		action_forward_ptr_->set_enabled(history_can_forward());
+		action_up_ptr_->set_enabled(!location_str_.empty());
 
 		// (Don't advertise an ability to further close something
 		// when there is nothing left to close, as the history is empty.)
@@ -551,6 +552,10 @@ namespace cvn { namespace lsgui
 		set_title_addition(
 			location_str_,
 			location_str_.empty() ? "" : Glib::filename_display_basename(location_str_));
+
+		// Be sure to update actions that may rely on the value
+		// of location_str_ (which we just changed).
+		update_actions();
 
 		// (N.B.: Be sure to use "->", as "." compiles fine
 		//        but frees the smartpointer => Segmentation fault.)
