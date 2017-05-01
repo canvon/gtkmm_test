@@ -154,6 +154,21 @@ namespace cvn { namespace fs
 	}
 
 
+	std::string get_current_dir_name()
+	{
+		// TODO: Make portable by not relying on GNU extension.
+		char *dir_name_ptr = ::get_current_dir_name();
+		if (!dir_name_ptr) {
+			throw std::system_error(errno, std::generic_category(),
+				"cannot get current directory name");
+		}
+
+		std::string dir_name(dir_name_ptr);
+		free(dir_name_ptr);
+		return dir_name;
+	}
+
+
 	//
 	// dirname(), basename() & is_hidden()
 	//

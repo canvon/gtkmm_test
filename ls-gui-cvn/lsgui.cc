@@ -1104,8 +1104,15 @@ namespace cvn { namespace lsgui
 			return;
 		}
 
-		std::string dir_name = cvn::fs::dirname(location_str_);
-		if (dir_name == location_str_) {
+		std::string prev_location(location_str_);
+		if (prev_location == ".") {
+			prev_location = cvn::fs::get_current_dir_name();
+			history_add(prev_location);
+		}
+
+		std::string dir_name = cvn::fs::dirname(prev_location);
+		
+		if (dir_name == prev_location) {
 			error_bell();
 			return;
 		}

@@ -22,6 +22,8 @@ namespace cvn { namespace fs
 	std::string readlinkat(int dirfd, const char *pathname, int expected_size);
 	std::string readlinkat(int dirfd, const std::string &pathname_str, int expected_size);
 
+	std::string get_current_dir_name();
+
 	std::string dirname(const std::string &pathname_str);
 	std::string basename(const std::string &pathname_str, const std::string &extension_str = "");
 
