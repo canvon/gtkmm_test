@@ -62,6 +62,13 @@
     potentially giving the user the last used state as starting point
     for further opens. (This could be a problem when introducing tabs, though.)
 
+  * Let the user provide fallback charset(s?) to try conversion with when
+    the one set by G_FILENAME_ENCODING environment variable gives conversion
+    error.
+
+  * Let the user configure a list of pathname prefixes and what encoding
+    to use for them.
+
   * Use inotify/dnotify, to (optionally?) automatically update the displayed data
     when it changes on-disk? (Need to be able to disable this!)
 
