@@ -43,9 +43,6 @@
   * Allow toggling symlink nofollow, to be able to see the symlink target's stats?
     Or can this be done in another way?
 
-  * Pay more attention to std::string vs. Glib::ustring, and use
-    Glib::filename_to_utf8() and _from_utf8() as appropriate.
-
   * Use more try-catch where things might fail, e.g. at charset conversion
     (like in Glib::filename_to_utf8()).
 

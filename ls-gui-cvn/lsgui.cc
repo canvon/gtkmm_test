@@ -126,15 +126,15 @@ namespace cvn { namespace lsgui
 
 		model_ = Gtk::ListStore::create(modelColumns_);
 		modelSort_ = Gtk::TreeModelSort::create(model_);
-		modelSort_->set_sort_column(modelColumns_.name, Gtk::SortType::SORT_ASCENDING);
+		modelSort_->set_sort_column(modelColumns_.name_user, Gtk::SortType::SORT_ASCENDING);
 		ls_.set_model(modelSort_);
 
 		locationCompletionModel_ptr_ = Gtk::ListStore::create(modelColumns_);
 		locationCompletionModel_ptr_->set_sort_column(
-			modelColumns_.name_raw, Gtk::SortType::SORT_ASCENDING);
+			modelColumns_.name_gui, Gtk::SortType::SORT_ASCENDING);
 		locationCompletion_ptr_ = Gtk::EntryCompletion::create();
 		locationCompletion_ptr_->set_model(locationCompletionModel_ptr_);
-		locationCompletion_ptr_->set_text_column(modelColumns_.name_raw);
+		locationCompletion_ptr_->set_text_column(modelColumns_.name_gui);
 		location_.set_completion(locationCompletion_ptr_);
 
 		lsViewColumns_.perms = ls_.append_column("Permissions", modelColumns_.perms) - 1;
@@ -143,7 +143,7 @@ namespace cvn { namespace lsgui
 		lsViewColumns_.group = ls_.append_column("Group",       modelColumns_.group) - 1;
 		lsViewColumns_.size  = ls_.append_column("Size",        modelColumns_.size)  - 1;
 		lsViewColumns_.time  = ls_.append_column("Time",        modelColumns_.time)  - 1;
-		lsViewColumns_.name  = ls_.append_column("File name",   modelColumns_.name)  - 1;
+		lsViewColumns_.name  = ls_.append_column("File name",   modelColumns_.name_user) - 1;
 
 		Gtk::CellRenderer *renderer = nullptr;
 		if ((renderer = ls_.get_column_cell_renderer(lsViewColumns_.perms)) == nullptr) {
@@ -186,7 +186,7 @@ namespace cvn { namespace lsgui
 
 #if 0
 		Gtk::TreeModel::Row row = *model_->append();
-		row[modelColumns_.name] = "test1";
+		row[modelColumns_.name_user] = "test1";
 #endif
 
 
@@ -373,8 +373,9 @@ namespace cvn { namespace lsgui
 		add(user); add(group);
 		add(size);
 		add(time);
-		add(name_raw);
-		add(name);
+		add(name_opsys);
+		add(name_gui);
+		add(name_user);
 	}
 
 	LsGui::LsModelColumns &LsGui::get_modelColumns()
@@ -486,7 +487,7 @@ namespace cvn { namespace lsgui
 		update_actions();
 	}
 
-	void LsGui::history_add(const Glib::ustring &new_item_str)
+	void LsGui::history_add(const std::string &new_item_str)
 	{
 		// Nothing in the history, yet?
 		if (location_history_pos_ == location_history_.end()) {
@@ -510,9 +511,9 @@ namespace cvn { namespace lsgui
 		update_actions();
 	}
 
-	Glib::ustring LsGui::get_location_str() const
+	std::string LsGui::get_location_str() const
 	{
-		return Glib::ustring(location_str_);
+		return location_str_;
 	}
 
 	bool LsGui::get_location_is_dirlisting() const
@@ -536,23 +537,36 @@ namespace cvn { namespace lsgui
 		}
 		else {
 			// Fetch location from current history position.
-			location_str_ = Glib::ustring(*location_history_pos_);
+			location_str_ = *location_history_pos_;
 		}
 
 		location_is_dirlisting_ = false;
 
-		std::cout << "New location: " << std::quoted(location_str_.raw()) << std::endl;
+		std::cout << "New location: " << std::quoted(location_str_) << std::endl;
+
+		Glib::ustring location_utf8;
+		try {
+			location_utf8 = Glib::filename_to_utf8(location_str_);
+		}
+		catch (const Glib::Exception &ex) {
+			auto errmsg = Glib::ustring("Error: Cannot convert operating system path: ")
+					+ ex.what();
+			g_warning("%s", errmsg.c_str());
+			display_errmsg(errmsg);
+
+			//location_utf8 = "(conversion error)";
+			location_utf8 = location_str_;
+		}
 
 		// Put new location into location entry.
 		// (Apparently this doesn't risk looping...
 		// But better safe than sorry.)
-		if (location_.get_text() != location_str_)
-			location_.set_text(location_str_);
+		if (location_.get_text() != location_utf8)
+			location_.set_text(location_utf8);
 
 		// Update window title as well.
-		// FIXME: Give an opsys-encoded std::string to filename_display_basename()!
 		set_title_addition(
-			location_str_,
+			location_utf8,
 			location_str_.empty() ? "" : Glib::filename_display_basename(location_str_));
 
 		// Be sure to update actions that may rely on the value
@@ -578,7 +592,7 @@ namespace cvn { namespace lsgui
 				bool show_hidden = get_show_hidden();
 
 				std::cout << "Reading in directory "
-				          << std::quoted(location_str_.raw())
+				          << std::quoted(location_str_)
 				          << "..."
 				          << std::endl;
 
@@ -602,7 +616,7 @@ namespace cvn { namespace lsgui
 			else {
 				// Put the non-directory location's stat results into a single row.
 				Gtk::TreeModel::Row row = *model_->append();
-				fill_row(row, nullptr, location_str_.raw(), loc_stat);
+				fill_row(row, nullptr, location_str_, loc_stat);
 			}
 		}
 		catch (std::exception &ex)
@@ -613,7 +627,7 @@ namespace cvn { namespace lsgui
 		}
 	}
 
-	void LsGui::set_location_str(const Glib::ustring &new_location_str)
+	void LsGui::set_location_str(const std::string &new_location_str)
 	{
 		// (Prevent entering the same location into history
 		// multiple times.)
@@ -624,7 +638,7 @@ namespace cvn { namespace lsgui
 		set_location_str();
 	}
 
-	void LsGui::set_location_str_relative(const Glib::ustring &rel_path)
+	void LsGui::set_location_str_relative(const std::string &rel_path)
 	{
 		// As a special case, on empty relative path,
 		// stay with the current state.
@@ -639,7 +653,7 @@ namespace cvn { namespace lsgui
 		}
 
 		// Otherwise, combine previous location string with relative path.
-		Glib::ustring new_path(location_str_);
+		std::string new_path(location_str_);
 		if (new_path[new_path.size() - 1] != '/')
 			new_path.push_back('/');
 		new_path.append(rel_path);
@@ -659,15 +673,41 @@ namespace cvn { namespace lsgui
 		row[modelColumns_.group] = name_stat.get_group();
 		row[modelColumns_.size]  = name_stat.get_size();
 		//row[modelColumns_.time]  = name_stat.get_mtime_str();  // TODO: Use when implemented.
-		row[modelColumns_.name_raw] = name;
+		row[modelColumns_.name_opsys] = name;
 
-		Glib::ustring name_field(name);
+		Glib::ustring name_utf8, name_field;
+		try {
+			name_utf8  = Glib::filename_to_utf8(name);
+			name_field = name_utf8;
+		}
+		catch (const Glib::Exception &ex) {
+			// Let's hope something sensible happens in the widgets.
+			// (Usually, just the problem character will be replaced
+			// by a box saying (U+)fffd (replacement character),
+			// and there will be loads of Pango warnings about bad UTF-8...)
+			name_utf8  = name;
+			name_field = name_utf8 + " (conversion error: " + ex.what() + ")";
+		}
+		row[modelColumns_.name_gui] = name_utf8;
+
 		if (name_stat.get_is_lnk()) {
 			try {
+				std::string symlink_target_opsys;
 				if (dirfdptr)
-					name_field = name_field + " -> " + cvn::fs::readlinkat(*dirfdptr, name, name_stat);
+					symlink_target_opsys = cvn::fs::readlinkat(*dirfdptr, name, name_stat);
 				else
-					name_field = name_field + " -> " + cvn::fs::readlink(name, name_stat);
+					symlink_target_opsys = cvn::fs::readlink(name, name_stat);
+
+				Glib::ustring symlink_target;
+				try {
+					symlink_target = Glib::filename_to_utf8(symlink_target_opsys);
+				}
+				catch (const Glib::Exception &ex) {
+					symlink_target = symlink_target_opsys
+							+ " (conversion error: " + ex.what() + ")";
+				}
+
+				name_field = name_field + " -> " + symlink_target;
 			}
 			catch (std::system_error &ex) {
 				// Special-case for system errors: Avoid information
@@ -680,7 +720,7 @@ namespace cvn { namespace lsgui
 				name_field = name_field + " (Error reading symlink target: " + ex.what() + ")";
 			}
 		}
-		row[modelColumns_.name] = name_field;
+		row[modelColumns_.name_user] = name_field;
 	}
 
 	Glib::RefPtr<Gio::MenuModel> LsGui::get_gmenu()
@@ -833,22 +873,38 @@ namespace cvn { namespace lsgui
 				rel_name.clear();
 		}
 
+		std::string dir_path_opsys;
+		try {
+			dir_path_opsys = Glib::filename_from_utf8(dir_path);
+		}
+		catch (const Glib::Exception &ex) {
+			dir_path_opsys = dir_path;
+		}
+
 		bool show_hidden = get_show_hidden();
 
 		try {
-			cvn::fs::Dirent  dir(dir_path);
+			cvn::fs::Dirent  dir(dir_path_opsys);
 			int              dir_fd = dir.fd();
 
 			while (dir.read()) {
-				std::string ent_name = dir.get_ent_name();
-				if (ent_name == "." ||
-				    ent_name == "..") {
+				std::string ent_name_opsys = dir.get_ent_name();
+				if (ent_name_opsys == "." ||
+				    ent_name_opsys == "..") {
 					// Skip current directory and parent directory
 					// for completion as they usually will not help.
 					continue;
 				}
 
-				if (!show_hidden && cvn::fs::is_hidden(dir_fd, ent_name)) {
+				Glib::ustring ent_name;
+				try {
+					ent_name = Glib::filename_to_utf8(ent_name_opsys);
+				}
+				catch (const Glib::Exception &ex) {
+					ent_name = ent_name_opsys;
+				}
+
+				if (!show_hidden && cvn::fs::is_hidden(dir_fd, ent_name_opsys)) {
 					if (rel_name.empty() || rel_name != ent_name.substr(0, rel_name.length())) {
 						// Skip hidden files/directories
 						// that have not been entered explicitly.
@@ -857,10 +913,14 @@ namespace cvn { namespace lsgui
 				}
 
 				Gtk::TreeModel::Row row = *locationCompletionModel_ptr_->append();
-				if (prepend_dir_path)
-					row[modelColumns_.name_raw] = dir_path + ent_name;
-				else
-					row[modelColumns_.name_raw] = ent_name;
+				if (prepend_dir_path) {
+					row[modelColumns_.name_opsys] = dir_path_opsys + ent_name_opsys;
+					row[modelColumns_.name_gui]   = dir_path + ent_name;
+				}
+				else {
+					row[modelColumns_.name_opsys] = ent_name_opsys;
+					row[modelColumns_.name_gui]   = ent_name;
+				}
 			}
 		}
 		catch (const std::system_error &ex) {
@@ -899,7 +959,15 @@ namespace cvn { namespace lsgui
 
 	void LsGui::on_locationEntry_activate()
 	{
-		set_location_str(location_.get_text());
+		Glib::ustring text(location_.get_text());
+		std::string pathname_opsys;
+		try {
+			pathname_opsys = Glib::filename_from_utf8(text);
+		}
+		catch (const Glib::Exception &ex) {
+			pathname_opsys = text;
+		}
+		set_location_str(pathname_opsys);
 	}
 
 	void LsGui::on_locationEntry_changed()
@@ -928,7 +996,14 @@ namespace cvn { namespace lsgui
 					if (location_esc_pressed_) {
 						// On Esc pressed on the location entry
 						// with no modifiers, reset the entry text.
-						location_.set_text(location_str_);
+						Glib::ustring pathname_gui;
+						try {
+							pathname_gui = Glib::filename_to_utf8(location_str_);
+						}
+						catch (const Glib::Exception &ex) {
+							pathname_gui = location_str_;
+						}
+						location_.set_text(pathname_gui);
 						location_.set_position(-1);
 						location_esc_pressed_ = false;
 					}
@@ -982,7 +1057,7 @@ namespace cvn { namespace lsgui
 
 		Gtk::TreeModel::Row row = *sel_ptr->get_selected();
 		if (location_is_dirlisting_) {
-			set_location_str_relative(Glib::ustring(row[modelColumns_.name_raw]));
+			set_location_str_relative(row[modelColumns_.name_opsys]);
 		}
 		else {
 			try {
@@ -1049,7 +1124,7 @@ namespace cvn { namespace lsgui
 		int result = dialog.run();
 		switch (result) {
 		case Gtk::ResponseType::RESPONSE_OK:
-			set_location_str(Glib::filename_to_utf8(dialog.get_filename()));
+			set_location_str(dialog.get_filename());
 			break;
 		default:
 			return;

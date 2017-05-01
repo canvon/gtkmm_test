@@ -50,9 +50,11 @@ namespace cvn { namespace lsgui
 			Gtk::TreeModelColumn<Glib::ustring>
 				time;  // mtime, ctime or atime
 			Gtk::TreeModelColumn<std::string>
-				name_raw;
+				name_opsys;
 			Gtk::TreeModelColumn<Glib::ustring>
-				name;
+				name_gui;
+			Gtk::TreeModelColumn<Glib::ustring>
+				name_user;
 
 			LsModelColumns();
 		};
@@ -80,13 +82,13 @@ namespace cvn { namespace lsgui
 		bool history_can_forward() const;
 
 		void history_clear();
-		void history_add(const Glib::ustring &new_item_str);
+		void history_add(const std::string &new_item_str);
 
-		Glib::ustring get_location_str() const;
+		std::string get_location_str() const;
 		bool get_location_is_dirlisting() const;
 		void set_location_str();
-		void set_location_str(const Glib::ustring &new_location_str);
-		void set_location_str_relative(const Glib::ustring &rel_path);
+		void set_location_str(const std::string &new_location_str);
+		void set_location_str_relative(const std::string &rel_path);
 
 		void fill_row(Gtk::TreeModel::Row &row,
 			const int *dirfdptr,
@@ -131,11 +133,11 @@ namespace cvn { namespace lsgui
 		Glib::RefPtr<Gtk::ListStore> model_;
 		Glib::RefPtr<Gtk::TreeModelSort> modelSort_;
 
-		Glib::ustring location_str_;
+		std::string location_str_;
 		bool location_is_dirlisting_;
 		bool location_esc_pressed_;
 
-		typedef std::list<Glib::ustring> location_history_type;
+		typedef std::list<std::string>   location_history_type;
 		location_history_type            location_history_;
 		location_history_type::iterator  location_history_pos_;
 
