@@ -137,6 +137,13 @@ namespace cvn { namespace lsgui
 		locationCompletion_ptr_->set_text_column(modelColumns_.name_gui);
 		location_.set_completion(locationCompletion_ptr_);
 
+		// Add a directory entry type (file, dir, symlink, ...) indication
+		// to the completion display.
+		locationCompletionDirentTypeCellRenderer_.set_alignment(1.0, 0.5);  // right-align
+		locationCompletion_ptr_->pack_end(locationCompletionDirentTypeCellRenderer_, false);
+		locationCompletion_ptr_->add_attribute(
+			locationCompletionDirentTypeCellRenderer_, "text", modelColumns_.type_user);
+
 		lsViewColumns_.perms = ls_.append_column("Permissions", modelColumns_.perms) - 1;
 		lsViewColumns_.nlink = ls_.append_column("#links",      modelColumns_.nlink) - 1;
 		lsViewColumns_.user  = ls_.append_column("User",        modelColumns_.user)  - 1;
@@ -376,6 +383,8 @@ namespace cvn { namespace lsgui
 		add(name_opsys);
 		add(name_gui);
 		add(name_user);
+		add(type_lib);
+		add(type_user);
 	}
 
 	LsGui::LsModelColumns &LsGui::get_modelColumns()
@@ -673,6 +682,8 @@ namespace cvn { namespace lsgui
 		row[modelColumns_.group] = name_stat.get_group();
 		row[modelColumns_.size]  = name_stat.get_size();
 		//row[modelColumns_.time]  = name_stat.get_mtime_str();  // TODO: Use when implemented.
+		row[modelColumns_.type_lib]   = cvn::fs::Dirent::EntType::Unknown;
+		row[modelColumns_.type_user]  = "";
 		row[modelColumns_.name_opsys] = name;
 
 		Glib::ustring name_utf8, name_field;
@@ -921,6 +932,36 @@ namespace cvn { namespace lsgui
 					row[modelColumns_.name_opsys] = ent_name_opsys;
 					row[modelColumns_.name_gui]   = ent_name;
 				}
+				cvn::fs::Dirent::EntType type_lib = dir.get_ent_type();
+				Glib::ustring type_user;
+				switch (type_lib) {
+				case dir.EntType::Regular:
+					type_user = "file";
+					break;
+				case dir.EntType::Directory:
+					type_user = "dir";
+					break;
+				case dir.EntType::Symlink:
+					type_user = "symlink";
+					break;
+				case dir.EntType::BlockDevice:
+					type_user = "blockdev";
+					break;
+				case dir.EntType::CharacterDevice:
+					type_user = "chardev";
+					break;
+				case dir.EntType::Fifo:
+					type_user = "fifo";
+					break;
+				case dir.EntType::Socket:
+					type_user = "socket";
+					break;
+				default:
+					type_user = "(unknown)";
+					break;
+				}
+				row[modelColumns_.type_lib]  = type_lib;
+				row[modelColumns_.type_user] = type_user;
 			}
 		}
 		catch (const std::system_error &ex) {

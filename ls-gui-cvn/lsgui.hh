@@ -3,6 +3,7 @@
 
 #include <list>
 #include <vector>
+#include "dirent-cvn.hh"
 
 #include <glib.h>
 #include <gtkmm/applicationwindow.h>
@@ -55,6 +56,10 @@ namespace cvn { namespace lsgui
 				name_gui;
 			Gtk::TreeModelColumn<Glib::ustring>
 				name_user;
+			Gtk::TreeModelColumn<cvn::fs::Dirent::EntType>
+				type_lib;
+			Gtk::TreeModelColumn<Glib::ustring>
+				type_user;
 
 			LsModelColumns();
 		};
@@ -156,6 +161,7 @@ namespace cvn { namespace lsgui
 		Gtk::Entry location_;
 		Glib::RefPtr<Gtk::ListStore> locationCompletionModel_ptr_;
 		Glib::RefPtr<Gtk::EntryCompletion> locationCompletion_ptr_;
+		Gtk::CellRendererText locationCompletionDirentTypeCellRenderer_;
 		Gtk::InfoBar errorsInfoBar_; int posErrorsInfoBar_;
 		Gtk::ScrolledWindow scrollErrorMessage_;
 		Gtk::Label errorMessage_;
