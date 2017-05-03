@@ -211,7 +211,7 @@ namespace cvn { namespace fs
 
 		// TODO: Use reentrant getpwuid_r(), to support threading?
 		errno = 0;
-		::passwd *user = ::getpwuid(uid);
+		const ::passwd *user = ::getpwuid(uid);
 		if (!user && errno)
 			throw std::system_error(
 				errno, std::generic_category(),
@@ -230,7 +230,7 @@ namespace cvn { namespace fs
 
 		// TODO: Use reentrant getgrgid_r(), to support threading?
 		errno = 0;
-		::group *group = ::getgrgid(gid);
+		const ::group *group = ::getgrgid(gid);
 		if (!group && errno)
 			throw std::system_error(
 				errno, std::generic_category(),
