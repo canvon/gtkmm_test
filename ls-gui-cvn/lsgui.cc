@@ -152,6 +152,7 @@ namespace cvn { namespace lsgui
 			cellRenderer.set_padding(padX, padY);
 
 			cellRenderer.property_cell_background().set_value("light gray");
+			cellRenderer.property_foreground().set_value("black");
 
 			locationCompletion_ptr_->pack_end(cellRenderer, false);
 			locationCompletion_ptr_->add_attribute(
