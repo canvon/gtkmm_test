@@ -895,26 +895,16 @@ namespace cvn { namespace lsgui
 		if (!typed_str.empty() &&
 		    typed_str[0] == '~' && pos_slash == Glib::ustring::npos)
 		{
-			auto  lc_ptr(locationCompletion_ptr_);
-			auto  lcModel_ptr(locationCompletionModel_ptr_);
-			auto &lcActions(locationCompletionActions_);
-
 			// Fill model with ~username entries.
 			for (auto &pair : users_) {
-				Gtk::TreeModel::Row row = *lcModel_ptr->append();
+				Gtk::TreeModel::Row row = *locationCompletionModel_ptr_->append();
 				row[modelColumns_.name_gui] = "~" + pair.first;
 			}
 
 			// Add action to update that list.
-			for (locationCompletionActions_type::size_type i = 0; i < lcActions.size(); i++) {
-				if (lcActions[i] == LocationCompletionAction::LoadUsers) {
-					lc_ptr->delete_action(i);
-					lcActions.erase(lcActions.begin() + i);
-				}
-			}
-			lc_ptr->prepend_action_text(
+			delete_locationCompletionActions(LocationCompletionAction::LoadUsers);
+			add_locationCompletionAction(LocationCompletionAction::LoadUsers,
 				std::string(users_.empty() ? "Load" : "Reload") + " user names");
-			lcActions.insert(lcActions.begin(), LocationCompletionAction::LoadUsers);
 
 			// Skip normal directory handling.
 			return;
@@ -1058,6 +1048,30 @@ namespace cvn { namespace lsgui
 		users_.insert(std::make_pair("fabian", "/home/fabian"));
 
 		std::cout << "Finished retrieving users." << std::endl;
+	}
+
+	void LsGui::add_locationCompletionAction(
+		LocationCompletionAction actionType, const Glib::ustring &actionText)
+	{
+		auto  completion_ptr(locationCompletion_ptr_);
+		auto &actions(locationCompletionActions_);
+
+		completion_ptr->prepend_action_text(actionText);
+		actions.insert(actions.begin(), actionType);
+	}
+
+	void LsGui::delete_locationCompletionActions(
+		LocationCompletionAction actionType)
+	{
+		auto  completion_ptr(locationCompletion_ptr_);
+		auto &actions(locationCompletionActions_);
+
+		for (locationCompletionActions_type::size_type i = 0; i < actions.size(); i++) {
+			if (actions[i] == actionType) {
+				completion_ptr->delete_action(i);
+				actions.erase(actions.begin() + i);
+			}
+		}
 	}
 
 	void LsGui::on_locationEntry_activate()

@@ -150,14 +150,21 @@ namespace cvn { namespace lsgui
 		location_history_type            location_history_;
 		location_history_type::iterator  location_history_pos_;
 
+
 		enum class LocationCompletionAction {
 			LoadUsers,
 		};
+
 		typedef std::vector<LocationCompletionAction>  locationCompletionActions_type;
 		locationCompletionActions_type                 locationCompletionActions_;
 
 		typedef std::map<std::string, std::string>  users_type;
 		users_type                                  users_;
+
+		void add_locationCompletionAction(
+			LocationCompletionAction actionType, const Glib::ustring &actionText);
+		void delete_locationCompletionActions(LocationCompletionAction actionType);
+
 
 		struct ErrMsg
 		{
