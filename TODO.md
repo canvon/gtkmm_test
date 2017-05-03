@@ -35,17 +35,6 @@
 
     * Test, test, test and adjust for corner cases.
 
-    * Give annotations what type of directory entry this is?
-
-      * E.g., append '/' for directory? (Can be seen from readlink() result.)
-        Or, rather:
-
-      * Make the completion TreeView(?) look like the dirlisting?
-        With all information readily available? That would need lstat()
-        on each directory entry... Performance loss?
-        If this should get implemented, it must be configurable!
-        It must be possible to turn this off!
-
     * Update when backspacing over a slash '/'.
       (Or rather, when the directory part of the typed location changes?)
 
