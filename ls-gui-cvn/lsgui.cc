@@ -1248,9 +1248,14 @@ namespace cvn { namespace lsgui
 		}
 
 		std::string prev_location(location_str_);
+		// Current directory?
 		if (prev_location == ".") {
 			prev_location = cvn::fs::get_current_dir_name();
 			// A history element will be added further below.
+		}
+		// Has tilde expansion and no more relative path to strip?
+		else if (prev_location[0] == '~' && prev_location.find('/') == std::string::npos) {
+			prev_location = cvn::fs::expand_path(prev_location);
 		}
 
 		std::string dir_name = cvn::fs::dirname(prev_location);
