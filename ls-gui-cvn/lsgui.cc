@@ -139,10 +139,24 @@ namespace cvn { namespace lsgui
 
 		// Add a directory entry type (file, dir, symlink, ...) indication
 		// to the completion display.
-		locationCompletionDirentTypeCellRenderer_.set_alignment(1.0, 0.5);  // right-align
-		locationCompletion_ptr_->pack_end(locationCompletionDirentTypeCellRenderer_, false);
-		locationCompletion_ptr_->add_attribute(
-			locationCompletionDirentTypeCellRenderer_, "text", modelColumns_.type_user);
+		{
+			Gtk::CellRendererText &cellRenderer(locationCompletionDirentTypeCellRenderer_);
+
+			// Right-align.
+			cellRenderer.set_alignment(1.0, 0.5);
+
+			// Increase padding slightly.
+			int padX = 0, padY = 0;
+			cellRenderer.get_padding(padX, padY);
+			if (padX < 3) padX = 3;
+			cellRenderer.set_padding(padX, padY);
+
+			cellRenderer.property_cell_background().set_value("light gray");
+
+			locationCompletion_ptr_->pack_end(cellRenderer, false);
+			locationCompletion_ptr_->add_attribute(
+				cellRenderer, "text", modelColumns_.type_user);
+		}
 
 		lsViewColumns_.perms = ls_.append_column("Permissions", modelColumns_.perms) - 1;
 		lsViewColumns_.nlink = ls_.append_column("#links",      modelColumns_.nlink) - 1;
