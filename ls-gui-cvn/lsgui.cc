@@ -1120,8 +1120,9 @@ namespace cvn { namespace lsgui
 		}
 
 		Gtk::TreeModel::Row row = *sel_ptr->get_selected();
+		const std::string selectedName(row[modelColumns_.name_opsys]);
 		if (location_is_dirlisting_) {
-			set_location_str_relative(row[modelColumns_.name_opsys]);
+			set_location_str_relative(selectedName);
 		}
 		else {
 			try {
@@ -1130,6 +1131,9 @@ namespace cvn { namespace lsgui
 					// Append a slash '/', in the hopes to
 					// dereference a directory symlink...
 					set_location_str(location_str_ + '/');
+				}
+				else if (selectedName != location_str_) {
+					set_location_str(selectedName);
 				}
 				else {
 					// "Bing!" & stay with current state.
