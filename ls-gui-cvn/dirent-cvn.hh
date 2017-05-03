@@ -26,6 +26,19 @@ namespace cvn { namespace fs
 
 		std::string get_ent_name();
 
+		enum class EntType {
+			Unknown,
+			Regular,
+			Directory,
+			Symlink,
+			BlockDevice,
+			CharacterDevice,
+			NamedPipe,
+			Fifo = NamedPipe,
+			Socket,
+		};
+		EntType get_ent_type();
+
 	private:
 		class impl;
 		std::shared_ptr<impl> pimpl;

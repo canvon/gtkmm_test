@@ -98,5 +98,51 @@ namespace cvn { namespace fs
 		return pimpl->entp->d_name;
 	}
 
+	Dirent::EntType Dirent::get_ent_type()
+	{
+		if (!pimpl->dirp)
+			throw std::logic_error("Dirent get_ent_type(): invalid operation: directory stream not open");
+
+		if (!pimpl->entp)
+			throw std::logic_error("Dirent get_ent_type(): invalid operation: no current directory entry");
+
+#ifdef _DIRENT_HAVE_D_TYPE
+		switch (pimpl->entp->d_type) {
+		case DT_BLK:
+			return EntType::BlockDevice;
+		case DT_CHR:
+			return EntType::CharacterDevice;
+		case DT_DIR:
+			return EntType::Directory;
+		case DT_FIFO:
+			return EntType::Fifo;
+		case DT_LNK:
+			return EntType::Symlink;
+		case DT_REG:
+			return EntType::Regular;
+		case DT_SOCK:
+			return EntType::Socket;
+		case DT_UNKNOWN:
+			return EntType::Unknown;
+		default:
+#if 0
+			std::ostringstream os;
+			os << "Dirent: get_ent_type(): unrecognized directory entry type '"
+			   << pimpl->entp->d_type << "'";
+			throw std::runtime_error(os.str());
+#else
+			// If the d_type field should ever get extended,
+			// we likely don't want to die on an exception,
+			// but continue to work normally.
+			return EntType::Unknown;
+#endif
+		}
+#else  // _DIRENT_HAVE_D_TYPE
+#pragma message("Warning: Compiling without dirent->d_type support, "
+	"all directory entry types will look unknown")
+		return EntType::Unknown;
+#endif  // _DIRENT_HAVE_D_TYPE
+	}
+
 }  // cvn::fs
 }  // cvn, when not able to use nested namespace declarations from C++17 or GCC6
