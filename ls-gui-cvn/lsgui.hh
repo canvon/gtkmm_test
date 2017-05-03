@@ -141,6 +141,7 @@ namespace cvn { namespace lsgui
 		std::string location_str_;
 		bool location_is_dirlisting_;
 		bool location_esc_pressed_;
+		Glib::ustring::size_type locationEntry_lastSlashPos_;
 
 		typedef std::list<std::string>   location_history_type;
 		location_history_type            location_history_;

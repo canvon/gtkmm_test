@@ -35,9 +35,6 @@
 
     * Test, test, test and adjust for corner cases.
 
-    * Update when backspacing over a slash '/'.
-      (Or rather, when the directory part of the typed location changes?)
-
   * Move directory processing to a background thread.
 
   * Make directory processing background thread cancellable via the GUI.

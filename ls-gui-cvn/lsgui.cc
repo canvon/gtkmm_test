@@ -108,6 +108,7 @@ namespace cvn { namespace lsgui
 	LsGui::LsGui() :
 		location_is_dirlisting_(false),
 		location_esc_pressed_(false),
+		locationEntry_lastSlashPos_(Glib::ustring::npos),
 		location_history_pos_(location_history_.end()),
 		outerVBox_(Gtk::ORIENTATION_VERTICAL),
 		locationLabel_("_Location", true)
@@ -1032,11 +1033,16 @@ namespace cvn { namespace lsgui
 		if (text.empty())
 			return;
 
+		Glib::ustring::size_type lastSlashPosPrev = locationEntry_lastSlashPos_;
+		locationEntry_lastSlashPos_ = text.rfind('/');
 		int pos = location_.get_position();
-		if (text[pos] == '/') {
+		if (text[pos] == '/' ||
+		    (lastSlashPosPrev != Glib::ustring::npos &&
+		     locationEntry_lastSlashPos_ < lastSlashPosPrev))
+		{
 			// It's possible the user has just input a slash
-			// (as in "directory separator"), so try to rebuild
-			// the completion cache.
+			// (as in "directory separator") or backspaced over it,
+			// so try to rebuild the completion cache.
 			//
 			// TODO: Let this happen in an idle handler or background thread.
 			update_locationCompletion();
