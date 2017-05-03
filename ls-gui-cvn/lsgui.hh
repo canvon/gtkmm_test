@@ -89,9 +89,6 @@ namespace cvn { namespace lsgui
 		void history_clear();
 		void history_add(const std::string &new_item_str);
 
-		std::string expand_location() const;
-		std::string expand_location(const std::string &loc) const;
-
 		std::string get_location_str() const;
 		bool get_location_is_dirlisting() const;
 		void set_location_str();

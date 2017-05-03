@@ -12,7 +12,6 @@
 #include <iomanip>
 #include <stdexcept>
 #include <system_error>
-#include <stdlib.h>
 
 #include "versioncheck.hh"
 
@@ -537,30 +536,6 @@ namespace cvn { namespace lsgui
 		update_actions();
 	}
 
-	std::string LsGui::expand_location() const
-	{
-		return expand_location(location_str_);
-	}
-
-	std::string LsGui::expand_location(const std::string &loc) const
-	{
-		if (loc.empty())
-			return loc;
-
-		std::string ret(loc);
-
-		if (ret[0] == '~') {
-			const char *home = getenv("HOME");
-			if (home == nullptr)
-				throw std::runtime_error("LsGui::expand_location(): tilde expansion: "
-					"environment variable ``HOME'' not set");
-
-			ret.replace(0, 1, home);
-		}
-
-		return ret;
-	}
-
 	std::string LsGui::get_location_str() const
 	{
 		return location_str_;
@@ -634,7 +609,7 @@ namespace cvn { namespace lsgui
 		}
 
 		try {
-			std::string location_expanded(expand_location(location_str_));
+			std::string location_expanded(cvn::fs::expand_path(location_str_));
 
 			// Retrieve stat information of the location itself.
 			cvn::fs::Lstat  loc_stat(location_expanded);
@@ -938,7 +913,7 @@ namespace cvn { namespace lsgui
 		bool show_hidden = get_show_hidden();
 
 		try {
-			cvn::fs::Dirent  dir(expand_location(dir_path_opsys));
+			cvn::fs::Dirent  dir(cvn::fs::expand_path(dir_path_opsys));
 			int              dir_fd = dir.fd();
 
 			while (dir.read()) {

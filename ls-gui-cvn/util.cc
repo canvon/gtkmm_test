@@ -3,8 +3,11 @@
 #include <iomanip>
 #include <system_error>
 
+#include <sys/types.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <stdlib.h>
+#include <pwd.h>
 #include <cerrno>
 
 
@@ -223,6 +226,62 @@ namespace cvn { namespace fs
 		// As long as is_hidden(string) just compares the basename against .*,
 		// we'll simply defer to it.
 		return is_hidden(pathname_str);
+	}
+
+
+	std::string expand_path(const std::string &pathname)
+	{
+		if (pathname.empty())
+			return pathname;
+
+		std::string ret(pathname);
+
+		if (ret[0] == '~') {
+			if (ret.length() == 1 || ret[1] == '/') {
+				const char *home = ::getenv("HOME");
+				if (home == nullptr)
+					throw std::runtime_error("cvn::fs::expand_path(): tilde expansion: "
+						"environment variable ``HOME'' not set");
+
+				ret.replace(0, 1, home);
+			}
+			else {
+				std::string::size_type slashPos = ret.find('/'), tildeLen = 0;
+				if (slashPos == std::string::npos) {
+					tildeLen = ret.length();
+				}
+				else {
+					tildeLen = slashPos;
+				}
+				if (tildeLen <= 1)
+					throw std::runtime_error("cvn::fs::expand_path(): tilde expansion: "
+						"invalid tilde length");
+
+				std::string userName(ret.substr(1, tildeLen - 1));
+
+				errno = 0;
+				const ::passwd *user = ::getpwnam(userName.c_str());
+				if (!user) {
+					if (errno) {
+						std::ostringstream os;
+						os << "cvn::fs::expand_path(): tilde expansion: "
+						   << "library function getpwnam() failed for user name "
+						   << std::quoted(userName);
+						throw std::system_error(errno, std::generic_category(), os.str());
+					}
+					else {
+						std::ostringstream os;
+						os << "cvn::fs::expand_path(): tilde expansion: "
+						   << "user name " << std::quoted(userName) << " not found";
+						throw std::runtime_error(os.str());
+					}
+				}
+
+				ret.replace(0, tildeLen, user->pw_dir);
+			}
+		}
+
+		return ret;
 	}
 
 }  // cvn::fs

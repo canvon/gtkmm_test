@@ -30,6 +30,8 @@ namespace cvn { namespace fs
 	bool is_hidden(const std::string &pathname_str);
 	bool is_hidden(int dirfd, const std::string &pathname_str);
 
+	std::string expand_path(const std::string &pathname);
+
 }  // cvn::fs
 }  // cvn, when not able to use nested namespace declarations from C++17 or GCC6
 
