@@ -1125,7 +1125,7 @@ namespace cvn { namespace lsgui
 		}
 		else {
 			try {
-				cvn::fs::Stat loc_stat(location_str_);
+				cvn::fs::Stat loc_stat(cvn::fs::expand_path(location_str_));
 				if (loc_stat.get_is_dir()) {
 					// Append a slash '/', in the hopes to
 					// dereference a directory symlink...
