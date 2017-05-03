@@ -136,6 +136,7 @@ namespace cvn { namespace lsgui
 		locationCompletion_ptr_ = Gtk::EntryCompletion::create();
 		locationCompletion_ptr_->set_model(locationCompletionModel_ptr_);
 		locationCompletion_ptr_->set_text_column(modelColumns_.name_gui);
+		locationCompletion_ptr_->set_minimum_key_length(0);
 		location_.set_completion(locationCompletion_ptr_);
 
 		// Add a directory entry type (file, dir, symlink, ...) indication
@@ -348,6 +349,8 @@ namespace cvn { namespace lsgui
 			sigc::mem_fun(*this, &LsGui::on_locationEntry_key_press_event));
 		locationCompletion_ptr_->signal_no_matches().connect(
 			sigc::mem_fun(*this, &LsGui::on_locationEntryCompletion_no_matches));
+		locationCompletion_ptr_->signal_action_activated().connect(
+			sigc::mem_fun(*this, &LsGui::on_locationEntryCompletion_action_activated));
 
 		errorsInfoBar_.signal_response().connect(
 			sigc::mem_fun(*this, &LsGui::on_errorsInfoBar_response));
@@ -888,6 +891,35 @@ namespace cvn { namespace lsgui
 		Glib::ustring typed_str = location_.get_text();
 		Glib::ustring::size_type pos_slash = typed_str.rfind("/");
 
+		// Username completion?
+		if (!typed_str.empty() &&
+		    typed_str[0] == '~' && pos_slash == Glib::ustring::npos)
+		{
+			auto  lc_ptr(locationCompletion_ptr_);
+			auto  lcModel_ptr(locationCompletionModel_ptr_);
+			auto &lcActions(locationCompletionActions_);
+
+			// Fill model with ~username entries.
+			for (auto &pair : users_) {
+				Gtk::TreeModel::Row row = *lcModel_ptr->append();
+				row[modelColumns_.name_gui] = "~" + pair.first;
+			}
+
+			// Add action to update that list.
+			for (locationCompletionActions_type::size_type i = 0; i < lcActions.size(); i++) {
+				if (lcActions[i] == LocationCompletionAction::LoadUsers) {
+					lc_ptr->delete_action(i);
+					lcActions.erase(lcActions.begin() + i);
+				}
+			}
+			lc_ptr->prepend_action_text(
+				std::string(users_.empty() ? "Load" : "Reload") + " user names");
+			lcActions.insert(lcActions.begin(), LocationCompletionAction::LoadUsers);
+
+			// Skip normal directory handling.
+			return;
+		}
+
 		Glib::ustring dir_path("."), rel_name(typed_str);
 		bool prepend_dir_path = false;
 		if (pos_slash != Glib::ustring::npos &&
@@ -1016,6 +1048,18 @@ namespace cvn { namespace lsgui
 		}
 	}
 
+	void LsGui::update_users()
+	{
+		users_.clear();
+
+		std::cout << "Retrieving users..." << std::endl;
+
+		// FIXME: Implement. This is fake static data, for now.
+		users_.insert(std::make_pair("fabian", "/home/fabian"));
+
+		std::cout << "Finished retrieving users." << std::endl;
+	}
+
 	void LsGui::on_locationEntry_activate()
 	{
 		Glib::ustring text(location_.get_text());
@@ -1095,6 +1139,21 @@ namespace cvn { namespace lsgui
 	{
 		// FIXME: Rate-limit?
 		update_locationCompletion();
+	}
+
+	void LsGui::on_locationEntryCompletion_action_activated(int index)
+	{
+		switch (locationCompletionActions_[index]) {
+		case LocationCompletionAction::LoadUsers:
+			update_users();
+			update_locationCompletion();
+			break;
+		default:
+			Glib::ustring errmsg("Internal error: Invalid location completion action index ");
+			errmsg = errmsg + std::to_string(index);
+			std::cerr << errmsg << std::endl;
+			display_errmsg(errmsg);
+		}
 	}
 
 	void LsGui::on_errorsInfoBar_response(int response_id)

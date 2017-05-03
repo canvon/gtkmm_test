@@ -2,6 +2,7 @@
 #define LS_GUI_HH
 
 #include <list>
+#include <map>
 #include <vector>
 #include "dirent-cvn.hh"
 
@@ -117,11 +118,13 @@ namespace cvn { namespace lsgui
 		void update_actions();
 		void update_errorsInfoBar();
 		void update_locationCompletion();
+		void update_users();
 
 		void on_locationEntry_activate();
 		void on_locationEntry_changed();
 		bool on_locationEntry_key_press_event(GdkEventKey* key_event);
 		void on_locationEntryCompletion_no_matches();
+		void on_locationEntryCompletion_action_activated(int index);
 		void on_errorsInfoBar_response(int response_id);
 		void on_ls_row_activated(const Gtk::TreeModel::Path &path, Gtk::TreeViewColumn *column);
 		void on_ls_column_clicked(int columnNr);
@@ -146,6 +149,15 @@ namespace cvn { namespace lsgui
 		typedef std::list<std::string>   location_history_type;
 		location_history_type            location_history_;
 		location_history_type::iterator  location_history_pos_;
+
+		enum class LocationCompletionAction {
+			LoadUsers,
+		};
+		typedef std::vector<LocationCompletionAction>  locationCompletionActions_type;
+		locationCompletionActions_type                 locationCompletionActions_;
+
+		typedef std::map<std::string, std::string>  users_type;
+		users_type                                  users_;
 
 		struct ErrMsg
 		{
