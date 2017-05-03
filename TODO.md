@@ -51,10 +51,7 @@
     Have a Current working directory button, for easily opening "."?
     Or is both sufficiently easily to achieve by using the file open dialog?
 
-  * Support ~/ and ~USERNAME tilde expansion?
-    But what about $HOME vs. getpwnam() inconsistency?
-    For our user, $HOME should be used, but should ~/ and ~OURUSER/ potentially differ?
-    Maybe have a look at what exactly bash (or some other shell) does?
+  * Tilde expansion: Support username completion? (bash does it!)
 
   * Support environment variable expansion, e.g., on Ctrl-Enter?
     (Or maybe according to toggle button?)
