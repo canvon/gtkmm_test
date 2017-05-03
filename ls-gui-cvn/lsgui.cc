@@ -909,6 +909,11 @@ namespace cvn { namespace lsgui
 			// Skip normal directory handling.
 			return;
 		}
+		else {
+			// If we're not completing a tilde expansion,
+			// don't offer to load users.
+			delete_locationCompletionActions(LocationCompletionAction::LoadUsers);
+		}
 
 		Glib::ustring dir_path("."), rel_name(typed_str);
 		bool prepend_dir_path = false;
