@@ -16,6 +16,10 @@ namespace cvn { namespace fs
 	public:
 		::DIR    *dirp;  // directory stream pointer
 		::dirent *entp;  // directory entry pointer
+
+		impl() : dirp(nullptr), entp(nullptr)
+		{
+		}
 	};
 
 	Dirent::Dirent(const char *pathname)
