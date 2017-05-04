@@ -1067,7 +1067,7 @@ namespace cvn { namespace lsgui
 		}
 		catch (const std::exception &ex) {
 			auto errmsg(Glib::ustring("Error retrieving users: ") + ex.what());
-			std::cerr << errmsg.raw();
+			std::cerr << errmsg.raw() << std::endl;
 			display_errmsg(errmsg);
 		}
 
