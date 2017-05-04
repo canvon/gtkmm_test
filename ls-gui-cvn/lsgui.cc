@@ -615,6 +615,8 @@ namespace cvn { namespace lsgui
 		try {
 			// Special-case for viewing a list of all known users' home directories.
 			if (location_str_ == "~*") {
+				std::cout << "Reading in list of user home directories..." << std::endl;
+
 				for (auto &pair : users_) {
 					const std::string &username(pair.first);
 					const std::string &homedir_opsys(pair.second);
@@ -631,6 +633,8 @@ namespace cvn { namespace lsgui
 					row[modelColumns_.name_gui]   = homedir_gui;
 					row[modelColumns_.name_user]  = "~" + username + " -> " + homedir_gui;
 				}
+
+				std::cout << "Finished reading in user home directories." << std::endl;
 
 				// Skip normal directory processing.
 				return;
@@ -666,6 +670,8 @@ namespace cvn { namespace lsgui
 					Gtk::TreeModel::Row row = *model_->append();
 					fill_row(row, &dir_fd, ent_name, ent_stat);
 				}
+
+				std::cout << "Finished reading in directory." << std::endl;
 			}
 			else {
 				// Put the non-directory location's stat results into a single row.
