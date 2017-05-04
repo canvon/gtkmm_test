@@ -629,9 +629,18 @@ namespace cvn { namespace lsgui
 					}
 
 					Gtk::TreeModel::Row row = *model_->append();
-					row[modelColumns_.name_opsys] = homedir_opsys;
-					row[modelColumns_.name_gui]   = homedir_gui;
-					row[modelColumns_.name_user]  = "~" + username + " -> " + homedir_gui;
+					std::string exWhat;
+					try {
+						cvn::fs::Lstat homedir_stat(homedir_opsys);
+						fill_row(row, nullptr, homedir_opsys, homedir_stat);
+					}
+					catch (const std::exception &ex) {
+						exWhat = ex.what();
+						row[modelColumns_.name_opsys] = homedir_opsys;
+						row[modelColumns_.name_gui]   = homedir_gui;
+					}
+					row[modelColumns_.name_user]  = "~" + username + " -> " + homedir_gui
+						+ (exWhat.empty() ? "" : " (" + exWhat + ")");
 				}
 
 				std::cout << "Finished reading in user home directories." << std::endl;
