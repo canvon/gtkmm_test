@@ -91,6 +91,25 @@ namespace cvn { namespace lsgui
 	NL "          <attribute name='action'>win.up</attribute>"
 	NL "          <attribute name='accel'>&lt;Alt&gt;Up</attribute>"
 	NL "        </item>"
+	NL "        <submenu id='menu-goto'>"
+	NL "          <attribute name='label' translatable='yes'>_Go to</attribute>"
+	NL "          <section>"
+	NL "            <item>"
+	NL "              <attribute name='label' translatable='yes'>_Current directory</attribute>"
+	NL "              <attribute name='action'>win.goto-cwd</attribute>"
+	NL "              <attribute name='accel'>&lt;Alt&gt;period</attribute>"
+	NL "            </item>"
+	NL "            <item>"
+	NL "              <attribute name='label' translatable='yes'>_Home directory</attribute>"
+	NL "              <attribute name='action'>win.goto-home</attribute>"
+	NL "              <attribute name='accel'>&lt;Alt&gt;Home</attribute>"
+	NL "            </item>"
+	NL "            <item>"
+	NL "              <attribute name='label' translatable='yes'>_List of home directories</attribute>"
+	NL "              <attribute name='action'>win.goto-homedirs</attribute>"
+	NL "            </item>"
+	NL "          </section>"
+	NL "        </submenu>"
 	NL "      </section>"
 	NL "    </submenu>"
 	NL "    <submenu>"
@@ -224,6 +243,9 @@ namespace cvn { namespace lsgui
 
 		// menubar
 		do {
+			menubar_gtk_ptr_ = nullptr;
+			menu_goto_gtk_ptr_ = nullptr;
+
 			try {
 				builder_ptr_->add_from_string(menubar_markup);
 			}
@@ -268,6 +290,20 @@ namespace cvn { namespace lsgui
 
 			app->set_menubar(gmenu_ptr);
 #endif
+
+			obj_ptr = builder_ptr_->get_object("menu-goto");
+			if (!obj_ptr) {
+				warn("Object 'menu-goto' not found");
+				break;
+			}
+
+			auto menu_goto_gmenu_ptr = Glib::RefPtr<Gio::Menu>::cast_dynamic(obj_ptr);
+			if (!menu_goto_gmenu_ptr) {
+				warn("Object 'menu-goto' is not a Gio::Menu");
+				break;
+			}
+
+			menu_goto_gtk_ptr_ = Gtk::manage(new Gtk::Menu(menu_goto_gmenu_ptr));
 		}
 		while (false);
 
@@ -290,6 +326,20 @@ namespace cvn { namespace lsgui
 			}
 
 			outerVBox_.pack_start(*toolbar_ptr_, Gtk::PACK_SHRINK);
+
+			if (!menu_goto_gtk_ptr_) {
+				warn("Menu goto not prepared, so won't attach it to the toolmenu");
+				break;
+			}
+
+			Gtk::MenuToolButton *toolmenu_goto_ptr = nullptr;
+			builder_ptr_->get_widget("toolmenu-goto", toolmenu_goto_ptr);
+			if (!toolmenu_goto_ptr) {
+				warn("Couldn't get widget 'toolmenu-goto'");
+				break;
+			}
+
+			toolmenu_goto_ptr->set_menu(*menu_goto_gtk_ptr_);
 		}
 		while (false);
 
@@ -366,6 +416,9 @@ namespace cvn { namespace lsgui
 		action_backward_ptr_ = add_action("backward", sigc::mem_fun(*this, &LsGui::on_action_backward));
 		action_forward_ptr_ = add_action("forward", sigc::mem_fun(*this, &LsGui::on_action_forward));
 		action_up_ptr_ = add_action("up", sigc::mem_fun(*this, &LsGui::on_action_up));
+		action_goto_cwd_ptr_ = add_action("goto-cwd", sigc::mem_fun(*this, &LsGui::on_action_goto_cwd));
+		action_goto_home_ptr_ = add_action("goto-home", sigc::mem_fun(*this, &LsGui::on_action_goto_home));
+		action_goto_homedirs_ptr_ = add_action("goto-homedirs", sigc::mem_fun(*this, &LsGui::on_action_goto_homedirs));
 		//
 		// Stateful actions.
 		action_show_hidden_ptr_ = add_action_bool("show-hidden",
@@ -1430,6 +1483,21 @@ namespace cvn { namespace lsgui
 
 		// Actually switch location to the determined directory name.
 		set_location_str(dir_name);
+	}
+
+	void LsGui::on_action_goto_cwd()
+	{
+		set_location_str(".");
+	}
+
+	void LsGui::on_action_goto_home()
+	{
+		set_location_str("~");
+	}
+
+	void LsGui::on_action_goto_homedirs()
+	{
+		set_location_str("~*");
 	}
 
 	void LsGui::on_action_show_hidden()

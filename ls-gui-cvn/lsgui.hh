@@ -19,6 +19,7 @@
 #include <gtkmm/builder.h>
 #include <gtkmm/menubar.h>
 #include <gtkmm/toolbar.h>
+#include <gtkmm/menutoolbutton.h>
 #include <giomm/simpleaction.h>
 
 #include "versioncheck.hh"
@@ -134,6 +135,9 @@ namespace cvn { namespace lsgui
 		void on_action_backward();
 		void on_action_forward();
 		void on_action_up();
+		void on_action_goto_cwd();
+		void on_action_goto_home();
+		void on_action_goto_homedirs();
 		void on_action_show_hidden();
 		void on_action_complete_location();
 
@@ -196,6 +200,7 @@ namespace cvn { namespace lsgui
 		Glib::RefPtr<Gtk::Builder>  builder_ptr_;
 		Glib::RefPtr<Gio::Menu>     gmenu_ptr_;
 		Gtk::MenuBar               *menubar_gtk_ptr_;
+		Gtk::Menu                  *menu_goto_gtk_ptr_;
 		Gtk::Toolbar               *toolbar_ptr_;
 
 		Glib::RefPtr<Gio::SimpleAction>
@@ -205,6 +210,9 @@ namespace cvn { namespace lsgui
 			action_backward_ptr_,
 			action_forward_ptr_,
 			action_up_ptr_,
+			action_goto_cwd_ptr_,
+			action_goto_home_ptr_,
+			action_goto_homedirs_ptr_,
 			action_show_hidden_ptr_,
 			action_complete_location_ptr_;
 	};
