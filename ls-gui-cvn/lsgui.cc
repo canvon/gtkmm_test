@@ -3,6 +3,7 @@
 #include "lsgui.hh"
 #include "stat-cvn.hh"
 #include "dirent-cvn.hh"
+#include "users-cvn.hh"
 #include "util.hh"
 #include <gtkmm/dialog.h>  // For Gtk::RESPONSE_CLOSE
 #include <gtkmm/filechooserdialog.h>
@@ -136,6 +137,7 @@ namespace cvn { namespace lsgui
 		locationCompletion_ptr_ = Gtk::EntryCompletion::create();
 		locationCompletion_ptr_->set_model(locationCompletionModel_ptr_);
 		locationCompletion_ptr_->set_text_column(modelColumns_.name_gui);
+		locationCompletion_ptr_->set_minimum_key_length(0);
 		location_.set_completion(locationCompletion_ptr_);
 
 		// Add a directory entry type (file, dir, symlink, ...) indication
@@ -348,6 +350,8 @@ namespace cvn { namespace lsgui
 			sigc::mem_fun(*this, &LsGui::on_locationEntry_key_press_event));
 		locationCompletion_ptr_->signal_no_matches().connect(
 			sigc::mem_fun(*this, &LsGui::on_locationEntryCompletion_no_matches));
+		locationCompletion_ptr_->signal_action_activated().connect(
+			sigc::mem_fun(*this, &LsGui::on_locationEntryCompletion_action_activated));
 
 		errorsInfoBar_.signal_response().connect(
 			sigc::mem_fun(*this, &LsGui::on_errorsInfoBar_response));
@@ -888,6 +892,37 @@ namespace cvn { namespace lsgui
 		Glib::ustring typed_str = location_.get_text();
 		Glib::ustring::size_type pos_slash = typed_str.rfind("/");
 
+		// Username completion?
+		if (!typed_str.empty() &&
+		    typed_str[0] == '~' && pos_slash == Glib::ustring::npos)
+		{
+			// Fill model with ~username entries.
+			for (auto &pair : users_) {
+				Gtk::TreeModel::Row row = *locationCompletionModel_ptr_->append();
+				row[modelColumns_.name_opsys] = "~" + pair.first;
+				row[modelColumns_.name_gui]   = "~" + pair.first;
+				row[modelColumns_.type_lib]   = cvn::fs::Dirent::EntType::Unknown;
+				row[modelColumns_.type_user]  = "";
+			}
+
+			// Add action to update that list.
+			if (locationCompletionActions_.empty() ||
+			    locationCompletionActions_[0] != LocationCompletionAction::LoadUsers)
+			{
+				delete_locationCompletionActions(LocationCompletionAction::LoadUsers);
+				add_locationCompletionAction(LocationCompletionAction::LoadUsers,
+					std::string(users_.empty() ? "Load" : "Reload") + " user names");
+			}
+
+			// Skip normal directory handling.
+			return;
+		}
+		else {
+			// If we're not completing a tilde expansion,
+			// don't offer to load users.
+			delete_locationCompletionActions(LocationCompletionAction::LoadUsers);
+		}
+
 		Glib::ustring dir_path("."), rel_name(typed_str);
 		bool prepend_dir_path = false;
 		if (pos_slash != Glib::ustring::npos &&
@@ -1016,6 +1051,57 @@ namespace cvn { namespace lsgui
 		}
 	}
 
+	void LsGui::update_users()
+	{
+		users_.clear();
+
+		std::cout << "Retrieving users..." << std::endl;
+
+		try {
+			cvn::Users systemUsers;
+			while (systemUsers.read()) {
+				users_.insert(std::make_pair(
+					systemUsers.get_ent_username(),
+					systemUsers.get_ent_homedir()));
+			}
+		}
+		catch (const std::exception &ex) {
+			auto errmsg(Glib::ustring("Error retrieving users: ") + ex.what());
+			std::cerr << errmsg.raw();
+			display_errmsg(errmsg);
+		}
+
+		std::cout << "Finished retrieving users." << std::endl;
+	}
+
+	void LsGui::add_locationCompletionAction(
+		LocationCompletionAction actionType, const Glib::ustring &actionText)
+	{
+		auto  completion_ptr(locationCompletion_ptr_);
+		auto &actions(locationCompletionActions_);
+
+		completion_ptr->prepend_action_text(actionText);
+		actions.insert(actions.begin(), actionType);
+	}
+
+	void LsGui::delete_locationCompletionActions(
+		LocationCompletionAction actionType)
+	{
+		auto  completion_ptr(locationCompletion_ptr_);
+		auto &actions(locationCompletionActions_);
+
+		locationCompletionActions_type::size_type i = 0;
+		while (i < actions.size()) {
+			if (actions[i] == actionType) {
+				completion_ptr->delete_action(i);
+				actions.erase(actions.begin() + i);
+				continue;
+			}
+
+			i++;
+		}
+	}
+
 	void LsGui::on_locationEntry_activate()
 	{
 		Glib::ustring text(location_.get_text());
@@ -1032,15 +1118,14 @@ namespace cvn { namespace lsgui
 	void LsGui::on_locationEntry_changed()
 	{
 		Glib::ustring text = location_.get_text();
-		if (text.empty())
-			return;
-
 		Glib::ustring::size_type lastSlashPosPrev = locationEntry_lastSlashPos_;
 		locationEntry_lastSlashPos_ = text.rfind('/');
 		int pos = location_.get_position();
-		if (text[pos] == '/' ||
+		if (text.empty() || text[pos] == '/' ||
+		    //(text[0] == '~' && locationEntry_lastSlashPos_ == Glib::ustring::npos) ||
 		    (lastSlashPosPrev != Glib::ustring::npos &&
-		     locationEntry_lastSlashPos_ < lastSlashPosPrev))
+		     (locationEntry_lastSlashPos_ == Glib::ustring::npos ||
+		      locationEntry_lastSlashPos_ < lastSlashPosPrev)))
 		{
 			// It's possible the user has just input a slash
 			// (as in "directory separator") or backspaced over it,
@@ -1095,6 +1180,22 @@ namespace cvn { namespace lsgui
 	{
 		// FIXME: Rate-limit?
 		update_locationCompletion();
+	}
+
+	void LsGui::on_locationEntryCompletion_action_activated(int index)
+	{
+		switch (locationCompletionActions_[index]) {
+		case LocationCompletionAction::LoadUsers:
+			update_users();
+			delete_locationCompletionActions(LocationCompletionAction::LoadUsers);
+			update_locationCompletion();
+			break;
+		default:
+			Glib::ustring errmsg("Internal error: Invalid location completion action index ");
+			errmsg = errmsg + std::to_string(index);
+			std::cerr << errmsg << std::endl;
+			display_errmsg(errmsg);
+		}
 	}
 
 	void LsGui::on_errorsInfoBar_response(int response_id)
