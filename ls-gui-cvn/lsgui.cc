@@ -629,15 +629,21 @@ namespace cvn { namespace lsgui
 					}
 
 					Gtk::TreeModel::Row row = *model_->append();
+					row[modelColumns_.name_opsys] = homedir_opsys;
+					row[modelColumns_.name_gui]   = homedir_gui;
 					std::string exWhat;
 					try {
 						cvn::fs::Lstat homedir_stat(homedir_opsys);
 						fill_row(row, nullptr, homedir_opsys, homedir_stat);
 					}
+					catch (const std::system_error &ex) {
+						// Shorten exception what()-string to error message
+						// where we know we likely won't need the context
+						// as it is known to be the target directory. (?)
+						exWhat = ex.code().message();
+					}
 					catch (const std::exception &ex) {
 						exWhat = ex.what();
-						row[modelColumns_.name_opsys] = homedir_opsys;
-						row[modelColumns_.name_gui]   = homedir_gui;
 					}
 					row[modelColumns_.name_user]  = "~" + username + " -> " + homedir_gui
 						+ (exWhat.empty() ? "" : " (" + exWhat + ")");
