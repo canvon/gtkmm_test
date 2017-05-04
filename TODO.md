@@ -17,6 +17,10 @@
 
   * Complete the symlink support -- but what would still need to get implemented?
 
+    * Perhaps keep symlink targets in the model,
+      and switch to them using set_location_str_relative()
+      if the location already is equal to the symlink's pathname.
+
   * Implement date/time processing & display.
 
   * Allow switching back to numerical uid/gid display.
