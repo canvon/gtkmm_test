@@ -898,7 +898,10 @@ namespace cvn { namespace lsgui
 			// Fill model with ~username entries.
 			for (auto &pair : users_) {
 				Gtk::TreeModel::Row row = *locationCompletionModel_ptr_->append();
-				row[modelColumns_.name_gui] = "~" + pair.first;
+				row[modelColumns_.name_opsys] = "~" + pair.first;
+				row[modelColumns_.name_gui]   = "~" + pair.first;
+				row[modelColumns_.type_lib]   = cvn::fs::Dirent::EntType::Unknown;
+				row[modelColumns_.type_user]  = "";
 			}
 
 			// Add action to update that list.
