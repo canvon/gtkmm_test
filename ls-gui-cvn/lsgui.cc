@@ -1068,6 +1068,8 @@ namespace cvn { namespace lsgui
 		auto  completion_ptr(locationCompletion_ptr_);
 		auto &actions(locationCompletionActions_);
 
+		std::cout << "Debug: Adding action of type " << static_cast<int>(actionType) << ": "
+			<< std::quoted(actionText.raw()) << std::endl;
 		completion_ptr->prepend_action_text(actionText);
 		actions.insert(actions.begin(), actionType);
 	}
@@ -1088,6 +1090,7 @@ namespace cvn { namespace lsgui
 				continue;
 			}
 
+			std::cout << "Debug: Increasing index " << i << std::endl;
 			i++;
 		}
 		std::cout << "Debug: Done deleting actions." << std::endl;
