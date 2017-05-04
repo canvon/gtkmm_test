@@ -15,6 +15,8 @@
     <File Name="util.cc"/>
     <File Name="util.hh"/>
     <File Name="versioncheck.hh"/>
+    <File Name="users-cvn.hh"/>
+    <File Name="users-cvn.cc"/>
   </VirtualDirectory>
   <Settings Type="Executable">
     <GlobalSettings>
