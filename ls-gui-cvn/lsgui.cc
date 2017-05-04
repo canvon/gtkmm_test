@@ -1112,13 +1112,10 @@ namespace cvn { namespace lsgui
 	void LsGui::on_locationEntry_changed()
 	{
 		Glib::ustring text = location_.get_text();
-		if (text.empty())
-			return;
-
 		Glib::ustring::size_type lastSlashPosPrev = locationEntry_lastSlashPos_;
 		locationEntry_lastSlashPos_ = text.rfind('/');
 		int pos = location_.get_position();
-		if (text[pos] == '/' ||
+		if (text.empty() || text[pos] == '/' ||
 		    //(text[0] == '~' && locationEntry_lastSlashPos_ == Glib::ustring::npos) ||
 		    (lastSlashPosPrev != Glib::ustring::npos &&
 		     (locationEntry_lastSlashPos_ == Glib::ustring::npos ||
