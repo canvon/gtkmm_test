@@ -3,6 +3,7 @@
 #include "lsgui.hh"
 #include "stat-cvn.hh"
 #include "dirent-cvn.hh"
+#include "users-cvn.hh"
 #include "util.hh"
 #include <gtkmm/dialog.h>  // For Gtk::RESPONSE_CLOSE
 #include <gtkmm/filechooserdialog.h>
@@ -1056,8 +1057,19 @@ namespace cvn { namespace lsgui
 
 		std::cout << "Retrieving users..." << std::endl;
 
-		// FIXME: Implement. This is fake static data, for now.
-		users_.insert(std::make_pair("fabian", "/home/fabian"));
+		try {
+			cvn::Users systemUsers;
+			while (systemUsers.read()) {
+				users_.insert(std::make_pair(
+					systemUsers.get_ent_username(),
+					systemUsers.get_ent_homedir()));
+			}
+		}
+		catch (const std::exception &ex) {
+			auto errmsg(Glib::ustring("Error retrieving users: ") + ex.what());
+			std::cerr << errmsg.raw();
+			display_errmsg(errmsg);
+		}
 
 		std::cout << "Finished retrieving users." << std::endl;
 	}
