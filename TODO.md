@@ -51,8 +51,6 @@
     Have a Current working directory button, for easily opening "."?
     Or is both sufficiently easily to achieve by using the file open dialog?
 
-  * Tilde expansion: Support username completion? (bash does it!)
-
   * Support environment variable expansion, e.g., on Ctrl-Enter?
     (Or maybe according to toggle button?)
 
