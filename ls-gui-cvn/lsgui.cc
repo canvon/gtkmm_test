@@ -1071,12 +1071,19 @@ namespace cvn { namespace lsgui
 		auto  completion_ptr(locationCompletion_ptr_);
 		auto &actions(locationCompletionActions_);
 
-		for (locationCompletionActions_type::size_type i = 0; i < actions.size(); i++) {
+		std::cout << "Debug: Deleting actions..." << std::endl;
+		locationCompletionActions_type::size_type i = 0;
+		while (i < actions.size()) {
 			if (actions[i] == actionType) {
+				std::cout << "Debug: Removing action " << i << "..." << std::endl;
 				completion_ptr->delete_action(i);
 				actions.erase(actions.begin() + i);
+				continue;
 			}
+
+			i++;
 		}
+		std::cout << "Debug: Done deleting actions." << std::endl;
 	}
 
 	void LsGui::on_locationEntry_activate()
