@@ -615,6 +615,8 @@ namespace cvn { namespace lsgui
 		try {
 			// Special-case for viewing a list of all known users' home directories.
 			if (location_str_ == "~*") {
+				location_is_dirlisting_ = true;
+
 				// Avoid having the user to activate a completion action first.
 				if (users_.empty())
 					update_users();
@@ -693,6 +695,8 @@ namespace cvn { namespace lsgui
 				std::cout << "Finished reading in directory." << std::endl;
 			}
 			else {
+				location_is_dirlisting_ = false;
+
 				// Put the non-directory location's stat results into a single row.
 				Gtk::TreeModel::Row row = *model_->append();
 				fill_row(row, nullptr, location_expanded, loc_stat);
