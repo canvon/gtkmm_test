@@ -613,6 +613,29 @@ namespace cvn { namespace lsgui
 		}
 
 		try {
+			// Special-case for viewing a list of all known users' home directories.
+			if (location_str_ == "~*") {
+				for (auto &pair : users_) {
+					const std::string &username(pair.first);
+					const std::string &homedir_opsys(pair.second);
+					Glib::ustring homedir_gui;
+					try {
+						homedir_gui = Glib::filename_to_utf8(homedir_opsys);
+					}
+					catch (const Glib::Exception &ex) {
+						homedir_gui = homedir_opsys;
+					}
+
+					Gtk::TreeModel::Row row = *model_->append();
+					row[modelColumns_.name_opsys] = homedir_opsys;
+					row[modelColumns_.name_gui]   = homedir_gui;
+					row[modelColumns_.name_user]  = "~" + username + " -> " + homedir_gui;
+				}
+
+				// Skip normal directory processing.
+				return;
+			}
+
 			std::string location_expanded(cvn::fs::expand_path(location_str_));
 
 			// Retrieve stat information of the location itself.
