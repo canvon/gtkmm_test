@@ -615,6 +615,10 @@ namespace cvn { namespace lsgui
 		try {
 			// Special-case for viewing a list of all known users' home directories.
 			if (location_str_ == "~*") {
+				// Avoid having the user to activate a completion action first.
+				if (users_.empty())
+					update_users();
+
 				std::cout << "Reading in list of user home directories..." << std::endl;
 
 				for (auto &pair : users_) {
