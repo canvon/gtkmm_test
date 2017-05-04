@@ -902,9 +902,13 @@ namespace cvn { namespace lsgui
 			}
 
 			// Add action to update that list.
-			delete_locationCompletionActions(LocationCompletionAction::LoadUsers);
-			add_locationCompletionAction(LocationCompletionAction::LoadUsers,
-				std::string(users_.empty() ? "Load" : "Reload") + " user names");
+			if (locationCompletionActions_.empty() ||
+			    locationCompletionActions_[0] != LocationCompletionAction::LoadUsers)
+			{
+				delete_locationCompletionActions(LocationCompletionAction::LoadUsers);
+				add_locationCompletionAction(LocationCompletionAction::LoadUsers,
+					std::string(users_.empty() ? "Load" : "Reload") + " user names");
+			}
 
 			// Skip normal directory handling.
 			return;
@@ -1172,6 +1176,7 @@ namespace cvn { namespace lsgui
 		switch (locationCompletionActions_[index]) {
 		case LocationCompletionAction::LoadUsers:
 			update_users();
+			delete_locationCompletionActions(LocationCompletionAction::LoadUsers);
 			update_locationCompletion();
 			break;
 		default:
