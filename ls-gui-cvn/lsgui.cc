@@ -1113,8 +1113,10 @@ namespace cvn { namespace lsgui
 		locationEntry_lastSlashPos_ = text.rfind('/');
 		int pos = location_.get_position();
 		if (text[pos] == '/' ||
+		    //(text[0] == '~' && locationEntry_lastSlashPos_ == Glib::ustring::npos) ||
 		    (lastSlashPosPrev != Glib::ustring::npos &&
-		     locationEntry_lastSlashPos_ < lastSlashPosPrev))
+		     (locationEntry_lastSlashPos_ == Glib::ustring::npos ||
+		      locationEntry_lastSlashPos_ < lastSlashPosPrev)))
 		{
 			// It's possible the user has just input a slash
 			// (as in "directory separator") or backspaced over it,
