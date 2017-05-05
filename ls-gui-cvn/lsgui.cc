@@ -717,12 +717,12 @@ namespace cvn { namespace lsgui
 				location_is_dirlisting_ = true;
 
 				// Avoid having the user to activate a completion action first.
-				if (users_.empty())
+				if (usersCache_.empty())
 					update_users();
 
 				std::cout << "Reading in list of user home directories..." << std::endl;
 
-				for (auto &pair : users_) {
+				for (auto &pair : usersCache_) {
 					const std::string &username(pair.first);
 					const std::string &homedir_opsys(pair.second);
 					Glib::ustring homedir_gui;
@@ -1050,7 +1050,7 @@ namespace cvn { namespace lsgui
 		    typed_str[0] == '~' && pos_slash == Glib::ustring::npos)
 		{
 			// Fill model with ~username entries.
-			for (auto &pair : users_) {
+			for (auto &pair : usersCache_) {
 				Gtk::TreeModel::Row row = *locationCompletionModel_ptr_->append();
 				row[modelColumns_.name_opsys] = "~" + pair.first;
 				row[modelColumns_.name_gui]   = "~" + pair.first;
@@ -1064,7 +1064,7 @@ namespace cvn { namespace lsgui
 			{
 				delete_locationCompletionActions(LocationCompletionAction::LoadUsers);
 				add_locationCompletionAction(LocationCompletionAction::LoadUsers,
-					std::string(users_.empty() ? "Load" : "Reload") + " user names");
+					std::string(usersCache_.empty() ? "Load" : "Reload") + " user names");
 			}
 
 			// Skip normal directory handling.
@@ -1206,14 +1206,14 @@ namespace cvn { namespace lsgui
 
 	void LsGui::update_users()
 	{
-		users_.clear();
+		usersCache_.clear();
 
 		std::cout << "Retrieving users..." << std::endl;
 
 		try {
 			cvn::Users systemUsers;
 			while (systemUsers.read()) {
-				users_.insert(std::make_pair(
+				usersCache_.insert(std::make_pair(
 					systemUsers.get_ent_username(),
 					systemUsers.get_ent_homedir()));
 			}
