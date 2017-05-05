@@ -1461,7 +1461,17 @@ namespace cvn { namespace lsgui
 		}
 		// Has tilde expansion and no more relative path to strip?
 		else if (prev_location[0] == '~' && prev_location.find('/') == std::string::npos) {
-			prev_location = cvn::fs::expand_path(prev_location);
+			try {
+				prev_location = cvn::fs::expand_path(prev_location);
+			}
+			catch (const std::exception &ex) {
+				auto errmsg(Glib::ustring("Error going up: ") + ex.what());
+				std::cerr << errmsg.raw() << std::endl;
+				display_msg(errmsg);
+
+				error_bell();
+				return;
+			}
 		}
 
 		std::string dir_name = cvn::fs::dirname(prev_location);
