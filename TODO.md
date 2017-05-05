@@ -51,10 +51,6 @@
   * Use more try-catch where things might fail, e.g. at charset conversion
     (like in Glib::filename_to_utf8()).
 
-  * Have a Home button, for easily opening $HOME?
-    Have a Current working directory button, for easily opening "."?
-    Or is both sufficiently easily to achieve by using the file open dialog?
-
   * Support environment variable expansion, e.g., on Ctrl-Enter?
     (Or maybe according to toggle button?)
 
