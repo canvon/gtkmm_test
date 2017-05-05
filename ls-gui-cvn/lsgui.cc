@@ -715,6 +715,7 @@ namespace cvn { namespace lsgui
 			// Special-case for viewing a list of all known users' home directories.
 			if (location_str_ == "~*") {
 				location_is_dirlisting_ = true;
+				bool show_hidden = get_show_hidden();
 
 				// Avoid having the user to activate a completion action first.
 				if (usersCache_.empty())
@@ -723,8 +724,12 @@ namespace cvn { namespace lsgui
 				std::cout << "Reading in list of user home directories..." << std::endl;
 
 				for (auto &pair : usersCache_) {
+					// Skip system users unless show hidden is on.
+					if (!show_hidden && pair.second.uid < 1000)
+						continue;
+
 					const std::string &username(pair.first);
-					const std::string &homedir_opsys(pair.second);
+					const std::string &homedir_opsys(pair.second.homedir);
 					Glib::ustring homedir_gui;
 					try {
 						homedir_gui = Glib::filename_to_utf8(homedir_opsys);
@@ -1213,9 +1218,12 @@ namespace cvn { namespace lsgui
 		try {
 			cvn::Users systemUsers;
 			while (systemUsers.read()) {
-				usersCache_.insert(std::make_pair(
+				UsersCacheEntry entry {
 					systemUsers.get_ent_username(),
-					systemUsers.get_ent_homedir()));
+					systemUsers.get_ent_homedir(),
+					systemUsers.get_ent_uid() };
+
+				usersCache_.insert(std::make_pair(entry.username, entry));
 			}
 		}
 		catch (const std::exception &ex) {

@@ -163,8 +163,13 @@ namespace cvn { namespace lsgui
 		typedef std::vector<LocationCompletionAction>  locationCompletionActions_type;
 		locationCompletionActions_type                 locationCompletionActions_;
 
-		typedef std::map<std::string, std::string>  usersCache_type;
-		usersCache_type                             usersCache_;
+		struct UsersCacheEntry {
+			std::string username;
+			std::string homedir;
+			long uid;
+		};
+		typedef std::map<std::string, UsersCacheEntry>  usersCache_type;
+		usersCache_type                                 usersCache_;
 
 		void add_locationCompletionAction(
 			LocationCompletionAction actionType, const Glib::ustring &actionText);
