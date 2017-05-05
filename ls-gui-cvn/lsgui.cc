@@ -202,6 +202,18 @@ namespace cvn { namespace lsgui
 				text_renderer->property_family().set_value("mono");
 			}
 		}
+		if ((renderer = ls_.get_column_cell_renderer(lsViewColumns_.time)) == nullptr) {
+			warn("LsGui ctor: Can't get cell renderer for ls view column time, get_column_cell_renderer() failed");
+		}
+		else {
+			auto text_renderer = dynamic_cast<Gtk::CellRendererText*>(renderer);
+			if (text_renderer == nullptr) {
+				warn("LsGui ctor: Can't get text cell renderer for ls view column time, cast gave null pointer");
+			}
+			else {
+				text_renderer->property_family().set_value("mono");
+			}
+		}
 		if ((renderer = ls_.get_column_cell_renderer(lsViewColumns_.nlink)) == nullptr) {
 			warn("LsGui ctor: Can't get cell renderer for ls view column nlink, get_column_cell_renderer() failed");
 		}
