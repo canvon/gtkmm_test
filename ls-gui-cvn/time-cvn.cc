@@ -77,7 +77,7 @@ namespace cvn
 	}
 
 
-	std::string Time::str()
+	std::string Time::str() const
 	{
 		::tm brokenDown = get_tm_localtime();
 		char buf[256];

@@ -33,7 +33,7 @@ namespace cvn
 
 		bool operator<(const Time &rhs) const;
 
-		std::string str();
+		std::string str() const;
 
 		::tm get_tm_gmtime() const;
 		::tm get_tm_localtime() const;
