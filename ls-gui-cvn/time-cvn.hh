@@ -31,6 +31,8 @@ namespace cvn
 
 		Time &operator=(const Time &rhs);
 
+		bool operator<(const Time &rhs) const;
+
 		std::string str();
 
 		::tm get_tm_gmtime() const;

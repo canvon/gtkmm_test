@@ -63,6 +63,20 @@ namespace cvn
 	}
 
 
+	bool Time::operator<(const Time &rhs) const
+	{
+		const ::timespec &lts(pimpl->ts), &rts(rhs.pimpl->ts);
+
+		if (lts.tv_sec < rts.tv_sec)
+			return true;
+
+		if (lts.tv_sec == rts.tv_sec)
+			return lts.tv_nsec < rts.tv_nsec;
+
+		return false;
+	}
+
+
 	std::string Time::str()
 	{
 		::tm brokenDown = get_tm_localtime();
