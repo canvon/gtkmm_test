@@ -28,7 +28,7 @@ namespace cvn
 		std::string get_ent_homedir();
 		std::string get_ent_shell();
 
-	private:
+	protected:
 		class impl;
 		std::unique_ptr<impl> pimpl;
 	};
