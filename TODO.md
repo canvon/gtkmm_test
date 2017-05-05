@@ -33,6 +33,9 @@
 
   * Allow sorting: Allow switching back to unsorted.
 
+  * Allow sorting by time column and later, which currently breaks
+    due to a difference between view column number and model column number...
+
   * Allow sorting directories first.
 
   * Have auto-completion in the location entry:
