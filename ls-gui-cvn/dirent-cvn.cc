@@ -142,7 +142,7 @@ namespace cvn { namespace fs
 #endif
 		}
 #else  // _DIRENT_HAVE_D_TYPE
-#pragma message("Warning: Compiling without dirent->d_type support, "
+#pragma message("Warning: Compiling without dirent->d_type support, " \
 	"all directory entry types will look unknown")
 		return EntType::Unknown;
 #endif  // _DIRENT_HAVE_D_TYPE
