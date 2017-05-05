@@ -416,9 +416,9 @@ namespace cvn { namespace lsgui
 		action_backward_ptr_ = add_action("backward", sigc::mem_fun(*this, &LsGui::on_action_backward));
 		action_forward_ptr_ = add_action("forward", sigc::mem_fun(*this, &LsGui::on_action_forward));
 		action_up_ptr_ = add_action("up", sigc::mem_fun(*this, &LsGui::on_action_up));
-		action_goto_cwd_ptr_ = add_action("goto-cwd", sigc::mem_fun(*this, &LsGui::on_action_goto_cwd));
-		action_goto_home_ptr_ = add_action("goto-home", sigc::mem_fun(*this, &LsGui::on_action_goto_home));
-		action_goto_homedirs_ptr_ = add_action("goto-homedirs", sigc::mem_fun(*this, &LsGui::on_action_goto_homedirs));
+		add_goto_action(".", "goto-cwd");
+		add_goto_action("~", "goto-home");
+		add_goto_action("~*", "goto-homedirs");
 		//
 		// Stateful actions.
 		action_show_hidden_ptr_ = add_action_bool("show-hidden",
@@ -440,6 +440,14 @@ namespace cvn { namespace lsgui
 		// Switch to an initial directory...
 		set_location_str("/home");
 #endif
+	}
+
+	void LsGui::add_goto_action(
+		const std::string &pathname,
+		const Glib::ustring &action_name)
+	{
+		actions_goto.push_back(add_action(action_name,
+			sigc::bind(sigc::mem_fun(*this, &LsGui::on_action_goto), pathname)));
 	}
 
 	LsGui::~LsGui()
@@ -1495,19 +1503,9 @@ namespace cvn { namespace lsgui
 		set_location_str(dir_name);
 	}
 
-	void LsGui::on_action_goto_cwd()
+	void LsGui::on_action_goto(const std::string &pathname)
 	{
-		set_location_str(".");
-	}
-
-	void LsGui::on_action_goto_home()
-	{
-		set_location_str("~");
-	}
-
-	void LsGui::on_action_goto_homedirs()
-	{
-		set_location_str("~*");
+		set_location_str(pathname);
 	}
 
 	void LsGui::on_action_show_hidden()

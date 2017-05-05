@@ -135,9 +135,7 @@ namespace cvn { namespace lsgui
 		void on_action_backward();
 		void on_action_forward();
 		void on_action_up();
-		void on_action_goto_cwd();
-		void on_action_goto_home();
-		void on_action_goto_homedirs();
+		void on_action_goto(const std::string &pathname);
 		void on_action_show_hidden();
 		void on_action_complete_location();
 
@@ -203,6 +201,7 @@ namespace cvn { namespace lsgui
 		Gtk::Menu                  *menu_goto_gtk_ptr_;
 		Gtk::Toolbar               *toolbar_ptr_;
 
+		typedef std::vector< Glib::RefPtr<Gio::SimpleAction> > actions_type;
 		Glib::RefPtr<Gio::SimpleAction>
 			action_open_ptr_,
 			action_close_ptr_,
@@ -210,11 +209,13 @@ namespace cvn { namespace lsgui
 			action_backward_ptr_,
 			action_forward_ptr_,
 			action_up_ptr_,
-			action_goto_cwd_ptr_,
-			action_goto_home_ptr_,
-			action_goto_homedirs_ptr_,
 			action_show_hidden_ptr_,
 			action_complete_location_ptr_;
+		actions_type actions_goto;
+
+		void add_goto_action(
+			const std::string &pathname,
+			const Glib::ustring &action_name);
 	};
 
 }  // cvn::lsgui
