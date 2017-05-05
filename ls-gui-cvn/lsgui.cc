@@ -725,8 +725,14 @@ namespace cvn { namespace lsgui
 
 				for (auto &pair : usersCache_) {
 					// Skip system users unless show hidden is on.
-					if (!show_hidden && pair.second.uid < 1000)
+					auto uid(pair.second.uid);
+					bool is_system_user = uid < 1000 ||
+						(uid > 60000 && uid < 65535);
+					if (!show_hidden && is_system_user)
 						continue;
+
+					// TODO: Maybe color system users differently;
+					// make them red, or gray them out?
 
 					const std::string &username(pair.first);
 					const std::string &homedir_opsys(pair.second.homedir);

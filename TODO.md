@@ -42,8 +42,8 @@
 
     * Test, test, test and adjust for corner cases.
 
-  * List users (~*): Use Show Hidden and only then list users
-    with a uid <1000?
+  * List users (~*): Maybe color system users (that will not be shown
+    when Show Hidden is off) differently; make them red, or gray them out?
 
   * Move directory processing to a background thread.
 
