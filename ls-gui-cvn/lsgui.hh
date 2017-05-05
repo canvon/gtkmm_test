@@ -5,6 +5,7 @@
 #include <map>
 #include <vector>
 #include "dirent-cvn.hh"
+#include "time-cvn.hh"
 
 #include <glib.h>
 #include <gtkmm/applicationwindow.h>
@@ -50,8 +51,10 @@ namespace cvn { namespace lsgui
 				user, group;
 			Gtk::TreeModelColumn<guint>
 				size;  // size in bytes
+			Gtk::TreeModelColumn<cvn::Time>
+				time_lib;  // mtime, ctime or atime
 			Gtk::TreeModelColumn<Glib::ustring>
-				time;  // mtime, ctime or atime
+				time_user;
 			Gtk::TreeModelColumn<std::string>
 				name_opsys;
 			Gtk::TreeModelColumn<Glib::ustring>

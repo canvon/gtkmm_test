@@ -186,7 +186,7 @@ namespace cvn { namespace lsgui
 		lsViewColumns_.user  = ls_.append_column("User",        modelColumns_.user)  - 1;
 		lsViewColumns_.group = ls_.append_column("Group",       modelColumns_.group) - 1;
 		lsViewColumns_.size  = ls_.append_column("Size",        modelColumns_.size)  - 1;
-		lsViewColumns_.time  = ls_.append_column("Time",        modelColumns_.time)  - 1;
+		lsViewColumns_.time  = ls_.append_column("Time",        modelColumns_.time_user) - 1;
 		lsViewColumns_.name  = ls_.append_column("File name",   modelColumns_.name_user) - 1;
 
 		Gtk::CellRenderer *renderer = nullptr;
@@ -485,7 +485,8 @@ namespace cvn { namespace lsgui
 		add(nlink);
 		add(user); add(group);
 		add(size);
-		add(time);
+		add(time_lib);
+		add(time_user);
 		add(name_opsys);
 		add(name_gui);
 		add(name_user);
@@ -841,7 +842,9 @@ namespace cvn { namespace lsgui
 		row[modelColumns_.user]  = name_stat.get_user();
 		row[modelColumns_.group] = name_stat.get_group();
 		row[modelColumns_.size]  = name_stat.get_size();
-		//row[modelColumns_.time]  = name_stat.get_mtime_str();  // TODO: Use when implemented.
+		cvn::Time mtime(name_stat.get_mtime());
+		row[modelColumns_.time_lib]   = mtime;
+		row[modelColumns_.time_user]  = mtime.str();
 		row[modelColumns_.type_lib]   = cvn::fs::Dirent::EntType::Unknown;
 		row[modelColumns_.type_user]  = "";
 		row[modelColumns_.name_opsys] = name;

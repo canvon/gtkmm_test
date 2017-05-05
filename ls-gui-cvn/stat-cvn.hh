@@ -1,6 +1,8 @@
 #ifndef STAT_CVN_HH
 #define STAT_CVN_HH
 
+#include "time-cvn.hh"
+
 #include <memory>
 #include <string>
 
@@ -50,7 +52,9 @@ namespace cvn { namespace fs
 
 		long long get_size() const;
 
-		// TODO: Give access to mtime, ctime, atime.
+		Time get_mtime() const;
+		Time get_ctime() const;
+		Time get_atime() const;
 
 		struct ::stat &get_stat();
 		const struct ::stat &get_stat() const;
