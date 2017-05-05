@@ -71,6 +71,10 @@
   * Let the user configure a list of pathname prefixes and what encoding
     to use for them.
 
+  * About dialog with author and version information.
+
+    * Version information from git? Or by updating some file manually?
+
   * Use inotify/dnotify, to (optionally?) automatically update the displayed data
     when it changes on-disk? (Need to be able to disable this!)
 
