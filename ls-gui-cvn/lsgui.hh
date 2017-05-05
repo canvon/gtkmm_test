@@ -196,7 +196,7 @@ namespace cvn { namespace lsgui
 		} lsViewColumns_;
 
 		Glib::RefPtr<Gtk::Builder>  builder_ptr_;
-		Glib::RefPtr<Gio::Menu>     gmenu_ptr_;
+		Glib::RefPtr<Gio::Menu>     gmenu_ptr_, gmenu_goto_ptr_;
 		Gtk::MenuBar               *menubar_gtk_ptr_;
 		Gtk::Menu                  *menu_goto_gtk_ptr_;
 		Gtk::Toolbar               *toolbar_ptr_;
@@ -216,6 +216,10 @@ namespace cvn { namespace lsgui
 		void add_goto_action(
 			const std::string &pathname,
 			const Glib::ustring &action_name);
+		void add_goto_action(
+			const std::string &pathname,
+			const Glib::ustring &action_name,
+			const Glib::ustring &label);
 	};
 
 }  // cvn::lsgui

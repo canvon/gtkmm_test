@@ -297,13 +297,13 @@ namespace cvn { namespace lsgui
 				break;
 			}
 
-			auto menu_goto_gmenu_ptr = Glib::RefPtr<Gio::Menu>::cast_dynamic(obj_ptr);
-			if (!menu_goto_gmenu_ptr) {
+			gmenu_goto_ptr_ = Glib::RefPtr<Gio::Menu>::cast_dynamic(obj_ptr);
+			if (!gmenu_goto_ptr_) {
 				warn("Object 'menu-goto' is not a Gio::Menu");
 				break;
 			}
 
-			menu_goto_gtk_ptr_ = Gtk::manage(new Gtk::Menu(menu_goto_gmenu_ptr));
+			menu_goto_gtk_ptr_ = Gtk::manage(new Gtk::Menu(gmenu_goto_ptr_));
 		}
 		while (false);
 
@@ -419,6 +419,11 @@ namespace cvn { namespace lsgui
 		add_goto_action(".", "goto-cwd");
 		add_goto_action("~", "goto-home");
 		add_goto_action("~*", "goto-homedirs");
+		add_goto_action("/", "goto-root", "/ _root directory");
+		add_goto_action("/etc", "goto-etc", "/_etc system configuration directory");
+		add_goto_action("/proc", "goto-proc", "/_proc process information pseudo-filesystem");
+		add_goto_action("/run", "goto-run", "/_run ephemeral configuration & data of this boot");
+		add_goto_action("/var/log", "goto-var-log", "/var/_log system messages logging");
 		//
 		// Stateful actions.
 		action_show_hidden_ptr_ = add_action_bool("show-hidden",
@@ -448,6 +453,26 @@ namespace cvn { namespace lsgui
 	{
 		actions_goto.push_back(add_action(action_name,
 			sigc::bind(sigc::mem_fun(*this, &LsGui::on_action_goto), pathname)));
+	}
+
+	void LsGui::add_goto_action(
+		const std::string &pathname,
+		const Glib::ustring &action_name,
+		const Glib::ustring &label)
+	{
+		add_goto_action(pathname, action_name);
+
+		if (!gmenu_goto_ptr_) {
+			Glib::ustring errmsg("GUI error: LsGui::add_goto_action(): "
+				"Can't create menu entry for action " + action_name
+				+ ": Menu goto pointer is not valid");
+			std::cerr << errmsg.raw() << std::endl;
+			display_errmsg(errmsg);
+			return;
+		}
+
+		auto gioMenuItem = Gio::MenuItem::create(label, "win." + action_name);
+		gmenu_goto_ptr_->append_item(gioMenuItem);
 	}
 
 	LsGui::~LsGui()
