@@ -2,6 +2,7 @@
 
 #include <iomanip>
 #include <system_error>
+#include <sstream>
 
 #include <sys/types.h>
 #include <fcntl.h>
@@ -9,7 +10,7 @@
 #include <stdlib.h>
 #include <pwd.h>
 #include <cerrno>
-
+#include <sys/param.h>
 
 //namespace cvn::fs
 namespace cvn { namespace fs
@@ -159,8 +160,9 @@ namespace cvn { namespace fs
 
 	std::string get_current_dir_name()
 	{
+		char tmp[MAXPATHLEN];
 		// TODO: Make portable by not relying on GNU extension.
-		char *dir_name_ptr = ::get_current_dir_name();
+		char *dir_name_ptr = getwd(tmp);
 		if (!dir_name_ptr) {
 			throw std::system_error(errno, std::generic_category(),
 				"cannot get current directory name");

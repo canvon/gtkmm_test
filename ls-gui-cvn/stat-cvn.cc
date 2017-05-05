@@ -1,6 +1,7 @@
 #include "stat-cvn.hh"
 #include <system_error>
 #include <iomanip>
+#include <sstream>
 
 #include <fcntl.h>
 #include <sys/types.h>

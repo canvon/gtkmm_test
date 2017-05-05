@@ -1,6 +1,7 @@
 #include "dirent-cvn.hh"
 #include <system_error>
 #include <iomanip>
+#include <sstream>
 
 #include <sys/types.h>
 #include <dirent.h>
