@@ -35,14 +35,18 @@ lsgui-version:
 	@if [ -d .git ]; then \
 	  echo -n "Getting git-based ls-gui-cvn version string... "; \
 	  VER=$$(git describe --tags --dirty) || { echo "failed"; exit 1; }; \
-	  echo "$$VER"; \
-	  if ! grep -q '^ls-gui-cvn/' <<<"$$VER"; then \
-	    echo "Can't determine ls-gui-cvn version from tag name \"$$VER\"" >&2; \
-	    exit 1; \
-	  fi; \
-	  ./update_config.sh ls-gui-cvn/config.h LSGUI_VERSION_STRING "\"$$VER\"" || exit 1; \
-	else echo "Updating version string not supported outside git" >&2; exit 1; \
-	fi
+	else \
+	  echo -n "Building outside git, trying fallback ls-gui-cvn version string... "; \
+	  VER=$$(sed -n -e 's/^#define LSGUI_REFNAMES "\(.*\)"/\1/p' \
+	    <ls-gui-cvn/version_fallback.h) || { echo "sed failed"; exit 1; }; \
+	  VER=$$(grep -E --only '\bls-gui-cvn[^ ]*' <<<"$$VER") || { echo "grep failed"; exit 1; }; \
+	fi; \
+	echo "$$VER"; \
+	if ! grep -q '^ls-gui-cvn/' <<<"$$VER"; then \
+	  echo "Can't determine ls-gui-cvn version from tag name \"$$VER\"" >&2; \
+	  exit 1; \
+	fi; \
+	./update_config.sh ls-gui-cvn/config.h LSGUI_VERSION_STRING "\"$$VER\""
 
 .PHONY: all clean realclean lsgui-version
 
