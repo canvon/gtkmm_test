@@ -170,8 +170,10 @@ namespace cvn { namespace fs
 			dir_name_malloced = true;
 #else
 		std::vector<char> bufVector(4096, 0);
-		for (; bufVector.size() <= 4*1024*1024; bufVector.resize(bufVector.size() * 2))
+		for (size_t requestSize = 4096; requestSize <= 4*1024*1024; requestSize *= 2)
 		{
+			bufVector.resize(requestSize);
+
 			errno = 0;
 			dir_name_ptr = ::getcwd(bufVector.data(), bufVector.size());
 			if (dir_name_ptr || errno != ERANGE)
