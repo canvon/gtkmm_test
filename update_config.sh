@@ -19,11 +19,23 @@ VALUE="$1"; shift
 
 [ "$#" -eq 0 ] || die "Trailing arguments"
 
+was-updated() {
+	echo "Updated config header \"$CONFIG_HEADER\" key \"$KEY\" to value \"$VALUE\"" >&2
+	if [ -z "$OK" ] || [ "$OK" -eq 0 ]
+	then
+		warn "Please re-run make so it will pick up the change to the file."
+		exit 3
+	else
+		warn "Let's hope make will pick up the change to the file. Otherwise, run make again."
+		exit 0
+	fi
+}
+
 if ! [ -e "$CONFIG_HEADER" ]
 then
 	echo "Creating config header \"$CONFIG_HEADER\""
 	echo "#define $KEY $VALUE" >"$CONFIG_HEADER" || die "Couldn't create config header \"$CONFIG_HEADER\""
-	exit 0
+	OK=1 was-updated
 fi
 
 OLD_VALUE=$(sed -n -e "s/^#define $KEY \\(.*\\)/\\1/p" <"$CONFIG_HEADER") || die "Error read-processing config header \"$CONFIG_HEADER\""
@@ -33,8 +45,11 @@ OLD_VALUE=$(sed -n -e "s/^#define $KEY \\(.*\\)/\\1/p" <"$CONFIG_HEADER") || die
 
 if grep -E -q "^#define $KEY " <"$CONFIG_HEADER"
 then
-	sed -i -e "s/^\\(#define $KEY\\) .*/\\1 $VALUE/" "$CONFIG_HEADER" || die "Error write-processing config header \"$CONFIG_HEADER\""
+	VALUE_ESCAPED=$(sed -e 's#\\#\\\\#; s#/#\\/#' <<<"$VALUE") || die "Couldn't escape value \"$VALUE\" for sed"
+	sed -i -e "s/^\\(#define $KEY\\) .*/\\1 ${VALUE_ESCAPED}/" "$CONFIG_HEADER" || die "Error write-processing config header \"$CONFIG_HEADER\""
+	was-updated
 else
 	echo "#define $KEY $VALUE" >>"$CONFIG_HEADER" || die "Couldn't append to config header \"$CONFIG_HEADER\""
+	was-updated
 fi
 exit 0

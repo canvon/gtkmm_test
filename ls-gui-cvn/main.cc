@@ -1,5 +1,6 @@
 #define G_LOG_USE_STRUCTURED
 
+#include "config.h"
 #include "lsgui.hh"
 #include <gtkmm/application.h>
 #include <gtkmm/messagedialog.h>
@@ -142,7 +143,7 @@ int main(int argc, char *argv[])
 
 	app->add_action("about", [] {
 		Gtk::AboutDialog dialog;
-		// TODO: dialog.set_version();
+		dialog.set_version(LSGUI_VERSION_STRING);
 		dialog.set_comments("An ls (list directory command) GUI by canvon");
 		dialog.set_authors({ "Fabian Pietsch aka canvon <fabian@canvon.de>" });
 		dialog.set_copyright("Copyright © 2017 Fabian Pietsch <fabian@canvon.de>");
