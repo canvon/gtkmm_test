@@ -1,8 +1,7 @@
 #include "util.hh"
-
-#include <iomanip>
 #include <system_error>
 #include <sstream>
+#include <iomanip>
 
 #include <sys/types.h>
 #include <fcntl.h>
