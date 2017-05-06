@@ -9,7 +9,6 @@
 #include <stdlib.h>
 #include <pwd.h>
 #include <cerrno>
-#include <sys/param.h>
 
 //namespace cvn::fs
 namespace cvn { namespace fs
@@ -159,16 +158,39 @@ namespace cvn { namespace fs
 
 	std::string get_current_dir_name()
 	{
-		char tmp[MAXPATHLEN];
-		// TODO: Make portable by not relying on GNU extension.
-		char *dir_name_ptr = getwd(tmp);
+		char *dir_name_ptr = nullptr;
+		bool  dir_name_malloced = false;
+
+		// Make portable by not relying on GNU extension
+		// on platforms which don't support it.
+#ifdef __GLIBC__
+		dir_name_ptr = ::get_current_dir_name();
+		if (dir_name_ptr)
+			dir_name_malloced = true;
+#else
+		size_t  buf_size = 4096;
+		do {
+			char  buf[buf_size];
+			errno = 0;
+			dir_name_ptr = ::getcwd(buf, buf_size);
+			if (!dir_name_ptr && errno == ERANGE) {
+				buf_size *= 2;
+				continue;
+			}
+		}
+		while (0);
+#endif
+
 		if (!dir_name_ptr) {
 			throw std::system_error(errno, std::generic_category(),
 				"cannot get current directory name");
 		}
 
 		std::string dir_name(dir_name_ptr);
-		free(dir_name_ptr);
+		if (dir_name_malloced && dir_name_ptr) {
+			free(dir_name_ptr);
+			dir_name_ptr = nullptr;
+		}
 		return dir_name;
 	}
 
