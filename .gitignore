@@ -5,10 +5,12 @@
 /helloworld/helloworld
 /radiobuttons/radiobuttons
 /entrycvn/entrycvn
-/ls-gui-cvn/config.h
 /ls-gui-cvn/resources.c
 /ls-gui-cvn/main
 /ls-gui-cvn/ls-gui-cvn
+
+# configuration headers (auto-generated)
+/ls-gui-cvn/config.h
 
 # per-user IDE settings/state
 .codelite
