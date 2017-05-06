@@ -39,10 +39,10 @@ lsgui-version:
 	  echo -n "Building outside git, trying fallback ls-gui-cvn version string... "; \
 	  VER=$$(sed -n -e 's/^#define LSGUI_REFNAMES "\(.*\)"/\1/p' \
 	    <ls-gui-cvn/version_fallback.h) || { echo "sed failed"; exit 1; }; \
-	  VER=$$(grep -E --only '\bls-gui-cvn[^ ]*' <<<"$$VER") || { echo "grep failed"; exit 1; }; \
+	  VER=$$(grep -E --only '\bls-gui-cvn[^ ]*' <<<"$$VER") || echo -n "(Not found in first pass.) "; \
 	  if [ -z "$$VER" ]; then \
 	    VER=$$(sed -n -e 's/^#define LSGUI_ABBREV_COMMIT_HASH "\(.*\)"/ls-gui-cvn\/unknown-g\1/p' \
-	      <ls-gui-cvn/version_fallback.h) || { echo "2nd sed failed"; exit 1; }; \
+	      <ls-gui-cvn/version_fallback.h) || { echo "second-pass sed failed"; exit 1; }; \
 	  fi; \
 	fi; \
 	echo "$$VER"; \
@@ -65,6 +65,7 @@ ls-gui-cvn/main: ls-gui-cvn/main.o ls-gui-cvn/lsgui.o ls-gui-cvn/stat-cvn.o \
                  ls-gui-cvn/dirent-cvn.o ls-gui-cvn/users-cvn.o \
                  ls-gui-cvn/util.o \
                  ls-gui-cvn/resources.o
+ls-gui-cvn/main.o: ls-gui-cvn/config.h
 ls-gui-cvn/config.h: lsgui-version
 ls-gui-cvn/resources.o: ls-gui-cvn/resources.c
 ls-gui-cvn/resources.c: ls-gui-cvn/toolbar.gresource.xml
