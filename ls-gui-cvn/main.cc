@@ -3,6 +3,7 @@
 #include "lsgui.hh"
 #include <gtkmm/application.h>
 #include <gtkmm/messagedialog.h>
+#include <gtkmm/aboutdialog.h>
 #include <iostream>
 #include <iomanip>
 #include <stdexcept>
@@ -137,6 +138,18 @@ int main(int argc, char *argv[])
 		// This seems to be necessary to get the accelerators
 		// picked up automatically from the menubar markup.
 		app->set_menubar(window.get_gmenu());
+	});
+
+	app->add_action("about", [] {
+		Gtk::AboutDialog dialog;
+		// TODO: dialog.set_version();
+		dialog.set_comments("An ls (list directory command) GUI by canvon");
+		dialog.set_authors({ "Fabian Pietsch aka canvon <fabian@canvon.de>" });
+		dialog.set_copyright("Copyright © 2017 Fabian Pietsch <fabian@canvon.de>");
+		// TODO: dialog.set_license() or set_license_type();
+		dialog.set_website("https://github.com/canvon/gtkmm_test");
+		dialog.set_website_label("Website: gtkmm_test on GitHub");
+		dialog.run();
 	});
 
 	app->add_action("quit", [&window] {
