@@ -168,17 +168,14 @@ namespace cvn { namespace fs
 		if (dir_name_ptr)
 			dir_name_malloced = true;
 #else
-		size_t  buf_size = 4096;
-		do {
+		for (size_t buf_size = 4096; buf_size <= 4*1024*1024; buf_size *= 2)
+		{
 			char  buf[buf_size];
 			errno = 0;
 			dir_name_ptr = ::getcwd(buf, buf_size);
-			if (!dir_name_ptr && errno == ERANGE) {
-				buf_size *= 2;
-				continue;
-			}
+			if (dir_name_ptr || errno != ERANGE)
+				break;
 		}
-		while (0);
 #endif
 
 		if (!dir_name_ptr) {
