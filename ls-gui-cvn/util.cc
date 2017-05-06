@@ -2,6 +2,7 @@
 #include <system_error>
 #include <sstream>
 #include <iomanip>
+#include <vector>
 
 #include <sys/types.h>
 #include <fcntl.h>
@@ -168,11 +169,11 @@ namespace cvn { namespace fs
 		if (dir_name_ptr)
 			dir_name_malloced = true;
 #else
-		for (size_t buf_size = 4096; buf_size <= 4*1024*1024; buf_size *= 2)
+		std::vector<char> bufVector(4096, 0);
+		for (; bufVector.size() <= 4*1024*1024; bufVector.resize(bufVector.size() * 2))
 		{
-			char  buf[buf_size];
 			errno = 0;
-			dir_name_ptr = ::getcwd(buf, buf_size);
+			dir_name_ptr = ::getcwd(bufVector.data(), bufVector.size());
 			if (dir_name_ptr || errno != ERANGE)
 				break;
 		}
