@@ -40,6 +40,10 @@ lsgui-version:
 	  VER=$$(sed -n -e 's/^#define LSGUI_REFNAMES "\(.*\)"/\1/p' \
 	    <ls-gui-cvn/version_fallback.h) || { echo "sed failed"; exit 1; }; \
 	  VER=$$(grep -E --only '\bls-gui-cvn[^ ]*' <<<"$$VER") || { echo "grep failed"; exit 1; }; \
+	  if [ -z "$$VER" ]; then \
+	    VER=$$(sed -n -e 's/^#define LSGUI_ABBREV_COMMIT_HASH "\(.*\)"/ls-gui-cvn\/unknown-g\1/p' \
+	      <ls-gui-cvn/version_fallback.h) || { echo "2nd sed failed"; exit 1; }; \
+	  fi; \
 	fi; \
 	echo "$$VER"; \
 	if ! grep -q '^ls-gui-cvn/' <<<"$$VER"; then \
