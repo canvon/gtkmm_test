@@ -1,7 +1,8 @@
 #include "util.hh"
-
-#include <iomanip>
 #include <system_error>
+#include <sstream>
+#include <iomanip>
+#include <vector>
 
 #include <sys/types.h>
 #include <fcntl.h>
@@ -159,15 +160,38 @@ namespace cvn { namespace fs
 
 	std::string get_current_dir_name()
 	{
-		// TODO: Make portable by not relying on GNU extension.
-		char *dir_name_ptr = ::get_current_dir_name();
+		char *dir_name_ptr = nullptr;
+		bool  dir_name_malloced = false;
+
+		// Make portable by not relying on GNU extension
+		// on platforms which don't support it.
+#ifdef __GLIBC__
+		dir_name_ptr = ::get_current_dir_name();
+		if (dir_name_ptr)
+			dir_name_malloced = true;
+#else
+		std::vector<char> bufVector(4096, 0);
+		for (size_t requestSize = 4096; requestSize <= 4*1024*1024; requestSize *= 2)
+		{
+			bufVector.resize(requestSize);
+
+			errno = 0;
+			dir_name_ptr = ::getcwd(bufVector.data(), bufVector.size());
+			if (dir_name_ptr || errno != ERANGE)
+				break;
+		}
+#endif
+
 		if (!dir_name_ptr) {
 			throw std::system_error(errno, std::generic_category(),
 				"cannot get current directory name");
 		}
 
 		std::string dir_name(dir_name_ptr);
-		free(dir_name_ptr);
+		if (dir_name_malloced && dir_name_ptr) {
+			free(dir_name_ptr);
+			dir_name_ptr = nullptr;
+		}
 		return dir_name;
 	}
 

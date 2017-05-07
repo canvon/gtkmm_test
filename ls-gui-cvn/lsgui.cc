@@ -1135,25 +1135,25 @@ namespace cvn { namespace lsgui
 				cvn::fs::Dirent::EntType type_lib = dir.get_ent_type();
 				Glib::ustring type_user;
 				switch (type_lib) {
-				case dir.EntType::Regular:
+				case cvn::fs::Dirent::EntType::Regular:
 					type_user = "file";
 					break;
-				case dir.EntType::Directory:
+				case cvn::fs::Dirent::EntType::Directory:
 					type_user = "dir";
 					break;
-				case dir.EntType::Symlink:
+				case cvn::fs::Dirent::EntType::Symlink:
 					type_user = "symlink";
 					break;
-				case dir.EntType::BlockDevice:
+				case cvn::fs::Dirent::EntType::BlockDevice:
 					type_user = "blockdev";
 					break;
-				case dir.EntType::CharacterDevice:
+				case cvn::fs::Dirent::EntType::CharacterDevice:
 					type_user = "chardev";
 					break;
-				case dir.EntType::Fifo:
+				case cvn::fs::Dirent::EntType::Fifo:
 					type_user = "fifo";
 					break;
-				case dir.EntType::Socket:
+				case cvn::fs::Dirent::EntType::Socket:
 					type_user = "socket";
 					break;
 				default:
