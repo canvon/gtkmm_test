@@ -101,10 +101,13 @@ can be adapted so it'll work out-of-the-box on that platform, soon.
 
 The initially checked-in material was from the online book ["Programming
 with gtkmm 3"][book-gtkmm3]. This includes the projects `simple`, `helloworld`,
-and `radiobuttons`. The `entrycvn` was coded up after looking at a screenshot
-of another example, but not looking at the provided source code.
+and `radiobuttons`. They appear to be [under GPL-2][examples-license].
+The `entrycvn` was coded up after looking at a screenshot of another example,
+but not looking at the provided source code.
 
 [book-gtkmm3]: https://developer.gnome.org/gtkmm-tutorial/stable/
+[examples-license]:
+  https://git.gnome.org/browse/gtkmm-documentation/tree/COPYING.examples?h=gtkmm-3-22
 
 The `ls-gui-cvn`, however, was devised and implemented by the initial author
 of this README, Fabian Pietsch a.k.a. `canvon`.
