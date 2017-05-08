@@ -69,19 +69,17 @@ ls-gui-cvn/main.o: ls-gui-cvn/config.h
 ls-gui-cvn/config.h: lsgui-version
 ls-gui-cvn/resources.o: ls-gui-cvn/resources.c
 ls-gui-cvn/resources.c: ls-gui-cvn/toolbar.gresource.xml
-	#cd "$(dir $<)" && \
-	#  glib-compile-resources \
-	#    --target="$(notdir $@)" \
-	#    --generate-source "$(notdir $<)"
 	glib-compile-resources --sourcedir="$(dir $<)" \
 	  --target="$@" --generate-source "$<"
 ls-gui-cvn/resources.deps: ls-gui-cvn/toolbar.gresource.xml
-	echo "$(@:.deps=.c) $@: $$( \
+	@echo "Generating glib resources dependency makefile $@ from $<"
+	@echo "$(@:.deps=.c) $@: $$( \
 	  glib-compile-resources --sourcedir="$(dir $<)" \
 	  --generate-dependencies "$<" )" >"$@"
 
 %.deps: %.cc
-	set -o pipefail && \
+	@echo "Generating C++ dependency makefile $@ from $<"
+	@set -o pipefail && \
 	  OUT=$$($(COMPILE.cc) -MM $< | \
 	         if [ "$(@D)" = . ]; \
 	         then sed -e 's,^\([^: ]*\)\.o *:,\1.o \1.deps:,'; \
