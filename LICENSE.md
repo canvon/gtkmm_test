@@ -31,7 +31,7 @@ This is licensed under GNU GPL-3 or later, as seen in the file LICENSE-GPL3
 or as published by the Free Software Foundation (FSF) e.g. on <http://fsf.org/>
 or by the GNU Project on <http://gnu.org/>.
 
-[GPL-3] https://www.gnu.org/licenses/gpl.txt
+[GPL-3]: https://www.gnu.org/licenses/gpl.txt
 
 The list of files to which this license applies is as follows [as of 2017-05-08],
 plus any file not explicitly mentioned in this document:
