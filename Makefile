@@ -34,7 +34,7 @@ realclean: clean
 lsgui-version:
 	@if [ -d .git ]; then \
 	  echo -n "Getting git-based ls-gui-cvn version string... "; \
-	  VER=$$(git describe --tags --dirty --match='ls-gui-cvn/*') || { echo "failed"; exit 1; }; \
+	  VER=$$(./describe-cvn.sh 'ls-gui-cvn/*' ls-gui-cvn/) || { echo "failed"; exit 1; }; \
 	else \
 	  echo -n "Building outside git, trying fallback ls-gui-cvn version string... "; \
 	  VER=$$(sed -n -e 's/^#define LSGUI_REFNAMES "\(.*\)"/\1/p' \
