@@ -28,8 +28,8 @@ The list of files to which this license applies is as follows:
 Own work. (That is, work by Fabian Pietsch a.k.a. canvon.)
 This is licensed under GNU GPL-3 or later, as seen in the file LICENSE-GPL3
 (which was downloaded [from gnu.org][GPL-3] on 2017-05-08)
-or as published by the Free Software Foundation (FSF) e.g. on [](http://fsf.org/)
-or by the GNU Project on [](http://gnu.org/).
+or as published by the Free Software Foundation (FSF) e.g. on <http://fsf.org/>
+or by the GNU Project on <http://gnu.org/>.
 
 [GPL-3] https://www.gnu.org/licenses/gpl.txt
 
