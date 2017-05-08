@@ -249,6 +249,21 @@ namespace cvn { namespace fs
 		return pimpl->sb.st_size;
 	}
 
+	Time Stat::get_mtime() const
+	{
+		return Time(pimpl->sb.st_mtim);
+	}
+
+	Time Stat::get_ctime() const
+	{
+		return Time(pimpl->sb.st_ctim);
+	}
+
+	Time Stat::get_atime() const
+	{
+		return Time(pimpl->sb.st_atim);
+	}
+
 	struct ::stat &Stat::get_stat()
 	{
 		return pimpl->sb;

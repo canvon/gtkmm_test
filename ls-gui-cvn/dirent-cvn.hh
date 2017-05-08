@@ -39,7 +39,7 @@ namespace cvn { namespace fs
 		};
 		EntType get_ent_type();
 
-	private:
+	protected:
 		class impl;
 		std::shared_ptr<impl> pimpl;
 	};

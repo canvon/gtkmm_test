@@ -156,6 +156,8 @@ namespace cvn { namespace lsgui
 
 		model_ = Gtk::ListStore::create(modelColumns_);
 		modelSort_ = Gtk::TreeModelSort::create(model_);
+		modelSort_->set_sort_func(modelColumns_.time_lib,
+			sigc::mem_fun(*this, &LsGui::on_model_sort_compare_time));
 		modelSort_->set_sort_column(modelColumns_.name_user, Gtk::SortType::SORT_ASCENDING);
 		ls_.set_model(modelSort_);
 
@@ -195,7 +197,7 @@ namespace cvn { namespace lsgui
 		lsViewColumns_.user  = ls_.append_column("User",        modelColumns_.user)  - 1;
 		lsViewColumns_.group = ls_.append_column("Group",       modelColumns_.group) - 1;
 		lsViewColumns_.size  = ls_.append_column("Size",        modelColumns_.size)  - 1;
-		lsViewColumns_.time  = ls_.append_column("Time",        modelColumns_.time)  - 1;
+		lsViewColumns_.time  = ls_.append_column("Time",        modelColumns_.time_user) - 1;
 		lsViewColumns_.name  = ls_.append_column("File name",   modelColumns_.name_user) - 1;
 
 		Gtk::CellRenderer *renderer = nullptr;
@@ -206,6 +208,18 @@ namespace cvn { namespace lsgui
 			auto text_renderer = dynamic_cast<Gtk::CellRendererText*>(renderer);
 			if (text_renderer == nullptr) {
 				warn("LsGui ctor: Can't get text cell renderer for ls view column perms, cast gave null pointer");
+			}
+			else {
+				text_renderer->property_family().set_value("mono");
+			}
+		}
+		if ((renderer = ls_.get_column_cell_renderer(lsViewColumns_.time)) == nullptr) {
+			warn("LsGui ctor: Can't get cell renderer for ls view column time, get_column_cell_renderer() failed");
+		}
+		else {
+			auto text_renderer = dynamic_cast<Gtk::CellRendererText*>(renderer);
+			if (text_renderer == nullptr) {
+				warn("LsGui ctor: Can't get text cell renderer for ls view column time, cast gave null pointer");
 			}
 			else {
 				text_renderer->property_family().set_value("mono");
@@ -494,7 +508,8 @@ namespace cvn { namespace lsgui
 		add(nlink);
 		add(user); add(group);
 		add(size);
-		add(time);
+		add(time_lib);
+		add(time_user);
 		add(name_opsys);
 		add(name_gui);
 		add(name_user);
@@ -711,16 +726,27 @@ namespace cvn { namespace lsgui
 			// Special-case for viewing a list of all known users' home directories.
 			if (location_str_ == "~*") {
 				location_is_dirlisting_ = true;
+				bool show_hidden = get_show_hidden();
 
 				// Avoid having the user to activate a completion action first.
-				if (users_.empty())
+				if (usersCache_.empty())
 					update_users();
 
 				std::cout << "Reading in list of user home directories..." << std::endl;
 
-				for (auto &pair : users_) {
+				for (auto &pair : usersCache_) {
+					// Skip system users unless show hidden is on.
+					auto uid(pair.second.uid);
+					bool is_system_user = uid < 1000 ||
+						(uid > 60000 && uid < 65535);
+					if (!show_hidden && is_system_user)
+						continue;
+
+					// TODO: Maybe color system users differently;
+					// make them red, or gray them out?
+
 					const std::string &username(pair.first);
-					const std::string &homedir_opsys(pair.second);
+					const std::string &homedir_opsys(pair.second.homedir);
 					Glib::ustring homedir_gui;
 					try {
 						homedir_gui = Glib::filename_to_utf8(homedir_opsys);
@@ -850,7 +876,9 @@ namespace cvn { namespace lsgui
 		row[modelColumns_.user]  = name_stat.get_user();
 		row[modelColumns_.group] = name_stat.get_group();
 		row[modelColumns_.size]  = name_stat.get_size();
-		//row[modelColumns_.time]  = name_stat.get_mtime_str();  // TODO: Use when implemented.
+		cvn::Time mtime(name_stat.get_mtime());
+		row[modelColumns_.time_lib]   = mtime;
+		row[modelColumns_.time_user]  = mtime.str();
 		row[modelColumns_.type_lib]   = cvn::fs::Dirent::EntType::Unknown;
 		row[modelColumns_.type_user]  = "";
 		row[modelColumns_.name_opsys] = name;
@@ -1044,7 +1072,7 @@ namespace cvn { namespace lsgui
 		    typed_str[0] == '~' && pos_slash == Glib::ustring::npos)
 		{
 			// Fill model with ~username entries.
-			for (auto &pair : users_) {
+			for (auto &pair : usersCache_) {
 				Gtk::TreeModel::Row row = *locationCompletionModel_ptr_->append();
 				row[modelColumns_.name_opsys] = "~" + pair.first;
 				row[modelColumns_.name_gui]   = "~" + pair.first;
@@ -1058,7 +1086,7 @@ namespace cvn { namespace lsgui
 			{
 				delete_locationCompletionActions(LocationCompletionAction::LoadUsers);
 				add_locationCompletionAction(LocationCompletionAction::LoadUsers,
-					std::string(users_.empty() ? "Load" : "Reload") + " user names");
+					std::string(usersCache_.empty() ? "Load" : "Reload") + " user names");
 			}
 
 			// Skip normal directory handling.
@@ -1200,16 +1228,19 @@ namespace cvn { namespace lsgui
 
 	void LsGui::update_users()
 	{
-		users_.clear();
+		usersCache_.clear();
 
 		std::cout << "Retrieving users..." << std::endl;
 
 		try {
 			cvn::Users systemUsers;
 			while (systemUsers.read()) {
-				users_.insert(std::make_pair(
+				UsersCacheEntry entry {
 					systemUsers.get_ent_username(),
-					systemUsers.get_ent_homedir()));
+					systemUsers.get_ent_homedir(),
+					systemUsers.get_ent_uid() };
+
+				usersCache_.insert(std::make_pair(entry.username, entry));
 			}
 		}
 		catch (const std::exception &ex) {
@@ -1248,6 +1279,24 @@ namespace cvn { namespace lsgui
 			i++;
 		}
 	}
+
+
+	int LsGui::on_model_sort_compare_time(
+		const Gtk::TreeModel::iterator& a,
+		const Gtk::TreeModel::iterator& b)
+	{
+		const cvn::Time &timeA(a->operator[](modelColumns_.time_lib));
+		const cvn::Time &timeB(b->operator[](modelColumns_.time_lib));
+
+		if (timeA < timeB)
+			return -1;
+
+		if (timeB < timeA)
+			return 1;
+
+		return 0;
+	}
+
 
 	void LsGui::on_locationEntry_activate()
 	{
@@ -1399,12 +1448,33 @@ namespace cvn { namespace lsgui
 
 	void LsGui::on_ls_column_clicked(int columnNr)
 	{
-		int prev_columnNr = 0;
+		int modelColumnNr;
+		if (columnNr == lsViewColumns_.perms)
+			modelColumnNr = modelColumns_.perms.index();
+		else if (columnNr == lsViewColumns_.nlink)
+			modelColumnNr = modelColumns_.nlink.index();
+		else if (columnNr == lsViewColumns_.user)
+			modelColumnNr = modelColumns_.user.index();
+		else if (columnNr == lsViewColumns_.group)
+			modelColumnNr = modelColumns_.group.index();
+		else if (columnNr == lsViewColumns_.size)
+			modelColumnNr = modelColumns_.size.index();
+		else if (columnNr == lsViewColumns_.time)
+			modelColumnNr = modelColumns_.time_lib.index();  // differs from append_column()
+		else if (columnNr == lsViewColumns_.name)
+			modelColumnNr = modelColumns_.name_user.index();
+		else {
+			g_warning("Can't convert view column number %d to model colum number, "
+				"leaving sort order unchanged.", columnNr);
+			return;
+		}
+
+		int prev_modelColumnNr = 0;
 		Gtk::SortType prev_order = Gtk::SortType::SORT_ASCENDING;
-		if (modelSort_->get_sort_column_id(prev_columnNr, prev_order))
+		if (modelSort_->get_sort_column_id(prev_modelColumnNr, prev_order))
 		{
 			Gtk::SortType new_order = prev_order;
-			if (prev_columnNr == columnNr) {
+			if (prev_modelColumnNr == modelColumnNr) {
 				// Switch sort order.
 				switch (prev_order) {
 				case Gtk::SortType::SORT_ASCENDING:
@@ -1420,10 +1490,10 @@ namespace cvn { namespace lsgui
 				}
 			}
 
-			modelSort_->set_sort_column(columnNr, new_order);
+			modelSort_->set_sort_column(modelColumnNr, new_order);
 		}
 		else {
-			modelSort_->set_sort_column(columnNr, Gtk::SortType::SORT_ASCENDING);
+			modelSort_->set_sort_column(modelColumnNr, Gtk::SortType::SORT_ASCENDING);
 		}
 	}
 

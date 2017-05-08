@@ -5,6 +5,7 @@
 #include <map>
 #include <vector>
 #include "dirent-cvn.hh"
+#include "time-cvn.hh"
 
 #include <glib.h>
 #include <gtkmm/applicationwindow.h>
@@ -50,8 +51,10 @@ namespace cvn { namespace lsgui
 				user, group;
 			Gtk::TreeModelColumn<guint>
 				size;  // size in bytes
+			Gtk::TreeModelColumn<cvn::Time>
+				time_lib;  // mtime, ctime or atime
 			Gtk::TreeModelColumn<Glib::ustring>
-				time;  // mtime, ctime or atime
+				time_user;
 			Gtk::TreeModelColumn<std::string>
 				name_opsys;
 			Gtk::TreeModelColumn<Glib::ustring>
@@ -121,6 +124,10 @@ namespace cvn { namespace lsgui
 		void update_locationCompletion();
 		void update_users();
 
+		int on_model_sort_compare_time(
+			const Gtk::TreeModel::iterator& a,
+			const Gtk::TreeModel::iterator& b);
+
 		void on_locationEntry_activate();
 		void on_locationEntry_changed();
 		bool on_locationEntry_key_press_event(GdkEventKey* key_event);
@@ -160,8 +167,13 @@ namespace cvn { namespace lsgui
 		typedef std::vector<LocationCompletionAction>  locationCompletionActions_type;
 		locationCompletionActions_type                 locationCompletionActions_;
 
-		typedef std::map<std::string, std::string>  users_type;
-		users_type                                  users_;
+		struct UsersCacheEntry {
+			std::string username;
+			std::string homedir;
+			long uid;
+		};
+		typedef std::map<std::string, UsersCacheEntry>  usersCache_type;
+		usersCache_type                                 usersCache_;
 
 		void add_locationCompletionAction(
 			LocationCompletionAction actionType, const Glib::ustring &actionText);

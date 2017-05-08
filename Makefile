@@ -63,7 +63,7 @@ ls-gui-cvn/ls-gui-cvn: ls-gui-cvn/main
 	cp $< $@
 ls-gui-cvn/main: ls-gui-cvn/main.o ls-gui-cvn/lsgui.o ls-gui-cvn/stat-cvn.o \
                  ls-gui-cvn/dirent-cvn.o ls-gui-cvn/users-cvn.o \
-                 ls-gui-cvn/util.o \
+                 ls-gui-cvn/time-cvn.o ls-gui-cvn/util.o \
                  ls-gui-cvn/resources.o
 ls-gui-cvn/main.o: ls-gui-cvn/config.h
 ls-gui-cvn/config.h: lsgui-version

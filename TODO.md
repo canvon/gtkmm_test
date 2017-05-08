@@ -39,6 +39,9 @@
 
     * Test, test, test and adjust for corner cases.
 
+  * List users (~*): Maybe color system users (that will not be shown
+    when Show Hidden is off) differently; make them red, or gray them out?
+
   * Move directory processing to a background thread.
 
   * Make directory processing background thread cancellable via the GUI.
@@ -64,6 +67,10 @@
 
   * Let the user configure a list of pathname prefixes and what encoding
     to use for them.
+
+  * About dialog with author and version information.
+
+    * Version information from git? Or by updating some file manually?
 
   * Use inotify/dnotify, to (optionally?) automatically update the displayed data
     when it changes on-disk? (Need to be able to disable this!)

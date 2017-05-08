@@ -17,6 +17,8 @@
     <File Name="versioncheck.hh"/>
     <File Name="users-cvn.hh"/>
     <File Name="users-cvn.cc"/>
+    <File Name="time-cvn.hh"/>
+    <File Name="time-cvn.cc"/>
   </VirtualDirectory>
   <Settings Type="Executable">
     <GlobalSettings>
