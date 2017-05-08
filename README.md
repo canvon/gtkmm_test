@@ -115,4 +115,4 @@ of this README, Fabian Pietsch a.k.a. `canvon`.
 The hand-written Makefile is also by canvon.
 
 Attribution & copyright claim headers are currently missing from the
-source files as of 2017-05-01. Also, there is no licensing, yet.
+source files as of 2017-05-01, but they're licensed according to [](LICENSE.md).
