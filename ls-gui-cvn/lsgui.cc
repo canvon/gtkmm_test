@@ -1439,12 +1439,33 @@ namespace cvn { namespace lsgui
 
 	void LsGui::on_ls_column_clicked(int columnNr)
 	{
-		int prev_columnNr = 0;
+		int modelColumnNr;
+		if (columnNr == lsViewColumns_.perms)
+			modelColumnNr = modelColumns_.perms.index();
+		else if (columnNr == lsViewColumns_.nlink)
+			modelColumnNr = modelColumns_.nlink.index();
+		else if (columnNr == lsViewColumns_.user)
+			modelColumnNr = modelColumns_.user.index();
+		else if (columnNr == lsViewColumns_.group)
+			modelColumnNr = modelColumns_.group.index();
+		else if (columnNr == lsViewColumns_.size)
+			modelColumnNr = modelColumns_.size.index();
+		else if (columnNr == lsViewColumns_.time)
+			modelColumnNr = modelColumns_.time_lib.index();  // differs from append_column()
+		else if (columnNr == lsViewColumns_.name)
+			modelColumnNr = modelColumns_.name_user.index();
+		else {
+			g_warning("Can't convert view column number %d to model colum number, "
+				"leaving sort order unchanged.", columnNr);
+			return;
+		}
+
+		int prev_modelColumnNr = 0;
 		Gtk::SortType prev_order = Gtk::SortType::SORT_ASCENDING;
-		if (modelSort_->get_sort_column_id(prev_columnNr, prev_order))
+		if (modelSort_->get_sort_column_id(prev_modelColumnNr, prev_order))
 		{
 			Gtk::SortType new_order = prev_order;
-			if (prev_columnNr == columnNr) {
+			if (prev_modelColumnNr == modelColumnNr) {
 				// Switch sort order.
 				switch (prev_order) {
 				case Gtk::SortType::SORT_ASCENDING:
@@ -1460,10 +1481,10 @@ namespace cvn { namespace lsgui
 				}
 			}
 
-			modelSort_->set_sort_column(columnNr, new_order);
+			modelSort_->set_sort_column(modelColumnNr, new_order);
 		}
 		else {
-			modelSort_->set_sort_column(columnNr, Gtk::SortType::SORT_ASCENDING);
+			modelSort_->set_sort_column(modelColumnNr, Gtk::SortType::SORT_ASCENDING);
 		}
 	}
 
