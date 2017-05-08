@@ -24,7 +24,7 @@ DESCRIBE=$(git describe --tags --dirty --match="$TAG_MATCH") || die "git describ
 
 if grep -E -q -- '-[0-9]|-dirty$' <<<"$DESCRIBE"
 then
-	TAG=$(sed -e 's/-[0-9].*//' <<<"$DESCRIBE") || die "Cannot get tag name from git describe output: sed failed"
+	TAG=$(sed -e 's/\(.*\)-[0-9].*/\1/' <<<"$DESCRIBE") || die "Cannot get tag name from git describe output: sed failed"
 	SUBDIR_COMMIT_COUNT=$(git rev-list --count "$TAG".. "$SUBDIR") || die "Cannot get count of commits since tag \"$TAG\" in subdir \"$SUBDIR\": git rev-list failed"
 	[ -n "$SUBDIR_COMMIT_COUNT" ] || die "Cannot get count of commits since tag \"$TAG\" in subdir \"$SUBDIR\": git rev-list gave empty result"
 	if [ "$SUBDIR_COMMIT_COUNT" -eq 0 ]
