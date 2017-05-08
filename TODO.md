@@ -16,6 +16,10 @@
 
   * Implement date/time processing & display.
 
+    * Allow switching from displaying mtime to ctime or atime.
+
+    * Provide multiple date/time formattings, one of them "relative"?
+
   * Allow switching back to numerical uid/gid display.
 
   * Right-align more numbers: uid/gid
