@@ -165,7 +165,7 @@ int main(int argc, char *argv[])
 		dialog.set_comments("An ls (list directory command) GUI by canvon");
 		dialog.set_authors({ "Fabian Pietsch aka canvon <fabian@canvon.de>" });
 		dialog.set_copyright("Copyright © 2017 Fabian Pietsch <fabian@canvon.de>");
-		// TODO: dialog.set_license() or set_license_type();
+		dialog.set_license_type(Gtk::License::LICENSE_GPL_3_0);
 		dialog.set_website("https://github.com/canvon/gtkmm_test");
 		dialog.set_website_label("Website: gtkmm_test on GitHub");
 		dialog.run();
