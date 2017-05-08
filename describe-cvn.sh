@@ -22,7 +22,7 @@ DESCRIBE=$(git describe --tags --dirty --match="$TAG_MATCH") || die "git describ
 
 [ -n "$DESCRIBE" ] || die "git describe gave empty result"
 
-if grep -q -- '-[0-9]' <<<"$DESCRIBE"
+if grep -E -q -- '-[0-9]|-dirty$' <<<"$DESCRIBE"
 then
 	TAG=$(sed -e 's/-[0-9].*//' <<<"$DESCRIBE") || die "Cannot get tag name from git describe output: sed failed"
 	SUBDIR_COMMIT_COUNT=$(git rev-list --count "$TAG".. "$SUBDIR") || die "Cannot get count of commits since tag \"$TAG\" in subdir \"$SUBDIR\": git rev-list failed"
@@ -36,7 +36,9 @@ then
 		DESCRIBE="${TAG}-${SUBDIR_COMMIT_COUNT}-g${COMMIT_HASH}"
 	fi
 
-	# TODO: Consider -dirty; limit it to SUBDIR, too?
+	# Consider -dirty; limit it to SUBDIR, too.
+	SUBDIR_STATUS=$(git status --porcelain "$SUBDIR") || die "Cannot determine work-tree dirty status: git status failed"
+	[ -n "$SUBDIR_STATUS" ] && DESCRIBE="${DESCRIBE}-dirty"
 fi
 
 echo "$DESCRIBE"
