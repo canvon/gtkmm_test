@@ -147,6 +147,8 @@ namespace cvn { namespace lsgui
 
 		model_ = Gtk::ListStore::create(modelColumns_);
 		modelSort_ = Gtk::TreeModelSort::create(model_);
+		modelSort_->set_sort_func(modelColumns_.time_lib,
+			sigc::mem_fun(*this, &LsGui::on_model_sort_compare_time));
 		modelSort_->set_sort_column(modelColumns_.name_user, Gtk::SortType::SORT_ASCENDING);
 		ls_.set_model(modelSort_);
 
@@ -1268,6 +1270,24 @@ namespace cvn { namespace lsgui
 			i++;
 		}
 	}
+
+
+	int LsGui::on_model_sort_compare_time(
+		const Gtk::TreeModel::iterator& a,
+		const Gtk::TreeModel::iterator& b)
+	{
+		const cvn::Time &timeA(a->operator[](modelColumns_.time_lib));
+		const cvn::Time &timeB(b->operator[](modelColumns_.time_lib));
+
+		if (timeA < timeB)
+			return -1;
+
+		if (timeB < timeA)
+			return 1;
+
+		return 0;
+	}
+
 
 	void LsGui::on_locationEntry_activate()
 	{

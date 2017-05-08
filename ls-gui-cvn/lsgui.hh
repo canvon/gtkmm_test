@@ -124,6 +124,10 @@ namespace cvn { namespace lsgui
 		void update_locationCompletion();
 		void update_users();
 
+		int on_model_sort_compare_time(
+			const Gtk::TreeModel::iterator& a,
+			const Gtk::TreeModel::iterator& b);
+
 		void on_locationEntry_activate();
 		void on_locationEntry_changed();
 		bool on_locationEntry_key_press_event(GdkEventKey* key_event);
