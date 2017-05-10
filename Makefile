@@ -19,7 +19,17 @@
 # Require bash to shell-script without need for a temporary file.
 SHELL = /bin/bash
 
-CXX      := g++
+# Default compilers. Specified like this so they can be overridden simply
+# via the environment. (No need to pass them as arguments to make.)
+ifeq ($(shell test -n "$$CXX" || echo notset),notset)
+CXX := g++
+endif
+ifeq ($(shell test -n "$$CC" || echo notset),notset)
+CC  := gcc
+endif
+
+# Use simply-expanded variables here so that each use of pkg-config
+# runs the external command only once.
 PCCFLAGS := $(shell pkg-config gtkmm-3.0 --cflags)
 CXXFLAGS := $(PCCFLAGS) -std=c++14 -Wall -O2 -g
 CFLAGS   := $(PCCFLAGS)            -Wall -O2 -g
