@@ -27,6 +27,7 @@ endif
 ifeq ($(shell test -n "$$CC" || echo notset),notset)
 CC  := gcc
 endif
+$(info Compilers are CXX=$(CXX) CC=$(CC))
 
 # Target the C++14 standard.
 cxx_standard := -std=c++14
@@ -43,6 +44,7 @@ endif
 else
 # Maybe clang etc. need a different command-line argument...
 endif
+$(info C++ standard is $(cxx_standard))
 
 # Use simply-expanded variables here so that each use of pkg-config
 # runs the external command only once.
