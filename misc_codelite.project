@@ -69,4 +69,8 @@
     <File Name="LICENSE-GPL2"/>
     <File Name="LICENSE-GPL3"/>
   </VirtualDirectory>
+  <VirtualDirectory Name="vcs">
+    <File Name=".gitattributes"/>
+    <File Name=".gitignore"/>
+  </VirtualDirectory>
 </CodeLite_Project>
