@@ -20,6 +20,8 @@
 
     * Provide multiple date/time formattings, one of them "relative"?
 
+    * Additional date/time format: %F %T
+
   * Allow switching back to numerical uid/gid display.
 
   * Right-align more numbers: uid/gid
