@@ -38,13 +38,13 @@ ifdef gxx_version
 ifeq ($(shell perl -le 'print(v$(gxx_version) lt v4.9);'),1)
 # GCC/g++ less than 4.9 probably support some (maybe enough?) of C++14
 # but name it differently.
-$(warning Your g++ is too old (version $(gxx_version)) to support C++14; trying with C++1y...)
+$(warning Warning: Your g++ version $(gxx_version) is too old to support C++14; trying with C++1y...)
 cxx_standard := -std=c++1y
 endif
 else
 # Maybe clang etc. need a different command-line argument...
 endif
-$(info C++ standard is $(cxx_standard))
+$(info Targetting C++14 standard via $(cxx_standard))
 
 # Use simply-expanded variables here so that each use of pkg-config
 # runs the external command only once.
