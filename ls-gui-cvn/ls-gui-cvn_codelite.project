@@ -110,5 +110,6 @@
   <VirtualDirectory Name="resources">
     <File Name="toolbar.glade"/>
     <File Name="toolbar.gresource.xml"/>
+    <File Name="version_fallback.h"/>
   </VirtualDirectory>
 </CodeLite_Project>
