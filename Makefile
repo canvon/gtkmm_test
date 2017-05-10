@@ -28,11 +28,27 @@ ifeq ($(shell test -n "$$CC" || echo notset),notset)
 CC  := gcc
 endif
 
+# Target the C++14 standard.
+cxx_standard := -std=c++14
+#
+# But try to name it differently according to used compiler.
+gxx_version := $(shell $(CXX) --version | sed -n -e '1 s/^g++.* //p')
+ifdef gxx_version
+ifeq ($(shell perl -le 'print(v$(gxx_version) lt v4.9);'),1)
+# GCC/g++ less than 4.9 probably support some (maybe enough?) of C++14
+# but name it differently.
+$(warning Your g++ is too old (version $(gxx_version)) to support C++14; trying with C++1y...)
+cxx_standard := -std=c++1y
+endif
+else
+# Maybe clang etc. need a different command-line argument...
+endif
+
 # Use simply-expanded variables here so that each use of pkg-config
 # runs the external command only once.
 PCCFLAGS := $(shell pkg-config gtkmm-3.0 --cflags)
-CXXFLAGS := $(PCCFLAGS) -std=c++14 -Wall -O2 -g
-CFLAGS   := $(PCCFLAGS)            -Wall -O2 -g
+CXXFLAGS := $(PCCFLAGS) $(cxx_standard) -Wall -O2 -g
+CFLAGS   := $(PCCFLAGS)                 -Wall -O2 -g
 LDFLAGS  := $(shell pkg-config gtkmm-3.0 --libs)
 
 # Let GNU make implicit rule link in a C++ way.
