@@ -2,9 +2,8 @@
 <CodeLite_Project Name="misc" Version="10.0.0" InternalType="">
   <Description/>
   <Dependencies/>
-  <VirtualDirectory Name="gtkmm_test_codelite">
+  <VirtualDirectory Name="docs">
     <File Name="TODO.md"/>
-    <File Name="Makefile"/>
     <File Name="README.md"/>
   </VirtualDirectory>
   <Settings Type="Executable">
@@ -60,4 +59,14 @@
       </Completion>
     </Configuration>
   </Settings>
+  <VirtualDirectory Name="build_system">
+    <File Name="Makefile"/>
+    <File Name="describe-cvn.sh"/>
+    <File Name="update_config.sh"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="licensing">
+    <File Name="LICENSE.md"/>
+    <File Name="LICENSE-GPL2"/>
+    <File Name="LICENSE-GPL3"/>
+  </VirtualDirectory>
 </CodeLite_Project>
