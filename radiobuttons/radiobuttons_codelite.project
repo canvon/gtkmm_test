@@ -2,7 +2,7 @@
 <CodeLite_Project Name="radiobuttons" Version="10.0.0" InternalType="">
   <Description/>
   <Dependencies/>
-  <VirtualDirectory Name="radiobuttons">
+  <VirtualDirectory Name="src">
     <File Name="main.cc"/>
     <File Name="radiobuttons.cc"/>
     <File Name="radiobuttons.hh"/>

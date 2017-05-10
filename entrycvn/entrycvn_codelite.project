@@ -2,7 +2,7 @@
 <CodeLite_Project Name="entrycvn" Version="10.0.0" InternalType="">
   <Description/>
   <Dependencies/>
-  <VirtualDirectory Name="entrycvn">
+  <VirtualDirectory Name="src">
     <File Name="entrycvn.cc"/>
     <File Name="entrycvn.hh"/>
     <File Name="main.cc"/>

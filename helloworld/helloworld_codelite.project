@@ -2,7 +2,7 @@
 <CodeLite_Project Name="helloworld" Version="10.0.0" InternalType="">
   <Description/>
   <Dependencies/>
-  <VirtualDirectory Name="helloworld">
+  <VirtualDirectory Name="src">
     <File Name="helloworld.hh"/>
     <File Name="helloworld.cc"/>
     <File Name="main.cc"/>
