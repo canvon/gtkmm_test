@@ -46,13 +46,29 @@ else
 endif
 $(info Targetting C++14 standard via $(cxx_standard))
 
+# Default build type is debugging.
+ifeq ($(shell test -n "$$BUILD_TYPE" || echo notset),notset)
+BUILD_TYPE := Debug
+endif
+
+ifeq ($(BUILD_TYPE),Debug)
+Add_CFLAGS := -g
+else ifeq ($(BUILD_TYPE),Release)
+Add_CFLAGS := -DNDEBUG
+else
+$(error Error: Unknown build type "$(BUILD_TYPE)", aborting)
+endif
+$(info This is a $(BUILD_TYPE) build. Additional compiler flags: $(Add_CFLAGS))
+CXXFLAGS := $(Add_CFLAGS) $(CXXFLAGS)
+CFLAGS   := $(Add_CFLAGS) $(CFLAGS)
+
 # Use simply-expanded variables here so that each use of pkg-config
 # runs the external command only once.
 PKGS       := gtkmm-3.0
 PC_CFLAGS  := $(shell pkg-config $(PKGS) --cflags)
 PC_LDFLAGS := $(shell pkg-config $(PKGS) --libs)
-CXXFLAGS   := $(PC_CFLAGS) $(cxx_standard) -Wall -O2 -g
-CFLAGS     := $(PC_CFLAGS)                 -Wall -O2 -g
+CXXFLAGS   := $(PC_CFLAGS) $(cxx_standard) -Wall -O2 $(CXXFLAGS)
+CFLAGS     := $(PC_CFLAGS)                 -Wall -O2 $(CFLAGS)
 LDFLAGS    := $(PC_LDFLAGS)
 
 # Let GNU make implicit rule link in a C++ way.
