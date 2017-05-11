@@ -131,7 +131,8 @@ ls-gui-cvn/main: ls-gui-cvn/main.o ls-gui-cvn/lsgui.o ls-gui-cvn/stat-cvn.o \
                  ls-gui-cvn/resources.o
 ls-gui-cvn/main.o: ls-gui-cvn/config.h
 ls-gui-cvn/config.h: lsgui-version
-	@OK=2 ./update_config.sh "$@" update-capability-to-compile \
+	@./update_config.sh "$@" exists HAVE_STD_QUOTED || \
+	OK=2 ./update_config.sh "$@" update-capability-to-compile \
 		"whether we have std::quoted()" \
 		HAVE_STD_QUOTED \
 	$$'#include <iostream>\n\
