@@ -143,15 +143,20 @@ ls-gui-cvn/resources.deps: ls-gui-cvn/toolbar.gresource.xml
 
 %.deps: %.cc
 	@echo "Generating C++ dependency makefile $@ from $<"
-	@set -o pipefail && \
-	  OUT=$$($(COMPILE.cc) -MM $< | \
-	         if [ "$(@D)" = . ]; \
-	         then sed -e 's,^\([^: ]*\)\.o *:,\1.o \1.deps:,'; \
-	         else sed -e 's,^\([^: ]*\)\.o *:,$(@D)/\1.o $(@D)/\1.deps:,'; \
-	         fi) && \
-	  [ -n "$$OUT" ] && \
-	  grep -q -F "$@" <<<"$$OUT" && \
-	  cat <<<"$$OUT" >$@
+	@set -o pipefail || \
+	  { echo "Failed: Couldn't set shell option \"pipefail\"" >&2; exit 1; }; \
+	OUT=$$($(COMPILE.cc) -MM $< | \
+	       if [ "$(@D)" = . ]; \
+	       then sed -e 's,^\([^: ]*\)\.o *:,\1.o \1.deps:,'; \
+	       else sed -e 's,^\([^: ]*\)\.o *:,$(@D)/\1.o $(@D)/\1.deps:,'; \
+	       fi) || { echo "Failed: Compiling *dependency* *makefile* failed;" \
+	                     "but all may be well, please don't cancel the build." >&2; exit 1; }; \
+	[ -n "$$OUT" ] || \
+	  { echo "Failed: Compiler output was empty..." >&2; exit 1; }; \
+	grep -q -F "$@" <<<"$$OUT" || \
+	  { echo "Failed: Target \"$@\" is not part of the compiler output." >&2; exit 1; }; \
+	cat <<<"$$OUT" >"$@" || \
+	  { echo "Failed: Couldn't write output to target file \"$@\"." >&2; exit 1; }
 
 # Use "-include" instead of "include", to ignore errors due to the
 # dependency makefiles. Before this change, you might have needed
