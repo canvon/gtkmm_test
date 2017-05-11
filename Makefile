@@ -66,10 +66,10 @@ CFLAGS   := $(Add_CFLAGS) $(CFLAGS)
 # runs the external command only once.
 PKGS       := gtkmm-3.0
 PC_CFLAGS  := $(shell pkg-config $(PKGS) --cflags)
-PC_LDFLAGS := $(shell pkg-config $(PKGS) --libs)
+PC_LDLIBS  := $(shell pkg-config $(PKGS) --libs)
 CXXFLAGS   := $(PC_CFLAGS) $(cxx_standard) -Wall -O2 $(CXXFLAGS)
 CFLAGS     := $(PC_CFLAGS)                 -Wall -O2 $(CFLAGS)
-LDFLAGS    := $(PC_LDFLAGS)
+LDLIBS     := $(PC_LDLIBS)
 
 # Let GNU make implicit rule link in a C++ way.
 LINK.o = $(LINK.cc)
