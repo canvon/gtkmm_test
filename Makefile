@@ -114,7 +114,7 @@ lsgui-version:
 	  echo "Can't determine ls-gui-cvn version from tag name \"$$VER\"" >&2; \
 	  exit 1; \
 	fi; \
-	./update_config.sh ls-gui-cvn/config.h LSGUI_VERSION_STRING "\"$$VER\""
+	./update_config.sh ls-gui-cvn/config.h update LSGUI_VERSION_STRING "\"$$VER\""
 
 .PHONY: all clean realclean lsgui-version
 
@@ -143,7 +143,7 @@ ls-gui-cvn/config.h: lsgui-version
 	then RES=1; echo "yes"; \
 	else RES=0; echo "no"; \
 	fi; \
-	OK=1 ./update_config.sh ls-gui-cvn/config.h HAVE_STD_QUOTED "$$RES"
+	OK=1 ./update_config.sh ls-gui-cvn/config.h update HAVE_STD_QUOTED "$$RES"
 ls-gui-cvn/resources.o: ls-gui-cvn/resources.c
 ls-gui-cvn/resources.c: ls-gui-cvn/toolbar.gresource.xml
 	glib-compile-resources --sourcedir="$(dir $<)" \
