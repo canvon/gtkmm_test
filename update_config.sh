@@ -133,6 +133,32 @@ update() {
 	fi
 }
 
+update-capability-to-compile() {
+	[ "$#" -gt 3 ] || die "Internal error: Usage: update-capability-to-compile MESSAGE DEFINE PROGRAM COMPILE [...]"
+	local MSG="$1"; shift
+	local DEF="$1"; shift
+	local PROG="$1"; shift
+
+	echo -n "Checking ${MSG}... "
+
+	trap 'rm -f "tmp-$$.cc" "tmp-$$"' EXIT
+
+	cat <<<"$PROG" >"tmp-$$.cc" || {
+		warn "update-capability-to-compile: Cannot write test program"
+		return 1
+	}
+
+	if "$@" "tmp-$$.cc" -o "tmp-$$" &>/dev/null && [ -f "tmp-$$" ]
+	then
+		RES=1
+		echo "yes"
+	else
+		RES=0
+		echo "no"
+	fi
+	update "$DEF" "$RES"
+}
+
 case "$ACTION" in
 get|retrieve)
 	[ "$#" -eq 1 ] || die "Usage: $BASENAME CONFIG_HEADER $ACTION KEY"
@@ -153,6 +179,14 @@ put|update)
 
 	#update "$KEY" "$VALUE" || die "Cannot update config header \"$CONFIG_HEADER\" value for key \"$KEY\" to \"$VALUE\": update failed"
 	update "$KEY" "$VALUE"
+	;;
+update-capability-to-compile)
+	[ "$#" -gt 3 ] || die "Usage: $BASENAME CONFIG_HEADER $ACTION MESSAGE DEFINE PROGRAM COMPILE [...]"
+	MSG="$1"; shift
+	DEF="$1"; shift
+	PROG="$1"; shift
+
+	update-capability-to-compile "$MSG" "$DEF" "$PROG" "$@"
 	;;
 *)
 	die "Unrecognized action \"$ACTION\""
