@@ -145,7 +145,7 @@ ls-gui-cvn/resources.deps: ls-gui-cvn/toolbar.gresource.xml
 	@echo "Generating C++ dependency makefile $@ from $<"
 	@set -o pipefail || \
 	  { echo "Failed: Couldn't set shell option \"pipefail\"" >&2; exit 1; }; \
-	OUT=$$($(COMPILE.cc) -MM $< | \
+	OUT=$$($(COMPILE.cc) -MM $< 2>/dev/null | \
 	       if [ "$(@D)" = . ]; \
 	       then sed -e 's,^\([^: ]*\)\.o *:,\1.o \1.deps:,'; \
 	       else sed -e 's,^\([^: ]*\)\.o *:,$(@D)/\1.o $(@D)/\1.deps:,'; \
