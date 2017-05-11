@@ -32,6 +32,7 @@
 #include <stdexcept>
 #include <system_error>
 
+#include "replacements.hh"
 #include "versioncheck.hh"
 
 

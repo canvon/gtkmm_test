@@ -131,6 +131,19 @@ ls-gui-cvn/main: ls-gui-cvn/main.o ls-gui-cvn/lsgui.o ls-gui-cvn/stat-cvn.o \
                  ls-gui-cvn/resources.o
 ls-gui-cvn/main.o: ls-gui-cvn/config.h
 ls-gui-cvn/config.h: lsgui-version
+	@echo -n "Checking whether we have std::quoted()... "; \
+	trap 'rm -f "tmp-$$$$.cc" "tmp-$$$$"' EXIT; \
+	echo $$'#include <iostream>\n\
+	#include <iomanip>\n\
+	int main(int argc, char **argv) {\n\
+		std::cout << std::quoted("test") << std::endl;\n\
+		return 0;\n\
+	}\n' >"tmp-$$$$.cc" || exit 1; \
+	if $(COMPILE.cc) "tmp-$$$$.cc" -o "tmp-$$$$" &>/dev/null; \
+	then RES=1; echo "yes"; \
+	else RES=0; echo "no"; \
+	fi; \
+	OK=1 ./update_config.sh ls-gui-cvn/config.h HAVE_STD_QUOTED "$$RES"
 ls-gui-cvn/resources.o: ls-gui-cvn/resources.c
 ls-gui-cvn/resources.c: ls-gui-cvn/toolbar.gresource.xml
 	glib-compile-resources --sourcedir="$(dir $<)" \

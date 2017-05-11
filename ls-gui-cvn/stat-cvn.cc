@@ -21,6 +21,8 @@
 #include <sstream>
 #include <iomanip>
 
+#include "replacements.hh"
+
 #include <fcntl.h>
 #include <sys/types.h>
 #include <sys/stat.h>
