@@ -25,7 +25,7 @@
 #pragma message("Using replacement for std::quoted()...")
 namespace std {
 
-string quoted(const string &str)
+inline string quoted(const string &str)
 {
 	string out("\"");
 	for (string::const_iterator iter(str.begin()); iter != str.end(); iter++)
