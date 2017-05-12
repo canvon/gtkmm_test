@@ -39,6 +39,7 @@
 #include <gtkmm/menubar.h>
 #include <gtkmm/toolbar.h>
 #include <gtkmm/menutoolbutton.h>
+#include <giomm/menu.h>
 #include <giomm/simpleaction.h>
 
 #include "versioncheck.hh"

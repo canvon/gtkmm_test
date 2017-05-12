@@ -28,6 +28,7 @@
 #include <stdexcept>
 #include <typeinfo>
 
+#include "../replacements/std_quoted.hh"
 #include "versioncheck.hh"
 
 

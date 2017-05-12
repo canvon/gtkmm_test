@@ -21,6 +21,8 @@
 #include <sstream>
 #include <iomanip>
 
+#include "../replacements/std_quoted.hh"
+
 #include <fcntl.h>
 #include <sys/types.h>
 #include <sys/stat.h>

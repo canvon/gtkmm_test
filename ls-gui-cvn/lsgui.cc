@@ -32,6 +32,7 @@
 #include <stdexcept>
 #include <system_error>
 
+#include "../replacements/std_quoted.hh"
 #include "versioncheck.hh"
 
 
@@ -428,7 +429,16 @@ namespace cvn { namespace lsgui
 
 		outerVBox_.pack_start(errorsInfoBar_, Gtk::PACK_SHRINK);
 		// Save position for later.
+#if GTKMM_VERSION_GE(3,14)
 		posErrorsInfoBar_ = outerVBox_.child_property_position(errorsInfoBar_).get_value();
+#else
+#pragma message("Warning: No support for Gtk::Box child property \"position\"," \
+	" requires gtkmm 3.14 (actually 3.13.7) but compiling against " GTKMM_VERSION_STRING)
+		posErrorsInfoBar_ = 2;
+		warn("No support for Gtk::Box child property \"position\","
+			" requires gtkmm 3.14 (actually 3.13.7) but was compiled against " GTKMM_VERSION_STRING
+			"; guessing " + std::to_string(posErrorsInfoBar_));
+#endif
 
 		scrollLs_.add(ls_);
 		outerVBox_.pack_start(scrollLs_);
@@ -439,8 +449,15 @@ namespace cvn { namespace lsgui
 			sigc::mem_fun(*this, &LsGui::on_locationEntry_changed));
 		location_.signal_key_press_event().connect(
 			sigc::mem_fun(*this, &LsGui::on_locationEntry_key_press_event));
+#if GTKMM_VERSION_GE(3,14)
 		locationCompletion_ptr_->signal_no_matches().connect(
 			sigc::mem_fun(*this, &LsGui::on_locationEntryCompletion_no_matches));
+#else
+#pragma message("Warning: No support for entry completion signal \"no matches\"," \
+	" requires gtkmm 3.14.0 but compiling against " GTKMM_VERSION_STRING)
+		warn("No support for entry completion signal \"no matches\","
+			" requires gtkmm 3.14.0 but was compiled against " GTKMM_VERSION_STRING);
+#endif
 		locationCompletion_ptr_->signal_action_activated().connect(
 			sigc::mem_fun(*this, &LsGui::on_locationEntryCompletion_action_activated));
 

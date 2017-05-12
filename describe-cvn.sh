@@ -36,11 +36,23 @@ SUBDIR="$1"; shift
 
 [ "$#" -eq 0 ] || die "Trailing arguments"
 
-DESCRIBE=$(git describe --tags --dirty --match="$TAG_MATCH") || die "git describe failed"
+DESCRIBE=$(git describe --tags --dirty --match="$TAG_MATCH" --always) || die "git describe failed"
 
 [ -n "$DESCRIBE" ] || die "git describe gave empty result"
 
-if grep -E -q -- '-[0-9]|-dirty$' <<<"$DESCRIBE"
+if grep -E -q '^[0-9a-f]{7}(-dirty)?$' <<<"$DESCRIBE"
+then
+	warn "Looks like we got a fallback. Augmenting to look like the expected tag format..."
+	COMMIT_HASH=$(git rev-list --max-count=1 --abbrev-commit HEAD "$SUBDIR") ||
+	COMMIT_HASH=$(git rev-list --max-count=1 --abbrev-commit HEAD) || die "Cannot get most recent relevant commit's hash: git rev-list failed"
+
+	TAG_BASE=${TAG_MATCH%\*}
+	DESCRIBE="${TAG_BASE}unknown-g${COMMIT_HASH}"
+
+	# Consider -dirty; limit it to SUBDIR, too.
+	SUBDIR_STATUS=$(git status --porcelain "$SUBDIR") || die "Cannot determine work-tree dirty status: git status failed"
+	[ -n "$SUBDIR_STATUS" ] && DESCRIBE="${DESCRIBE}-dirty"
+elif grep -E -q -- '-[0-9]|-dirty$' <<<"$DESCRIBE"
 then
 	TAG=$(sed -e 's/\(.*\)-[0-9].*/\1/' <<<"$DESCRIBE") || die "Cannot get tag name from git describe output: sed failed"
 	SUBDIR_COMMIT_COUNT=$(git rev-list --count "$TAG".. "$SUBDIR") || die "Cannot get count of commits since tag \"$TAG\" in subdir \"$SUBDIR\": git rev-list failed"

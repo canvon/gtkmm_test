@@ -20,6 +20,8 @@
 #include <system_error>
 #include <iomanip>
 
+#include "../replacements/std_make_unique.hh"
+
 #include <sys/types.h>
 #include <pwd.h>
 #include <errno.h>

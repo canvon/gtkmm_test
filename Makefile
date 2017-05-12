@@ -27,13 +27,49 @@ endif
 ifeq ($(shell test -n "$$CC" || echo notset),notset)
 CC  := gcc
 endif
+$(info Compilers are CXX=$(CXX) CC=$(CC))
+
+# Target the C++14 standard.
+cxx_standard := -std=c++14
+#
+# But try to name it differently according to used compiler.
+gxx_version := $(shell $(CXX) --version | sed -n -e '1 s/^g++.* //p')
+ifdef gxx_version
+ifeq ($(shell perl -le 'print(v$(gxx_version) lt v4.9);'),1)
+# GCC/g++ less than 4.9 probably support some (maybe enough?) of C++14
+# but name it differently.
+$(warning Warning: Your g++ version $(gxx_version) is too old to support C++14; trying with C++1y...)
+cxx_standard := -std=c++1y
+endif
+else
+# Maybe clang etc. need a different command-line argument...
+endif
+$(info Targetting C++14 standard via $(cxx_standard))
+
+# Default build type is debugging.
+ifeq ($(shell test -n "$$BUILD_TYPE" || echo notset),notset)
+BUILD_TYPE := Debug
+endif
+
+ifeq ($(BUILD_TYPE),Debug)
+Add_CFLAGS := -g
+else ifeq ($(BUILD_TYPE),Release)
+Add_CFLAGS := -DNDEBUG
+else
+$(error Error: Unknown build type "$(BUILD_TYPE)", aborting)
+endif
+$(info This is a $(BUILD_TYPE) build. Additional compiler flags: $(Add_CFLAGS))
+CXXFLAGS := $(Add_CFLAGS) $(CXXFLAGS)
+CFLAGS   := $(Add_CFLAGS) $(CFLAGS)
 
 # Use simply-expanded variables here so that each use of pkg-config
 # runs the external command only once.
-PCCFLAGS := $(shell pkg-config gtkmm-3.0 --cflags)
-CXXFLAGS := $(PCCFLAGS) -std=c++14 -Wall -O2 -g
-CFLAGS   := $(PCCFLAGS)            -Wall -O2 -g
-LDFLAGS  := $(shell pkg-config gtkmm-3.0 --libs)
+PKGS       := gtkmm-3.0
+PC_CFLAGS  := $(shell pkg-config $(PKGS) --cflags)
+PC_LDLIBS  := $(shell pkg-config $(PKGS) --libs)
+CXXFLAGS   := $(PC_CFLAGS) $(cxx_standard) -Wall -O2 $(CXXFLAGS)
+CFLAGS     := $(PC_CFLAGS)                 -Wall -O2 $(CFLAGS)
+LDLIBS     := $(PC_LDLIBS)
 
 # Let GNU make implicit rule link in a C++ way.
 LINK.o = $(LINK.cc)
@@ -48,16 +84,28 @@ DEPS := $(OBJS:.o=.deps)
 BINS := simple helloworld/helloworld radiobuttons/radiobuttons \
         entrycvn/entrycvn ls-gui-cvn/ls-gui-cvn
 BINS_EXTRA := ls-gui-cvn/main ls-gui-cvn/resources.c
-CONFIG_HEADERS := ls-gui-cvn/config.h
+CONFIG_HEADERS := config-global.h ls-gui-cvn/config.h
 
-all: $(BINS)
+all: $(CONFIG_HEADERS) $(BINS)
+
+deps: $(DEPS)
 
 clean:
 	rm -f $(BINS) $(BINS_EXTRA) $(OBJS) $(DEPS)
-	@echo "Maybe you also want: make realclean, which also cleans config headers"
+	@echo "Info: Maybe you also want: make cleanconfig, which cleans config headers, or make realclean, which cleans all"
 
-realclean: clean
+cleanconfig:
 	rm -f $(CONFIG_HEADERS)
+
+# Only clean dependency makefiles.
+# This is unfortunately sometimes necessary, e.g.,
+# when a previously existing header file disappears.
+cleandeps:
+	rm -f $(DEPS)
+
+realclean: clean cleanconfig
+
+reconfig: cleanconfig $(CONFIG_HEADERS)
 
 lsgui-version:
 	@if [ -d .git ]; then \
@@ -78,9 +126,41 @@ lsgui-version:
 	  echo "Can't determine ls-gui-cvn version from tag name \"$$VER\"" >&2; \
 	  exit 1; \
 	fi; \
-	./update_config.sh ls-gui-cvn/config.h LSGUI_VERSION_STRING "\"$$VER\""
+	./update_config.sh ls-gui-cvn/config.h update LSGUI_VERSION_STRING "\"$$VER\""
 
-.PHONY: all clean realclean lsgui-version
+.PHONY: all deps clean cleanconfig cleandeps realclean reconfig lsgui-version
+
+config-global.h:
+	@./update_config.sh "$@" exists HAVE_STD_QUOTED || \
+	OK=2 ./update_config.sh "$@" update-capability-to-compile \
+		"whether we have std::quoted()" \
+		HAVE_STD_QUOTED \
+	$$'#include <iostream>\n\
+	#include <iomanip>\n\
+	int main(int argc, char **argv) {\n\
+		std::cout << std::quoted("test") << std::endl;\n\
+		return 0;\n\
+	}\n' \
+		$(COMPILE.cc)
+	@./update_config.sh "$@" exists HAVE_STD_MAKE_UNIQUE || \
+	OK=2 ./update_config.sh "$@" update-capability-to-compile \
+		"whether we have std::make_unique<>()" \
+		HAVE_STD_MAKE_UNIQUE \
+	$$'#include <iostream>\n\
+	#include <memory>\n\
+	#include <cstring>\n\
+	struct foo {\n\
+		char x;\n\
+		int y;\n\
+		foo(char theX, int theY) : x(theX), y(theY)\n\
+		{ }\n\
+	};\n\
+	int main(int argc, char **argv) {\n\
+		std::unique_ptr<foo> ptr = std::make_unique<foo>(\'x\', 7);\n\
+		std::cout << "(" << ptr->x << "," << ptr->y << ")" << std::endl;\n\
+		return 0;\n\
+	}\n' \
+		$(COMPILE.cc)
 
 simple: simple.o
 helloworld/helloworld: helloworld/main.o helloworld/helloworld.o
@@ -107,15 +187,20 @@ ls-gui-cvn/resources.deps: ls-gui-cvn/toolbar.gresource.xml
 
 %.deps: %.cc
 	@echo "Generating C++ dependency makefile $@ from $<"
-	@set -o pipefail && \
-	  OUT=$$($(COMPILE.cc) -MM $< | \
-	         if [ "$(@D)" = . ]; \
-	         then sed -e 's,^\([^: ]*\)\.o *:,\1.o \1.deps:,'; \
-	         else sed -e 's,^\([^: ]*\)\.o *:,$(@D)/\1.o $(@D)/\1.deps:,'; \
-	         fi) && \
-	  [ -n "$$OUT" ] && \
-	  grep -q -F "$@" <<<"$$OUT" && \
-	  cat <<<"$$OUT" >$@
+	@set -o pipefail || \
+	  { echo "Failed: Couldn't set shell option \"pipefail\"" >&2; exit 1; }; \
+	OUT=$$($(COMPILE.cc) -MM $< 2>/dev/null | \
+	       if [ "$(@D)" = . ]; \
+	       then sed -e 's,^\([^: ]*\)\.o *:,\1.o \1.deps:,'; \
+	       else sed -e 's,^\([^: ]*\)\.o *:,$(@D)/\1.o $(@D)/\1.deps:,'; \
+	       fi) || { echo "Failed: Compiling *dependency* *makefile* failed;" \
+	                     "but all may be well, please don't cancel the build." >&2; exit 1; }; \
+	[ -n "$$OUT" ] || \
+	  { echo "Failed: Compiler output was empty..." >&2; exit 1; }; \
+	grep -q -F "$@" <<<"$$OUT" || \
+	  { echo "Failed: Target \"$@\" is not part of the compiler output." >&2; exit 1; }; \
+	cat <<<"$$OUT" >"$@" || \
+	  { echo "Failed: Couldn't write output to target file \"$@\"." >&2; exit 1; }
 
 # Use "-include" instead of "include", to ignore errors due to the
 # dependency makefiles. Before this change, you might have needed

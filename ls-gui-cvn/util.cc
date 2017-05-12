@@ -22,6 +22,8 @@
 #include <iomanip>
 #include <vector>
 
+#include "../replacements/std_quoted.hh"
+
 #include <sys/types.h>
 #include <fcntl.h>
 #include <unistd.h>

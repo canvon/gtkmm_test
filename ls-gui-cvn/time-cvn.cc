@@ -20,6 +20,8 @@
 
 #include <system_error>
 
+#include "../replacements/std_make_unique.hh"
+
 #include <time.h>
 #include <string.h>
 
