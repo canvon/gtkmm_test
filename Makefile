@@ -88,12 +88,22 @@ CONFIG_HEADERS := ls-gui-cvn/config.h
 
 all: $(BINS)
 
+deps: $(DEPS)
+
 clean:
 	rm -f $(BINS) $(BINS_EXTRA) $(OBJS) $(DEPS)
-	@echo "Maybe you also want: make realclean, which also cleans config headers"
+	@echo "Info: Maybe you also want: make cleanconfig, which cleans config headers, or make realclean, which cleans all"
 
-realclean: clean
+cleanconfig:
 	rm -f $(CONFIG_HEADERS)
+
+# Only clean dependency makefiles.
+# This is unfortunately sometimes necessary, e.g.,
+# when a previously existing header file disappears.
+cleandeps:
+	rm -f $(DEPS)
+
+realclean: clean cleanconfig
 
 lsgui-version:
 	@if [ -d .git ]; then \
@@ -116,7 +126,7 @@ lsgui-version:
 	fi; \
 	./update_config.sh ls-gui-cvn/config.h update LSGUI_VERSION_STRING "\"$$VER\""
 
-.PHONY: all clean realclean lsgui-version
+.PHONY: all deps clean cleanconfig cleandeps realclean lsgui-version
 
 simple: simple.o
 helloworld/helloworld: helloworld/main.o helloworld/helloworld.o
