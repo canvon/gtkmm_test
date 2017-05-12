@@ -8,4 +8,8 @@ addons:
   apt:
     packages:
       - libgtkmm-3.0-dev
+before_script:
+  # Apparently on trusty / clang 3.5.0, it dies on #include <cstdio>,
+  # so try to use clang's own C++ library (as far as I, canvon, understand).
+  - if [ "$CXX" = "clang++" ]; then export CXXFLAGS="-stdlib=libc++ $CXXFLAGS"; fi
 script: make
