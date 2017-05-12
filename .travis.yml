@@ -1,11 +1,11 @@
 language: cpp
 compiler:
-- gcc
-- clang
+  - gcc
+  - clang
 os: linux
 dist: trusty
 addons:
   apt:
     packages:
-    - libgtkmm-3.0-dev
+      - libgtkmm-3.0-dev
 script: make
