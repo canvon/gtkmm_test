@@ -22,7 +22,7 @@
 #include <iomanip>
 #include <vector>
 
-#include "replacements.hh"
+#include "../replacements/std_quoted.hh"
 
 #include <sys/types.h>
 #include <fcntl.h>

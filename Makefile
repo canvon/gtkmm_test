@@ -84,9 +84,9 @@ DEPS := $(OBJS:.o=.deps)
 BINS := simple helloworld/helloworld radiobuttons/radiobuttons \
         entrycvn/entrycvn ls-gui-cvn/ls-gui-cvn
 BINS_EXTRA := ls-gui-cvn/main ls-gui-cvn/resources.c
-CONFIG_HEADERS := ls-gui-cvn/config.h
+CONFIG_HEADERS := config-global.h ls-gui-cvn/config.h
 
-all: $(BINS)
+all: $(CONFIG_HEADERS) $(BINS)
 
 deps: $(DEPS)
 
@@ -104,6 +104,8 @@ cleandeps:
 	rm -f $(DEPS)
 
 realclean: clean cleanconfig
+
+reconfig: cleanconfig $(CONFIG_HEADERS)
 
 lsgui-version:
 	@if [ -d .git ]; then \
@@ -126,7 +128,39 @@ lsgui-version:
 	fi; \
 	./update_config.sh ls-gui-cvn/config.h update LSGUI_VERSION_STRING "\"$$VER\""
 
-.PHONY: all deps clean cleanconfig cleandeps realclean lsgui-version
+.PHONY: all deps clean cleanconfig cleandeps realclean reconfig lsgui-version
+
+config-global.h:
+	@./update_config.sh "$@" exists HAVE_STD_QUOTED || \
+	OK=2 ./update_config.sh "$@" update-capability-to-compile \
+		"whether we have std::quoted()" \
+		HAVE_STD_QUOTED \
+	$$'#include <iostream>\n\
+	#include <iomanip>\n\
+	int main(int argc, char **argv) {\n\
+		std::cout << std::quoted("test") << std::endl;\n\
+		return 0;\n\
+	}\n' \
+		$(COMPILE.cc)
+	@./update_config.sh "$@" exists HAVE_STD_MAKE_UNIQUE || \
+	OK=2 ./update_config.sh "$@" update-capability-to-compile \
+		"whether we have std::make_unique<>()" \
+		HAVE_STD_MAKE_UNIQUE \
+	$$'#include <iostream>\n\
+	#include <memory>\n\
+	#include <cstring>\n\
+	struct foo {\n\
+		char x;\n\
+		int y;\n\
+		foo(char theX, int theY) : x(theX), y(theY)\n\
+		{ }\n\
+	};\n\
+	int main(int argc, char **argv) {\n\
+		std::unique_ptr<foo> ptr = std::make_unique<foo>(\'x\', 7);\n\
+		std::cout << "(" << ptr->x << "," << ptr->y << ")" << std::endl;\n\
+		return 0;\n\
+	}\n' \
+		$(COMPILE.cc)
 
 simple: simple.o
 helloworld/helloworld: helloworld/main.o helloworld/helloworld.o
@@ -141,17 +175,6 @@ ls-gui-cvn/main: ls-gui-cvn/main.o ls-gui-cvn/lsgui.o ls-gui-cvn/stat-cvn.o \
                  ls-gui-cvn/resources.o
 ls-gui-cvn/main.o: ls-gui-cvn/config.h
 ls-gui-cvn/config.h: lsgui-version
-	@./update_config.sh "$@" exists HAVE_STD_QUOTED || \
-	OK=2 ./update_config.sh "$@" update-capability-to-compile \
-		"whether we have std::quoted()" \
-		HAVE_STD_QUOTED \
-	$$'#include <iostream>\n\
-	#include <iomanip>\n\
-	int main(int argc, char **argv) {\n\
-		std::cout << std::quoted("test") << std::endl;\n\
-		return 0;\n\
-	}\n' \
-		$(COMPILE.cc)
 ls-gui-cvn/resources.o: ls-gui-cvn/resources.c
 ls-gui-cvn/resources.c: ls-gui-cvn/toolbar.gresource.xml
 	glib-compile-resources --sourcedir="$(dir $<)" \

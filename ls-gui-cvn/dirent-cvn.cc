@@ -21,7 +21,7 @@
 #include <sstream>
 #include <iomanip>
 
-#include "replacements.hh"
+#include "../replacements/std_quoted.hh"
 
 #include <sys/types.h>
 #include <dirent.h>

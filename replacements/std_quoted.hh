@@ -16,19 +16,19 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef REPLACEMENTS_HH
-#define REPLACEMENTS_HH
+#ifndef REPLACEMENTS_STD_QUOTED_HH
+#define REPLACEMENTS_STD_QUOTED_HH
 
-#include "config.h"
+#include "../config-global.h"
 
 #if !HAVE_STD_QUOTED
-#pragma message("Using replacement for std::quoted...")
+#pragma message("Using replacement for std::quoted()...")
 namespace std {
 
-std::string quoted(const std::string &str)
+string quoted(const string &str)
 {
-	std::string out("\"");
-	for (std::string::const_iterator iter(str.begin()); iter != str.end(); iter++)
+	string out("\"");
+	for (string::const_iterator iter(str.begin()); iter != str.end(); iter++)
 	{
 		if (*iter == '"')
 			out += "\\\"";
@@ -40,6 +40,6 @@ std::string quoted(const std::string &str)
 }
 
 }
-#endif
+#endif  // !HAVE_STD_QUOTED
 
-#endif  // REPLACEMENTS_HH
+#endif  // REPLACEMENTS_STD_QUOTED_HH
