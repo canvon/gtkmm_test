@@ -148,12 +148,18 @@ update-capability-to-compile() {
 		return 1
 	}
 
-	if "$@" "tmp-$$.cc" -o "tmp-$$" &>/dev/null && [ -f "tmp-$$" ]
+	RES=0
+	if [ -n "$V" ] && [ "$V" -ne 0 ]
 	then
-		RES=1
+		"$@" "tmp-$$.cc" -o "tmp-$$"             && [ -f "tmp-$$" ] && RES=1
+	else
+		"$@" "tmp-$$.cc" -o "tmp-$$" &>/dev/null && [ -f "tmp-$$" ] && RES=1
+	fi
+
+	if [ "$RES" -ne 0 ]
+	then
 		echo "yes"
 	else
-		RES=0
 		echo "no"
 	fi
 	update "$DEF" "$RES"
