@@ -269,20 +269,23 @@ namespace cvn { namespace fs
 		return pimpl->sb.st_size;
 	}
 
-	Time Stat::get_mtime() const
-	{
-		return Time(pimpl->sb.st_mtim);
-	}
-
-	Time Stat::get_ctime() const
-	{
-		return Time(pimpl->sb.st_ctim);
-	}
-
-	Time Stat::get_atime() const
-	{
-		return Time(pimpl->sb.st_atim);
-	}
+// Sub-second precision file timestamps are system-specific / non-portable.
+#if __linux__
+	Time Stat::get_mtime() const { return pimpl->sb.st_mtim; }
+	Time Stat::get_ctime() const { return pimpl->sb.st_ctim; }
+	Time Stat::get_atime() const { return pimpl->sb.st_atim; }
+#elif __APPLE__
+	Time Stat::get_mtime() const { return pimpl->sb.st_mtimespec; }
+	Time Stat::get_ctime() const { return pimpl->sb.st_ctimespec; }
+	Time Stat::get_atime() const { return pimpl->sb.st_atimespec; }
+#else
+#pragma message("Warning: No sub-second precision in file timestamps available on this platform!")
+	// This is expected to initialize the cvn::Time via conversion
+	// from time_t to cvn::Time::seconds_type.
+	Time Stat::get_mtime() const { return pimpl->sb.st_mtime; }
+	Time Stat::get_ctime() const { return pimpl->sb.st_ctime; }
+	Time Stat::get_atime() const { return pimpl->sb.st_atime; }
+#endif
 
 	struct ::stat &Stat::get_stat()
 	{
