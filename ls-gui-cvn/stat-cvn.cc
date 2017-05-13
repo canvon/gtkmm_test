@@ -271,17 +271,17 @@ namespace cvn { namespace fs
 
 	Time Stat::get_mtime() const
 	{
-		return Time(pimpl->sb.st_mtim);
+		return pimpl->sb.st_mtim;
 	}
 
 	Time Stat::get_ctime() const
 	{
-		return Time(pimpl->sb.st_ctim);
+		return pimpl->sb.st_ctim;
 	}
 
 	Time Stat::get_atime() const
 	{
-		return Time(pimpl->sb.st_atim);
+		return pimpl->sb.st_atim;
 	}
 
 	struct ::stat &Stat::get_stat()
