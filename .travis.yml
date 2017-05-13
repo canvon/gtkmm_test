@@ -35,4 +35,7 @@ before_script:
 script: make
 
 notifications:
-  irc: "chat.freenode.net#canvon"
+  irc:
+    channels:
+      - "chat.freenode.net#canvon"
+    use_notice: true
