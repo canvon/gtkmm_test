@@ -33,3 +33,6 @@ before_script:
   - $CXX -v || true
 
 script: make
+
+notifications:
+  irc: "chat.freenode.net#canvon"
