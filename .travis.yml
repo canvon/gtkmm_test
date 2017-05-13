@@ -38,4 +38,7 @@ notifications:
   irc:
     channels:
       - "chat.freenode.net#canvon"
+    on_success: always
+    on_failure: always
     use_notice: true
+    skip_join: false
