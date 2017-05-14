@@ -30,11 +30,28 @@ namespace system_time
 
 time_point from_timespec(const ::timespec &ts)
 {
+// TODO: Let this depend on a build-system test instead of on the platform?
+#if __linux__
 	return
 		time_point(
 			std::chrono::seconds(ts.tv_sec) +
 			std::chrono::nanoseconds(ts.tv_nsec)
 		);
+#else
+// On other systems, e.g., macOS/osx/Apple, the system clock may have
+// less precision than nanoseconds... So an explicit cast is needed,
+// there, and may lose the filesystem-provided nanoseconds precision!
+#pragma message("Warning: Storing nanoseconds-precision timestamps in std::chrono::system_clock may lose precision on this platform!")
+	return
+		// TODO: Make the duration_cast unnecessary by storing time
+		// in a non-system_clock, explicitly nanoseconds-based
+		// representation... (Or is this not worth the effort as
+		// maybe no-one will ever need the 3 digits missing on macOS?)
+		time_point(std::chrono::duration_cast<clock::duration>(
+			std::chrono::seconds(ts.tv_sec) +
+			std::chrono::nanoseconds(ts.tv_nsec)
+		));
+#endif
 }
 
 ::timespec to_timespec(const time_point &tp)
