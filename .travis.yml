@@ -34,6 +34,7 @@ before_script:
 
 script: make
 
+# Note: This did not seem to work as of 2017-05-13/-14.
 notifications:
   irc:
     channels:
