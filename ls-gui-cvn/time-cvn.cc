@@ -20,130 +20,77 @@
 
 #include <system_error>
 
-#include "../replacements/std_make_unique.hh"
-
 #include <time.h>
 #include <string.h>
 
 namespace cvn
 {
+namespace system_time
+{
 
-	class Time::impl
-	{
-	public:
-		::timespec ts;
+time_point from_timespec(const ::timespec &ts)
+{
+	return
+		time_point(
+			std::chrono::seconds(ts.tv_sec) +
+			std::chrono::nanoseconds(ts.tv_nsec)
+		);
+}
 
-		impl()
+::timespec to_timespec(const time_point &tp)
+{
+	const clock::duration &tp_dur(tp.time_since_epoch());
+	return
 		{
-			ts = { 0, 0 };
-		}
-
-		impl(seconds_type unixTime, nanosecs_type nanosecs)
-		{
-			ts.tv_sec  = unixTime;
-			ts.tv_nsec = nanosecs;
-		}
-
-		impl(const ::timespec &ts)
-		{
-			this->ts = ts;
-		}
-	};
+			std::chrono::duration_cast<std::chrono::seconds>(tp_dur).count(),
+			std::chrono::duration_cast<std::chrono::nanoseconds>(tp_dur).count()
+		};
+}
 
 
-	Time::Time()
-	{
-		pimpl = std::make_unique<impl>();
-	}
+std::string to_string(const time_point &tp, bool localtime)
+{
+	::tm brokenDown = localtime ?
+		get_tm_localtime(tp) :
+		get_tm_gmtime(tp);
+	char buf[256];
 
-	Time::Time(seconds_type unixTime, nanosecs_type nanosecs)
-	{
-		pimpl = std::make_unique<impl>(unixTime, nanosecs);
-	}
+	if (strftime(buf, sizeof buf, "%c", &brokenDown) <= 0)
+		throw std::runtime_error(__func__ + std::string(": couldn't format time"));
 
-	Time::Time(const ::timespec &ts)
-	{
-		pimpl = std::make_unique<impl>(ts);
-	}
-
-	Time::Time(const Time &toCopy)
-	{
-		pimpl = std::make_unique<impl>(*toCopy.pimpl);
-	}
-
-	Time::~Time()
-	{
-	}
+	return buf;
+}
 
 
-	Time &Time::operator=(const Time &rhs)
-	{
-		*pimpl = *rhs.pimpl;
-		return *this;
-	}
+::tm get_tm_gmtime(const time_point &tp)
+{
+	time_t tt(clock::to_time_t(tp));
 
+	::tm brokenDown;
+	::memset(&brokenDown, '\0', sizeof brokenDown);
+	brokenDown.tm_isdst = -1;
 
-	bool Time::operator<(const Time &rhs) const
-	{
-		const ::timespec &lts(pimpl->ts), &rts(rhs.pimpl->ts);
+	if (::gmtime_r(&tt, &brokenDown) == nullptr)
+		throw std::system_error(errno, std::generic_category(),
+			__func__ + std::string(": library function gmtime_r() failed"));
 
-		if (lts.tv_sec < rts.tv_sec)
-			return true;
+	return brokenDown;
+}
 
-		if (lts.tv_sec == rts.tv_sec)
-			return lts.tv_nsec < rts.tv_nsec;
+::tm get_tm_localtime(const time_point &tp)
+{
+	time_t tt(clock::to_time_t(tp));
 
-		return false;
-	}
+	::tm brokenDown;
+	::memset(&brokenDown, '\0', sizeof brokenDown);
+	brokenDown.tm_isdst = -1;
 
+	if (::localtime_r(&tt, &brokenDown) == nullptr)
+		throw std::system_error(errno, std::generic_category(),
+			__func__ + std::string(": library function localtime_r() failed"));
 
-	std::string Time::str() const
-	{
-		::tm brokenDown = get_tm_localtime();
-		char buf[256];
+	return brokenDown;
+}
 
-		if (strftime(buf, sizeof buf, "%c", &brokenDown) <= 0)
-			throw std::runtime_error("Time: couldn't format time");
-
-		return buf;
-	}
-
-
-	::tm Time::get_tm_gmtime() const
-	{
-		::tm brokenDown;
-		::memset(&brokenDown, '\0', sizeof brokenDown);
-		brokenDown.tm_isdst = -1;
-
-		if (::gmtime_r(&pimpl->ts.tv_sec, &brokenDown) == nullptr)
-			throw std::system_error(errno, std::generic_category(),
-				"Time: library function gmtime_r() failed");
-
-		return brokenDown;
-	}
-
-	::tm Time::get_tm_localtime() const
-	{
-		::tm brokenDown;
-		::memset(&brokenDown, '\0', sizeof brokenDown);
-		brokenDown.tm_isdst = -1;
-
-		if (::localtime_r(&pimpl->ts.tv_sec, &brokenDown) == nullptr)
-			throw std::system_error(errno, std::generic_category(),
-				"Time: library function localtime_r() failed");
-
-		return brokenDown;
-	}
-
-
-	::timespec &Time::get_timespec()
-	{
-		return pimpl->ts;
-	}
-
-	const ::timespec &Time::get_timespec() const
-	{
-		return pimpl->ts;
-	}
-
+}  // cvn::system_time
 }  // cvn

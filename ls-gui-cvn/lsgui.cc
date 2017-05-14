@@ -911,9 +911,9 @@ namespace cvn { namespace lsgui
 		row[modelColumns_.user]  = name_stat.get_user();
 		row[modelColumns_.group] = name_stat.get_group();
 		row[modelColumns_.size]  = name_stat.get_size();
-		cvn::Time mtime(name_stat.get_mtime());
+		cvn::system_time::time_point mtime(name_stat.get_mtime());
 		row[modelColumns_.time_lib]   = mtime;
-		row[modelColumns_.time_user]  = mtime.str();
+		row[modelColumns_.time_user]  = cvn::system_time::to_string(mtime);
 		row[modelColumns_.type_lib]   = cvn::fs::Dirent::EntType::Unknown;
 		row[modelColumns_.type_user]  = "";
 		row[modelColumns_.name_opsys] = name;
@@ -1320,8 +1320,8 @@ namespace cvn { namespace lsgui
 		const Gtk::TreeModel::iterator& a,
 		const Gtk::TreeModel::iterator& b)
 	{
-		const cvn::Time &timeA(a->operator[](modelColumns_.time_lib));
-		const cvn::Time &timeB(b->operator[](modelColumns_.time_lib));
+		const cvn::system_time::time_point &timeA(a->operator[](modelColumns_.time_lib));
+		const cvn::system_time::time_point &timeB(b->operator[](modelColumns_.time_lib));
 
 		if (timeA < timeB)
 			return -1;

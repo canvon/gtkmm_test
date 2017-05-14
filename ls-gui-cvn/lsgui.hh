@@ -70,7 +70,7 @@ namespace cvn { namespace lsgui
 				user, group;
 			Gtk::TreeModelColumn<guint>
 				size;  // size in bytes
-			Gtk::TreeModelColumn<cvn::Time>
+			Gtk::TreeModelColumn<cvn::system_time::time_point>
 				time_lib;  // mtime, ctime or atime
 			Gtk::TreeModelColumn<Glib::ustring>
 				time_user;

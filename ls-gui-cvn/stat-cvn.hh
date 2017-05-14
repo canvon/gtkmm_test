@@ -70,9 +70,9 @@ namespace cvn { namespace fs
 
 		long long get_size() const;
 
-		Time get_mtime() const;
-		Time get_ctime() const;
-		Time get_atime() const;
+		cvn::system_time::time_point get_mtime() const;
+		cvn::system_time::time_point get_ctime() const;
+		cvn::system_time::time_point get_atime() const;
 
 		struct ::stat &get_stat();
 		const struct ::stat &get_stat() const;

@@ -19,7 +19,7 @@
 #ifndef TIME_CVN_HH
 #define TIME_CVN_HH
 
-#include <memory>
+#include <chrono>
 #include <string>
 
 // Forward-declare to avoid need of including C-style system headers here.
@@ -28,42 +28,30 @@ struct tm;
 
 namespace cvn
 {
+namespace system_time
+{
 
-	class Time
-	{
-	public:
-		typedef long long seconds_type;  // Seconds: Ensure 64bits resolution. (?)
-		typedef      long nanosecs_type;  // Nanoseconds: 32bits would suffice,
-			// but make processing easier on 64bit machines. (?)
-			// It is expected that two 64bit registers would be used
-			// to store a seconds:nanoseconds combination.
-			// Whereas 32bit machines would be using three registers,
-			// two to store the seconds and one for the nanoseconds?
-			// ...
+using clock = std::chrono::system_clock;
+using time_point = clock::time_point;
 
-		Time();
-		Time(seconds_type unixTime, nanosecs_type nanosecs = 0);
-		Time(const ::timespec &ts);
-		Time(const Time &toCopy);
-		~Time();
 
-		Time &operator=(const Time &rhs);
+// Convert from low-level C struct timespec to C++ std::chrono::system_clock::time_point.
+time_point from_timespec(const ::timespec &ts);
 
-		bool operator<(const Time &rhs) const;
+// Convert from C++ std::chrono::system_clock::time_point to low-level C struct timespec.
+::timespec to_timespec(const time_point &tp);
 
-		std::string str() const;
 
-		::tm get_tm_gmtime() const;
-		::tm get_tm_localtime() const;
+// Convert from std::chrono::system_clock::time_point to std::string.
+std::string to_string(const time_point &tp, bool localtime = true);
 
-		::timespec &get_timespec();
-		const ::timespec &get_timespec() const;
+// Get low-level C struct tm, with Greenwich Mean Time.
+::tm get_tm_gmtime(const time_point &tp);
 
-	protected:
-		class impl;
-		std::unique_ptr<impl> pimpl;
-	};
+// Get low-level C struct tm, with local time.
+::tm get_tm_localtime(const time_point &tp);
 
-}
+}  // cvn::system_time
+}  // cvn
 
 #endif  // TIME_CVN_HH
